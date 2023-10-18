@@ -1,0 +1,2 @@
+| test.c:10:15:10:20 | test.c:10:15:10:20 | The variable b is allocated on line 10 and may leak on line 17 |
+| test.c:22:20:22:21 | test.c:22:20:22:21 | The variable x is allocated on line 22 and may leak on line 25 |

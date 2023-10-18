@@ -1,0 +1,3 @@
+- description: Recommended set of queries for Go
+- import: codeql-suites/tob-go-security.qls
+- import: codeql-suites/tob-go-crypto.qls

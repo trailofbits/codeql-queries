@@ -1,0 +1,53 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+Some functions receive input buffer (strings, arrays, ...) and the buffer's size as separate arguments.
+For manually provided (hardcoded) sizes one may make simple mistakes resulting from typos or misunderstanding of fuctions' APIs.
+For example:
+</p>
+
+<ul>
+  <li>a hardcoded string's length may be incorrectly stated</li>
+  <li>size arguments of strncat-like functions may be mistreated as destination buffer sizes, instead of input buffers</li>
+  <li><code>memcmp</code>-like functions may not take into account both inputs' lengths</li>
+</ul>
+<p></p>
+
+<p>
+This query finds calls to functions that take as input string and its size as separate arguments (<code>strncmp</code>, <code>strncpy</code>, <code>memmove</code>, ...), and:
+</p>
+
+<ul>
+<li>the size argument is slightly smaller than the source string's length (probable typo or off-by-one bug)</li>
+<li>the size argument is greater than the input string's length and memory function is used (buffer overread)</li>
+<li>the size argument is greater than the input string's length, and <code>strncat</code> like function is used (probable incorrect <code>strncat</code> use)</li>
+</ul>
+<p></p>
+
+<p>
+Most of the cases detected by this query are related to incorrect string comparisons, e.g. when comparing:
+</p>
+<p></p>
+
+<ul>
+<li>paths (e.g., "path/" compared without "/")</li>
+<li>extensions (".exe" compared with size=4)</li>
+<li>parsing of various formats tokens (which can cause a given parsing library to act differently than other libraries that parse the same format)</li>
+<li>more examples can be found in [disconnect3d/cstrnfinder](https://github.com/disconnect3d/cstrnfinder#reported-or-fixed-bugs)</li>
+</ul>
+</overview>
+
+<recommendation>
+<p>Review results and verify that provided sizes are correct.</p>
+
+</recommendation>
+<example>
+<sample src="CStrnFinder.c" />
+
+<p>In this example, the call to <code>strncmp</code> is not correct - it fails to compare last character of the hardcoded string.</p>
+</example>
+
+</qhelp>

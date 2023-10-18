@@ -1,0 +1,28 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+<code>FileMode</code> parameters (for methods accessing filesystem) are usually provided as octal numbers.
+This query detects hardcoded <code>FileMode</code>s that are not in octal form - numbers you see in the code are not what you will get.
+
+The query filters out some commonly used, not-octal integers to reduce number of false positives.
+
+Moreover, the query detect calls to permission-changing methods (e.g., <code>os.Chmod</code>, <code>os.Mkdir</code>) when
+the <code>FileMode</code> has more than 9 bits set - other bits may not be used, depending on the operating system.
+</p>
+
+</overview>
+<recommendation>
+<p>Review results and replace highlighted permissions with their octal versions.</p>
+
+</recommendation>
+<example>
+<sample src="FilePermsFlaws.go" />
+
+<p>In this example, the call to <code>os.Chmod</code> is most probably not correct 
+- it sets the new directory permissions to <code>0o1204</code>, and not to the <code>0644</code>.</p>
+</example>
+
+</qhelp>

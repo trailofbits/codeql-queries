@@ -1,0 +1,37 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+<code>strings.Trim</code>, <code>strings.TrimLeft</code>, <code>strings.TrimRight</code>,
+and corresponding <code>bytes.*</code> methods remove
+*all* provided Unicode code points from the beginning and/or end of a string. They do not remove whole
+suffix and/or prefix, as may be incorrectly assumed. Such task can be accomplished by
+<code>strings.TrimPrefix</code> and <code>strings.TrimSuffix</code> methods.
+
+For example, <code>strings.Trim("abbaXXXaaaab", "ab") == "XXX"</code> and not <code>"baXXXaaa"</code>.
+
+This query finds calls to the buggy Trim methods with second argument of length greater than 1.
+This is a simple heuristic that is meant to assist with manual code review. 
+</p>
+
+</overview>
+<recommendation>
+<p>Review results and ensure that the correct Trimming methods are used.</p>
+
+</recommendation>
+<example>
+<sample src="TrimMisuse.go" />
+
+<p>In this example, instead of removing <code>:debug</code> suffix (a "debug" task) from the <code>jobs</code> string,
+we remove all tasks composed from letters "d", "e", "b", "g", "u" until a task with any other letter is found.
+</p>
+
+</example>
+<references>
+<li>
+    <a href="https://pkg.go.dev/strings#TrimRight">strings.TrimRight specification</a>
+</li>
+</references>
+</qhelp>

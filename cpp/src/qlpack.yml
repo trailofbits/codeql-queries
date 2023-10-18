@@ -1,0 +1,11 @@
+---
+name: trailofbits/cpp-queries
+authors: Trail of Bits
+version: 0.0.1
+library: false
+extractor: cpp
+dependencies:
+  codeql/cpp-all: "*"
+  trailofbits/cpp-all: "*"
+suites: codeql-suites
+defaultSuiteFile: codeql-suites/tob-cpp-code-scanning.qls

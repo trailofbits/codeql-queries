@@ -1,0 +1,2 @@
+| test.c:11:5:11:11 | test.c:11:5:11:11 | The variable b is deallocated on line 11 and then subsequently used on line 14 |
+| test.c:11:5:11:11 | test.c:11:5:11:11 | The variable b is deallocated on line 11 and then subsequently used on line 19 |

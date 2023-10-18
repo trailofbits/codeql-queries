@@ -1,0 +1,24 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+ECDSA, DSA and some other cryptographic methods expect data for signing and verification to be pre-hashed.
+If the data is longer than the expected hash digest size, the data is silently truncated.
+This query finds flows into such methods, but only flows that are not sanitized by calls to hash functions or by slicing operations.
+</p>
+
+</overview>
+<recommendation>
+<p>Hash data before using it in the signature verification/creation method. If the data is known to be hashed then ignore the finding.</p>
+
+</recommendation>
+<example>
+<sample src="MsgNotHashedBeforeSigVerfication.go" />
+
+<p>In this example, we read content of the <code>/etc/passwd</code> file, sign the content and verify the signature.
+Because the content is not hashed before signing/verification, only the first 32 bytes of the file are actually signed.</p>
+</example>
+
+</qhelp>

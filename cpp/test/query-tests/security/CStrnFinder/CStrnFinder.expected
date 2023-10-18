@@ -1,0 +1,20 @@
+| test.c:11:9:11:15 | call to strncmp | Call to strncmp receives an input string of size 3, but is passed size argument of 2. Not whole source buffer is consumed, which may be a bug. |
+| test.c:14:15:14:20 | call to memcmp | Call to memcmp receives an input string of size 25, but is passed size argument of 24. Not whole source buffer is consumed, which may be a bug. |
+| test.c:17:15:17:21 | call to wmemcmp | Call to wmemcmp receives an input string of size 6, but is passed size argument of 5. Not whole source buffer is consumed, which may be a bug. |
+| test.c:28:5:28:11 | call to strncpy | Call to strncpy receives an input string of size 5, but is passed size argument of 4. Not whole source buffer is consumed, which may be a bug. |
+| test.c:36:5:36:11 | call to strncpy | Call to strncpy receives an input string of size 3, but is passed size argument of 2. Not whole source buffer is consumed, which may be a bug. |
+| test.c:45:5:45:11 | call to memccpy | Call to memccpy receives an input string of size 3, but is passed size argument of 2. Not whole source buffer is consumed, which may be a bug. |
+| test.c:56:5:56:11 | call to strncpy | Call to strncpy receives an input string of size 3, but is passed size argument of 2. Not whole source buffer is consumed, which may be a bug. |
+| test.c:78:12:78:19 | call to _mbsncmp | Call to _mbsncmp receives an input string of size 3, but is passed size argument of 2. Not whole source buffer is consumed, which may be a bug. |
+| test.c:85:12:85:17 | call to memcmp | Call to memcmp receives an input string of size 3, but is passed size argument of 2. Not whole source buffer is consumed, which may be a bug. |
+| test.c:92:12:92:17 | call to memcmp | Call to memcmp receives an input string of size 4, but is passed size argument of 2. Not whole source buffer is consumed, which may be a bug. |
+| test.c:98:12:98:18 | call to wmemcmp | Call to wmemcmp receives an input string of size 6, but is passed size argument of 5. Not whole source buffer is consumed, which may be a bug. |
+| test.c:104:12:104:19 | call to _memicmp | Call to _memicmp receives an input string of size 6, but is passed size argument of 5. Not whole source buffer is consumed, which may be a bug. |
+| test.c:110:12:110:19 | call to _memicmp | Call to _memicmp receives an input string of size 2, but is passed size argument of 8. This is a buffer overread vulnerability. |
+| test.c:117:12:117:17 | call to memcmp | Call to memcmp receives an input string of size 2, but is passed size argument of 5. This is a buffer overread vulnerability. |
+| test.c:124:5:124:11 | call to mempcpy | Call to mempcpy receives an input string of size 2, but is passed size argument of 4. This is a buffer overread vulnerability. |
+| test.c:131:12:131:18 | call to wcsncmp | Call to wcsncmp receives an input string of size 10, but is passed size argument of 9. Not whole source buffer is consumed, which may be a bug. |
+| test.c:138:12:138:18 | call to strncat | Call to strncat receives an input string of size 7, but is passed size argument of 10. This indicates that the destination buffer may overflow, as the size argument limits amount of bytes copied, and not total length. |
+| test.c:146:12:146:18 | call to strncat | Call to strncat receives an input string of size 5, but is passed size argument of 7. This indicates that the destination buffer may overflow, as the size argument limits amount of bytes copied, and not total length. |
+| test.c:154:5:154:11 | call to strncat | Call to strncat receives an input string of size 6, but is passed size argument of 20. This indicates that the destination buffer may overflow, as the size argument limits amount of bytes copied, and not total length. |
+| test.c:161:5:161:11 | call to wmemcpy | Call to wmemcpy receives an input string of size 4, but is passed size argument of 8. This is a buffer overread vulnerability. |

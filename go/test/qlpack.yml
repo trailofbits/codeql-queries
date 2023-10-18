@@ -1,0 +1,7 @@
+---
+name: trailofbits/go-tests
+authors: Trail of Bits
+extractor: go
+tests: .
+dependencies:
+  trailofbits/go-queries: "*"

@@ -1,0 +1,2 @@
+| test.c:6:13:6:18 | test.c:6:13:6:18 | rand output is used to initialize RAND_seed parameter random |
+| test.c:10:12:10:17 | test.c:10:12:10:17 | lrand48 output is used to initialize RAND_add parameter random |

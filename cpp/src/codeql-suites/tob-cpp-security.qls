@@ -1,0 +1,5 @@
+- description: Security queries for C and C++
+- queries: 'security'
+  from: trailofbits/cpp-queries
+- exclude:
+    tags contain: experimental

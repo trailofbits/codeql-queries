@@ -1,0 +1,6 @@
+| test.c:28:40:28:42 | test.c:28:40:28:42 | EVP_EncryptInit parameter key is initialized using static data from GLOBAL_KEY |
+| test.c:28:40:28:42 | test.c:28:40:28:42 | EVP_EncryptInit parameter key is initialized using static data from local_key |
+| test.c:28:45:28:46 | test.c:28:45:28:46 | EVP_EncryptInit parameter iv is initialized using static data from GLOBAL_IV |
+| test.c:28:45:28:46 | test.c:28:45:28:46 | EVP_EncryptInit parameter iv is initialized using static data from local_iv |
+| test.c:62:40:62:49 | test.c:62:40:62:49 | EVP_DecryptInit parameter GLOBAL_KEY is initialized using static data from GLOBAL_KEY |
+| test.c:62:52:62:60 | test.c:62:52:62:60 | EVP_DecryptInit parameter GLOBAL_IV is initialized using static data from GLOBAL_IV |

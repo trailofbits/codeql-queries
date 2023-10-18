@@ -1,0 +1,3 @@
+- description: Recommended set of queries for C and C++
+- import: codeql-suites/tob-cpp-security.qls
+- import: codeql-suites/tob-cpp-crypto.qls

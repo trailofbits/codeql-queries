@@ -1,0 +1,10 @@
+| test.c:10:15:10:20 | call to BN_new | test.c:13:5:13:11 | call to BN_free | test.c:13:13:13:13 | b |
+| test.c:10:15:10:20 | call to BN_new | test.c:17:5:17:11 | call to BN_free | test.c:17:13:17:13 | a |
+| test.c:10:15:10:20 | call to BN_new | test.c:35:3:35:9 | call to BN_free | test.c:35:11:35:11 | a |
+| test.c:18:9:18:14 | call to BN_new | test.c:13:5:13:11 | call to BN_free | test.c:13:13:13:13 | b |
+| test.c:18:9:18:14 | call to BN_new | test.c:17:5:17:11 | call to BN_free | test.c:17:13:17:13 | a |
+| test.c:18:9:18:14 | call to BN_new | test.c:35:3:35:9 | call to BN_free | test.c:35:11:35:11 | a |
+| test.c:27:3:27:18 | call to mbedtls_mpi_init | test.c:28:3:28:18 | call to mbedtls_mpi_free | test.c:28:20:28:21 | & ... |
+| test.c:32:15:32:20 | call to BN_new | test.c:13:5:13:11 | call to BN_free | test.c:13:13:13:13 | b |
+| test.c:32:15:32:20 | call to BN_new | test.c:17:5:17:11 | call to BN_free | test.c:17:13:17:13 | a |
+| test.c:32:15:32:20 | call to BN_new | test.c:35:3:35:9 | call to BN_free | test.c:35:11:35:11 | a |

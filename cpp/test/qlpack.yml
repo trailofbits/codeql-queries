@@ -1,0 +1,8 @@
+---
+name: trailofbits/cpp-tests
+authors: Trail of Bits
+extractor: cpp
+tests: .
+dependencies:
+  trailofbits/cpp-all: "*"
+  trailofbits/cpp-queries: "*"

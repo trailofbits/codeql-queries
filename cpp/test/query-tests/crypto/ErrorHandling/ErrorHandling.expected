@@ -1,0 +1,1 @@
+| test.c:10:14:10:23 | test.c:10:14:10:23 | The function fails to check the return value of 'RAND_bytes' |

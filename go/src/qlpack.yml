@@ -1,0 +1,10 @@
+---
+name: trailofbits/go-queries
+authors: Trail of Bits
+version: 0.0.1
+library: false
+extractor: go
+dependencies:
+  codeql/go-all: "*"
+suites: codeql-suites
+defaultSuiteFile: codeql-suites/tob-go-code-scanning.qls

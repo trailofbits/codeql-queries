@@ -1,0 +1,1 @@
+# Faulty hardware initialization

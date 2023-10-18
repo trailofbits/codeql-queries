@@ -1,0 +1,21 @@
+| FilePermsFlaws.go:19:9:19:11 | 777 | Found invalid permissions: 777 will evaluate to 0o1411 |
+| FilePermsFlaws.go:24:40:24:42 | 644 | Found invalid permissions: 644 - only 9 permission bits are supported in Mkdir/MkdirAll/Chmod methods on all platforms |
+| FilePermsFlaws.go:28:40:28:42 | 775 | Found invalid permissions: 775 - only 9 permission bits are supported in Mkdir/MkdirAll/Chmod methods on all platforms |
+| FilePermsFlaws.go:32:40:32:44 | 7_7_5 | Found invalid permissions: 7_7_5 - only 9 permission bits are supported in Mkdir/MkdirAll/Chmod methods on all platforms |
+| FilePermsFlaws.go:36:40:36:43 | 0x44 | Found invalid permissions: 0x44 will evaluate to 0o104 |
+| FilePermsFlaws.go:40:40:40:44 | 0x777 | Found invalid permissions: 0x777 - only 9 permission bits are supported in Mkdir/MkdirAll/Chmod methods on all platforms |
+| FilePermsFlaws.go:45:40:45:44 | 02755 | Found invalid permissions: 02755 - only 9 permission bits are supported in Mkdir/MkdirAll/Chmod methods on all platforms |
+| FilePermsFlaws.go:49:40:49:44 | 04666 | Found invalid permissions: 04666 - only 9 permission bits are supported in Mkdir/MkdirAll/Chmod methods on all platforms |
+| FilePermsFlaws.go:53:40:53:44 | 07777 | Found invalid permissions: 07777 - only 9 permission bits are supported in Mkdir/MkdirAll/Chmod methods on all platforms |
+| FilePermsFlaws.go:58:40:58:45 | 0o1755 | Found invalid permissions: 0o1755 - only 9 permission bits are supported in Mkdir/MkdirAll/Chmod methods on all platforms |
+| FilePermsFlaws.go:62:40:62:44 | 04666 | Found invalid permissions: 04666 - only 9 permission bits are supported in Mkdir/MkdirAll/Chmod methods on all platforms |
+| FilePermsFlaws.go:66:40:66:44 | 07777 | Found invalid permissions: 07777 - only 9 permission bits are supported in Mkdir/MkdirAll/Chmod methods on all platforms |
+| FilePermsFlaws.go:71:45:71:50 | 0b_1_1 | Found invalid permissions: 0b_1_1 will evaluate to 0o003 |
+| FilePermsFlaws.go:75:40:75:45 | 0x0755 | Found invalid permissions: 0x0755 - only 9 permission bits are supported in Mkdir/MkdirAll/Chmod methods on all platforms |
+| FilePermsFlaws.go:75:47:75:50 | 0b11 | Found invalid permissions: 0b11 will evaluate to 0o003 |
+| FilePermsFlaws.go:75:59:75:62 | 0x12 | Found invalid permissions: 0x12 will evaluate to 0o022 |
+| FilePermsFlaws.go:79:59:79:61 | 123 | Found invalid permissions: 123 will evaluate to 0o173 |
+| FilePermsFlaws.go:84:15:84:17 | 755 | Found invalid permissions: 755 will evaluate to 0o1363 |
+| FilePermsFlaws.go:84:22:84:24 | 755 | Found invalid permissions: 755 will evaluate to 0o1363 |
+| FilePermsFlaws.go:88:52:88:57 | 0x1000 | Found invalid permissions: 0x1000 - only 9 permission bits are supported in Mkdir/MkdirAll/Chmod methods on all platforms |
+| FilePermsFlaws.go:92:52:92:57 | 0x2000 | Found invalid permissions: 0x2000 - only 9 permission bits are supported in Mkdir/MkdirAll/Chmod methods on all platforms |

@@ -1,0 +1,5 @@
+- description: Security queries for Go
+- queries: 'security'
+  from: trailofbits/go-queries
+- exclude:
+    tags contain: experimental

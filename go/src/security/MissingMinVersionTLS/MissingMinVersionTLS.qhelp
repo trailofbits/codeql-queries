@@ -1,0 +1,32 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+Golang's <code>tls.Config</code> struct accepts <code>MinVersion</code> parameter that sets minimum accepted TLS version.
+If the parameter is not provided, default value is used: TLS1.2 for clients, and TLS1.0 for servers.
+TLS1.0 is considered deprecated and should not be used. 
+</p>
+
+</overview>
+<recommendation>
+<p>Explicitly set tls version to an up-to-date one.</p>
+
+</recommendation>
+<example>
+<sample src="MissingMinVersionTLS.go" />
+
+<p>In this example, the <code>http.Server</code> may be set with TLS configuration created by either <code>test1</code> or <code>test2</code> functions.
+The <code>test1</code> result will be highlighted by this query, as it fails to explicitly set minimum supported TLS version.
+The <code>test2</code> result will not be marked, even that it also uses the default value for minimum version.
+That is because the <code>test2</code> is explicit, and this query assumes that developers knew what they are doing. 
+</p>
+
+</example>
+<references>
+<li>
+    <a href="https://pkg.go.dev/crypto/tls#Config">tls.Config specification</a>
+</li>
+</references>
+</qhelp>

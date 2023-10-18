@@ -1,0 +1,5 @@
+- description: Cryptographic queries for C and C++
+- queries: 'crypto'
+  from: trailofbits/cpp-queries
+- exclude:
+    tags contain: experimental

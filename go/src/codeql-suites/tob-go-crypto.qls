@@ -1,0 +1,5 @@
+- description: Cryptographic queries for Go
+- queries: 'crypto'
+  from: trailofbits/go-queries
+- exclude:
+    tags contain: experimental

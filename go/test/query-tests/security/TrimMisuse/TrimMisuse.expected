@@ -1,0 +1,8 @@
+| TrimMisuse.go:14:14:14:45 | call to TrimRight | TrimRight will consider the second argument ($@) as a list of elements, and not as indivisible string. | TrimMisuse.go:14:40:14:44 | "BBA" | BBA |
+| TrimMisuse.go:15:14:15:51 | call to TrimRight | TrimRight will consider the second argument ($@) as a list of elements, and not as indivisible string. | TrimMisuse.go:15:46:15:50 | "BBA" | BBA |
+| TrimMisuse.go:21:14:21:42 | call to TrimRight | TrimRight will consider the second argument ($@) as a list of elements, and not as indivisible string. | TrimMisuse.go:20:7:20:13 | "/test" | /test |
+| TrimMisuse.go:26:14:26:40 | call to TrimLeft | TrimLeft will consider the second argument ($@) as a list of elements, and not as indivisible string. | TrimMisuse.go:96:8:96:18 | "removeall" | removeall |
+| TrimMisuse.go:27:14:27:46 | call to TrimLeft | TrimLeft will consider the second argument ($@) as a list of elements, and not as indivisible string. | TrimMisuse.go:96:8:96:18 | "removeall" | removeall |
+| TrimMisuse.go:32:14:32:35 | call to Trim | Trim will consider the second argument ($@) as a list of elements, and not as indivisible string. | TrimMisuse.go:10:18:10:24 | ":tob:" | :tob: |
+| TrimMisuse.go:37:14:37:44 | call to TrimLeft | TrimLeft will consider the second argument ($@) as a list of elements, and not as indivisible string. | TrimMisuse.go:37:40:37:43 | "  " |    |
+| TrimMisuse.go:38:14:38:50 | call to TrimLeft | TrimLeft will consider the second argument ($@) as a list of elements, and not as indivisible string. | TrimMisuse.go:38:46:38:49 | "  " |    |
