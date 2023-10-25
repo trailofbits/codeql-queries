@@ -447,13 +447,20 @@ class EVP_CIPHER extends FunctionCall {
   int keySize;
 
   EVP_CIPHER () {
-    // AES XTS variants.
+    // AES variants.
+    (this.getTarget().getName().matches("%EVP_aes_256_cbc%") and keySize = 32) or
+    (this.getTarget().getName().matches("%EVP_aes_256_cfb%") and keySize = 32) or
+    (this.getTarget().getName().matches("%EVP_aes_256_ctr%") and keySize = 32) or
+    (this.getTarget().getName().matches("%EVP_aes_256_ecb%") and keySize = 32) or
+    (this.getTarget().getName().matches("%EVP_aes_256_ofb%") and keySize = 32) or
     (this.getTarget().getName().matches("%EVP_aes_256_xts%") and keySize = 64) or
-    (this.getTarget().getName().matches("%EVP_aes_128_xts%") and keySize = 32) or
-    // Remaining AES variants.
-    (this.getTarget().getName().matches("%EVP_aes_256%") and keySize = 32) or
     (this.getTarget().getName().matches("%EVP_aes_192%") and keySize = 24) or
-    (this.getTarget().getName().matches("%EVP_aes_128%") and keySize = 16) or
+    (this.getTarget().getName().matches("%EVP_aes_128_cbc%") and keySize = 16) or
+    (this.getTarget().getName().matches("%EVP_aes_128_cfb%") and keySize = 16) or
+    (this.getTarget().getName().matches("%EVP_aes_128_ctr%") and keySize = 16) or
+    (this.getTarget().getName().matches("%EVP_aes_128_ecb%") and keySize = 16) or
+    (this.getTarget().getName().matches("%EVP_aes_128_ofb%") and keySize = 16) or
+    (this.getTarget().getName().matches("%EVP_aes_128_xts%") and keySize = 32) or
     // Chacha20 variants.
     (this.getTarget().getName().matches("%EVP_chacha20%") and keySize = 32)
   }
