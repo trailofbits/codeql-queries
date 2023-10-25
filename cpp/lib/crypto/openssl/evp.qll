@@ -447,7 +447,10 @@ class EVP_CIPHER extends FunctionCall {
   int keySize;
 
   EVP_CIPHER () {
-    // AES variants.
+    // AES XTS variants.
+    (this.getTarget().getName().matches("%EVP_aes_256_xts%") and keySize = 64) or
+    (this.getTarget().getName().matches("%EVP_aes_128_xts%") and keySize = 32) or
+    // Remaining AES variants.
     (this.getTarget().getName().matches("%EVP_aes_256%") and keySize = 32) or
     (this.getTarget().getName().matches("%EVP_aes_192%") and keySize = 24) or
     (this.getTarget().getName().matches("%EVP_aes_128%") and keySize = 16) or
