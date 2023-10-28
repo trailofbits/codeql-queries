@@ -1,5 +1,5 @@
 /**
- * @name RAND_bytes and BN_rand error handling
+ * @name Proper error handling
  * @id tob/cpp/error-handling
  * @description Checks if care is being taken to perform proper error handling
  * @kind problem
@@ -10,6 +10,8 @@
  */
 
 import cpp
+import crypto.common
+import crypto.libraries
 import semmle.code.cpp.dataflow.new.DataFlow
 
 predicate isChecked(Expr value) {
@@ -36,13 +38,10 @@ predicate isChecked(Expr value) {
     )
 }
 
-// TODO: This should use an abstract type for functions that return status codes.
-predicate isReturnValue(Expr value){
-    value.(FunctionCall).getTarget().getName() in ["BN_rand", "RAND_bytes"]
-}
-
-
-from FunctionCall call
-where isReturnValue(call)
-    and not isChecked(call)
-select call.getLocation(), "The function fails to check the return value of '" + call.getTarget().getName() + "'"
+from
+  ErrorCode res
+where
+  not isChecked(res)
+select
+  res.getLocation(),
+  "The function fails to check the return value of '" + res.getTarget().getName() + "'"
