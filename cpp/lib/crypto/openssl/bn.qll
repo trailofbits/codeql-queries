@@ -61,6 +61,7 @@ class BN_rand extends FunctionCall {
 
 class BIGNUM extends FunctionCall {
   BIGNUM () {
-    this.getTarget().getName() in ["BN_new"]
+    this.getTarget() instanceof BN_new or
+    this.getTarget() instanceof BN_secure_new
   }
 }
