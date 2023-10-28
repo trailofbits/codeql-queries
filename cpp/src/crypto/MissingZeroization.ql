@@ -1,7 +1,7 @@
 /**
- * @name Non-cleared bignum detection
+ * @name Missing zeroization of random BIGNUMs
  * @id tob/cpp/bignum-clearing
- * @description Determines if random bignums are properly cleared
+ * @description Determines if random bignums are properly zeroized
  * @kind problem
  * @tags correctness crypto
  * @problem.severity warning
@@ -27,4 +27,4 @@ predicate isRandom(Expr bignum) {
 
 from BIGNUM bignum
 where isRandom(bignum) and not isCleared(bignum)
-select bignum.getLocation(), "Bignum is initialized with random data but is not properly cleared"
+select bignum.getLocation(), "Bignum is initialized with random data but is not zeroized before it goes out of scope"

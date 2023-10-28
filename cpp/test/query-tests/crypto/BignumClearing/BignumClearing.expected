@@ -1,1 +1,0 @@
-| test.c:4:18:4:23 | test.c:4:18:4:23 | Bignum is initialized with random data but is not properly cleared |
