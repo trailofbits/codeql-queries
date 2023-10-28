@@ -1,7 +1,7 @@
 /**
  * @name Proper error handling
  * @id tob/cpp/error-handling
- * @description Checks if care is being taken to perform proper error handling
+ * @description Checks if returned error codes are properly checked
  * @kind problem
  * @tags correctness crypto
  * @problem.severity warning
