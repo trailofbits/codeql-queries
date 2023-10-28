@@ -1,7 +1,7 @@
 /**
  * @name Random buffer too small
  * @id tob/cpp/random-buffer-too-small
- * @description Finds buffer overflows in calls to `RAND_bytes`
+ * @description Finds buffer overflows in calls to CSPRNGs
  * @kind problem
  * @tags security crypto
  * @problem.severity warning
@@ -10,14 +10,30 @@
  */
 
 import cpp
+import crypto.common
 import crypto.libraries
 
-predicate requestedRandomnessFitsInBuffer(RAND_bytes call) { call.getRequestedBytes() <= call.getBufferSize() }
-
-predicate bufferIsPointer(RAND_bytes call) {
-    call.getBuffer().getType().getPointerIndirectionLevel() > 0
+// Exclude pointer arguments where we cannot determine the buffer size.
+predicate sourceIsPointer(CsprngCall call) {
+    call.getAStrongRandomnessSource().getType().getPointerIndirectionLevel() > 0
 }
 
-from RAND_bytes randBytesCall
-where not bufferIsPointer(randBytesCall) and not requestedRandomnessFitsInBuffer(randBytesCall)
-select randBytesCall.getLocation(), "Buffer size (" + randBytesCall.getBufferSize() + ") is smaller than the number of requested bytes (" + randBytesCall.getRequestedBytes() + ") in call to RAND_bytes."
+int getBufferSize(CsprngCall call) {
+  result = call.getAStrongRandomnessSource().getUnderlyingType().getSize()
+}
+
+int getRequestedBytes(CsprngCall call) {
+  result = call.getRequestedBytes().getValue().toInt()
+}
+
+from
+  CsprngCall call,
+  int bufferSize,
+  int requestedSize
+where
+  not sourceIsPointer(call) and
+  bufferSize = getBufferSize(call) and
+  requestedSize = getRequestedBytes(call) and
+  requestedSize > bufferSize
+select call.getLocation(),
+  "Buffer size (" + bufferSize + ") is smaller than the number of requested bytes (" + requestedSize + ") in call to '" + call.getTarget().getName() + "'."

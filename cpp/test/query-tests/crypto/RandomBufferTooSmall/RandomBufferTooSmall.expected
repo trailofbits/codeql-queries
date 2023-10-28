@@ -1,1 +1,1 @@
-| test.c:17:14:17:23 | test.c:17:14:17:23 | Buffer size (16) is smaller than the number of requested bytes (32) in call to RAND_bytes. |
+| test.c:17:14:17:23 | test.c:17:14:17:23 | Buffer size (16) is smaller than the number of requested bytes (32) in call to 'RAND_bytes'. |
