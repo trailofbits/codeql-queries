@@ -34,9 +34,9 @@ codeql database analyze database.db --format=sarif-latest --output=./tob.sarif -
 |[Invalid key size](./cpp/src/docs/crypto/InvalidKeySize.md "correctness, crypto")|Tests if keys passed to EncryptInit_ex have the same size as the key size of the cipher used|warning|medium|
 |[Legacy cryptographic algorithm](./cpp/src/docs/crypto/UseOfLegacyAlgorithm.md "correctness, crypto")|Detects potential instantiations of legacy cryptographic algorithms|warning|medium|
 |[Missing engine initialization](./cpp/src/docs/crypto/MissingEngineInit.md "correctness, crypto")|Finds created OpenSSL engines that may not be properly initialized|warning|medium|
-|[Non-cleared bignum detection](./cpp/src/docs/crypto/BignumClearing.md "correctness, crypto")|Determines if random bignums are properly cleared|warning|medium|
-|[RAND_bytes and BN_rand error handling](./cpp/src/docs/crypto/ErrorHandling.md "correctness, crypto")|Checks if care is being taken to perform proper error handling|warning|high|
-|[Random buffer too small](./cpp/src/docs/crypto/RandomBufferTooSmall.md "crypto, security")|Finds buffer overflows in calls to `RAND_bytes`|warning|high|
+|[Missing zeroization of random BIGNUMs](./cpp/src/docs/crypto/MissingZeroization.md "correctness, crypto")|Determines if random bignums are properly zeroized|warning|medium|
+|[Proper error handling](./cpp/src/docs/crypto/ErrorHandling.md "correctness, crypto")|Checks if returned error codes are properly checked|warning|high|
+|[Random buffer too small](./cpp/src/docs/crypto/RandomBufferTooSmall.md "crypto, security")|Finds buffer overflows in calls to CSPRNGs|warning|high|
 |[Static key flow](./cpp/src/docs/crypto/StaticKeyFlow.md "crypto, security")|Finds crypto variables initialized using static keys|error|high|
 |[Static password flow](./cpp/src/docs/crypto/StaticPasswordFlow.md "crypto, security")|Finds crypto variables initialized using static passwords|error|high|
 |[Weak randomness taint](./cpp/src/docs/crypto/WeakRandomnessTaint.md "crypto, security")|Finds crypto variables initialized using weak randomness|error|high|
