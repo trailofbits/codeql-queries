@@ -1,5 +1,5 @@
 import cpp
-import crypto.common
+import tob.crypto.common
 
 // void RAND_seed(const void *buf, int num);
 class RAND_seed extends CsprngInitializer {

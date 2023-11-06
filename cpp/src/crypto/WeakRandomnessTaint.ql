@@ -10,7 +10,7 @@
  */
 
 import cpp
-import crypto.libraries
+import tob.crypto.libraries
 import semmle.code.cpp.dataflow.new.DataFlow
 import WeakRandomnessTaint
 

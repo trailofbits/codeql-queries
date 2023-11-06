@@ -1,5 +1,5 @@
 import cpp
-import crypto.common
+import tob.crypto.common
 
 // Common API definitions for OpenSSL hash functions.
 module Hash {

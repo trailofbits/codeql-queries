@@ -17,4 +17,4 @@ a work in progress which means that the structure and definitions of these
 types will most likely change over time.
 
 This repository contains a number of queries built on top of the primitives
-defined here. These can be found under [`cpp/src/crypto`](../../src/crypto).
+defined here. These can be found under [`cpp/src/crypto`](../../../src/crypto).

@@ -1,5 +1,5 @@
 import cpp
-import crypto.common
+import tob.crypto.common
 
 // This file contains CodeQL models for the OpenSSL EVP API defined in
 // openssl/evp.h.

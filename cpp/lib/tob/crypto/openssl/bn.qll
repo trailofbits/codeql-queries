@@ -1,5 +1,5 @@
 import cpp
-import crypto.common
+import tob.crypto.common
 
 // BIGNUM *BN_new(void);
 class BN_new extends CustomAllocator {
