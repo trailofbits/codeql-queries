@@ -19,12 +19,12 @@ where
       .matches([
           // Hash functions
           "%md2%", "%md4%", "%md5%", "%ripemd%", "%sha1%", "%whirlpool%", "%streebog%",
+          // KDFs
+          "%pbkdf1%",
           // Symmetric ciphers
-          "%arcfour%", "%blowfish%", "%cast%", "%camellia%", "%des%", "%idea%", "%kasumi%",
-          "%magma%", "%rc2%", "%rc4%", "%tdea%",
-          // Asymmetric ciphers
-          "%rsa%"
-        ])
+          "%arcfour%", "%blowfish%", "%cast%", "%des%", "%idea%", "%kasumi%",
+          "%magma%", "%rc2%", "%rc4%", "%tdea%"
+      ])
 select call.getLocation(),
   "Potential use of legacy cryptographic algorithm " + call.getTarget().getQualifiedName() +
     " detected"

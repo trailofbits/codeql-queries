@@ -13,12 +13,14 @@ import cpp
 import crypto.libraries
 import semmle.code.cpp.dataflow.new.DataFlow
 
+// TODO: Handle `BN_clear_free` as well.
 predicate isCleared(Expr bignum) {
   exists(BN_clear clear |
     DataFlow::localFlow(DataFlow::exprNode(bignum), DataFlow::exprNode(clear.getArgument(0)))
   )
 }
 
+// TODO: Add support for remaining OpenSSL PRNG functions.
 predicate isRandom(Expr bignum) {
   exists(BN_rand rand |
     DataFlow::localFlow(DataFlow::exprNode(bignum), DataFlow::exprNode(rand.getArgument(0)))
