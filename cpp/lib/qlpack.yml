@@ -2,6 +2,7 @@
 name: trailofbits/cpp-all
 authors: Trail of Bits
 version: 0.0.1
+license: AGPL
 library: true
 extractor: cpp
 dependencies:
