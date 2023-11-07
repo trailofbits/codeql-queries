@@ -6,8 +6,8 @@ of bytes from the buffer. This query will check if the size of the key buffer
 passed as an argument to one of these functions is equal to the key size of the
 corresponding cipher.
 
-The following code snippet is aan example of an issue that would be identified
-by the query.
+The following code snippet is an example of an issue that would be identified by
+the query.
 
 ```cpp
 unsigned char key[16];  // This should be 32 for a 256 bit key
