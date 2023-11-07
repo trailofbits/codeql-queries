@@ -1,7 +1,7 @@
 ---
 name: trailofbits/cpp-queries
 authors: Trail of Bits
-version: 0.0.1
+version: 0.1.0
 license: AGPL
 library: false
 extractor: cpp
