@@ -10,8 +10,8 @@
  */
 
 import cpp
-import crypto.common
-import crypto.libraries
+import trailofbits.crypto.common
+import trailofbits.crypto.libraries
 import semmle.code.cpp.dataflow.new.DataFlow
 
 predicate isChecked(Expr value) {

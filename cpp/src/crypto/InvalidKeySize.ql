@@ -11,7 +11,7 @@
 
 import cpp
 import semmle.code.cpp.dataflow.new.DataFlow
-import crypto.libraries
+import trailofbits.crypto.libraries
 
 class Key extends Variable {
 

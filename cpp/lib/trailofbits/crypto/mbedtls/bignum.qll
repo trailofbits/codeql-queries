@@ -1,5 +1,5 @@
 import cpp
-import crypto.common
+import trailofbits.crypto.common
 
 // void mbedtls_mpi_init( mbedtls_mpi *X );
 class Mbedtls_mpi_init extends CustomAllocator {

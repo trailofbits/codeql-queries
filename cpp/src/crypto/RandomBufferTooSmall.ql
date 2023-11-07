@@ -10,8 +10,8 @@
  */
 
 import cpp
-import crypto.common
-import crypto.libraries
+import trailofbits.crypto.common
+import trailofbits.crypto.libraries
 
 // Exclude pointer arguments where we cannot determine the buffer size.
 predicate sourceIsPointer(CsprngCall call) {

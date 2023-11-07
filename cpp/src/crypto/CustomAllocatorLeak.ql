@@ -10,7 +10,7 @@
  */
 
 import cpp
-import crypto.libraries
+import trailofbits.crypto.libraries
 
 string toLine(ControlFlowNode node) { result = node.getLocation().getStartLine().toString() }
 
