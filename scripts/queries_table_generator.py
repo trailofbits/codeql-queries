@@ -64,7 +64,7 @@ class QlQuery:
         qhelp_markdown_path = (Path(self.lang)/'src'/'docs'/self.rel_path).with_suffix('.md')
         cells = [
             # f"{self.id}",
-            f'[{self.name}](./{qhelp_markdown_path} "{", ".join(self.tags)}")',
+            f'[{self.name}](./{qhelp_markdown_path})',
             f"{self.description}",
             f"{self.problem_severity}",
             f"{self.precision}",
