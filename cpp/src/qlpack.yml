@@ -2,7 +2,7 @@
 name: trailofbits/cpp-queries
 description: CodeQL queries for C and C++ developed by Trail of Bits
 authors: Trail of Bits
-version: 0.1.0
+version: 0.2.0
 license: AGPL
 library: false
 extractor: cpp
