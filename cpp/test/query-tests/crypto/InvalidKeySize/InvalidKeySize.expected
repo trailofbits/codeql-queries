@@ -1,1 +1,1 @@
-| test.c:15:5:15:22 | test.c:15:5:15:22 | Key size (31 bytes) does not match the expected key size for the encryption algorithm (32 bytes) |
+| test.c:9:3:9:20 | test.c:9:3:9:20 | Key size (16 bytes) does not match the expected key size for the encryption algorithm (32 bytes) |

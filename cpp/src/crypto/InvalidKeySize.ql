@@ -1,7 +1,7 @@
 /**
  * @name Invalid key size
  * @id tob/cpp/invalid-key-size
- * @description Tests if keys passed to EncryptInit_ex have the same size as the key size of the cipher used
+ * @description Tests if keys passed to EVP_EncryptInit and EVP_EncryptInit_ex have the same size as the key size of the cipher used
  * @kind problem
  * @tags correctness crypto
  * @problem.severity warning
@@ -41,9 +41,21 @@ class Key extends Variable {
     cipher.getKeySize() = this.getSize()
   }
 
-
+  // Avoid matching on pointers where the key size is not known.
+  predicate isArray() {
+    this.getType() instanceof ArrayType
+  }
 }
 
-from Key key, EVP_CIPHER cipher
-where cipher = key.getACipher() and not key.correctKeySize(cipher)
-select key.getInitCall().getLocation(), "Key size (" + key.getSize() + " bytes) does not match the expected key size for the encryption algorithm (" + cipher.getKeySize() + " bytes)"
+
+
+from 
+  Key key, 
+  EVP_CIPHER cipher
+where 
+  cipher = key.getACipher() and 
+  key.isArray() and
+  not key.correctKeySize(cipher)
+select 
+  key.getInitCall().getLocation(),
+  "Key size (" + key.getSize() + " bytes) does not match the expected key size for the encryption algorithm (" + cipher.getKeySize() + " bytes)"
