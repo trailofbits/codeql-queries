@@ -1,5 +1,5 @@
 /**
- * @name Weak randomness taint
+ * @name Crypto variable initialized using weak randomness
  * @id tob/cpp/weak-randomness-taint
  * @description Finds crypto variables initialized using weak randomness
  * @kind problem

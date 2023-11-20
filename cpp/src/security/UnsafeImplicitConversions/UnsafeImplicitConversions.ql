@@ -1,5 +1,5 @@
 /**
- * @name Unsafe Implicit Conversions
+ * @name Unsafe implicit integer conversion
  * @id tob/cpp/unsafe-implicit-conversions
  * @description Finds implicit integer casts that may overflow or be truncated, with false positive reduction via Value Range Analysis
  * @kind problem

@@ -1,5 +1,5 @@
 /**
- * @name Legacy cryptographic algorithm
+ * @name Use of legacy cryptographic algorithm
  * @id tob/cpp/use-of-legacy-algorithm
  * @description Detects potential instantiations of legacy cryptographic algorithms
  * @kind problem

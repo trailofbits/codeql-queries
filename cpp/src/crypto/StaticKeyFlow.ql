@@ -1,5 +1,5 @@
 /**
- * @name Static key flow
+ * @name Crypto variable initialized using static key
  * @id tob/cpp/static-key-flow
  * @description Finds crypto variables initialized using static keys
  * @kind problem

@@ -1,5 +1,5 @@
 /**
- * @name Custom allocator leak
+ * @name Memory leak related to custom allocator
  * @id tob/cpp/custom-allocator-leak
  * @description Finds memory leaks from custom allocated memory
  * @kind problem

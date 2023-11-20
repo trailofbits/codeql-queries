@@ -1,5 +1,5 @@
 /**
- * @name Custom allocator use-after-free
+ * @name Memory use after free related to custom allocator
  * @id tob/cpp/custom-allocator-use-after-free
  * @description Finds use-after-frees related to custom allocators like `BN_new`
  * @kind problem

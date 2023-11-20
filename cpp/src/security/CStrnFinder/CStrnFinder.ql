@@ -1,5 +1,5 @@
 /**
- * @name CStrNFinder
+ * @name Invalid string size passed to string manipulation function
  * @id tob/cpp/cstrnfinder
  * @description Finds calls to functions that take as input a string and its size as separate arguments (e.g., `strncmp`, `strncat`, ...) and the size argument is wrong
  * @kind problem

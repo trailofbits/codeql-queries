@@ -1,5 +1,5 @@
 /**
- * @name Missing zeroization of random BIGNUMs
+ * @name Missing zeroization of potentially sensitive random BIGNUM
  * @id tob/cpp/bignum-clearing
  * @description Determines if random bignums are properly zeroized
  * @kind problem

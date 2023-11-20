@@ -1,5 +1,5 @@
 /**
- * @name Missing engine initialization
+ * @name Missing OpenSSL engine initialization
  * @id tob/cpp/missing-engine-init
  * @description Finds created OpenSSL engines that may not be properly initialized
  * @kind problem

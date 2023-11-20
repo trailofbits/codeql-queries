@@ -1,5 +1,5 @@
 /**
- * @name File permission flaws
+ * @name Invalid file permission parameter
  * @id tob/go/file-perms-flaws
  * @description Finds non-octal (e.g., `755` vs `0o755`) and unsupported (e.g., `04666`) literals used as a filesystem permission parameter (`FileMode`)
  * @kind problem

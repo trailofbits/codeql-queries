@@ -1,5 +1,5 @@
 /**
- * @name Proper error handling
+ * @name Missing error handling
  * @id tob/cpp/error-handling
  * @description Checks if returned error codes are properly checked
  * @kind problem

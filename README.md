@@ -29,27 +29,25 @@ codeql database analyze database.db --format=sarif-latest --output=./tob.sarif -
 
 | Name | Description | Severity | Precision  |
 | ---  | ----------- | :----:   | :--------: |
-|[Custom allocator leak](./cpp/src/docs/crypto/CustomAllocatorLeak.md "crypto, security")|Finds memory leaks from custom allocated memory|warning|medium|
-|[Custom allocator use-after-free](./cpp/src/docs/crypto/CustomAllocatorUseAfterFree.md "correctness, crypto")|Finds use-after-frees related to custom allocators like `BN_new`|warning|medium|
-|[Invalid key size](./cpp/src/docs/crypto/InvalidKeySize.md "correctness, crypto")|Tests if keys passed to EncryptInit_ex have the same size as the key size of the cipher used|warning|medium|
-|[Legacy cryptographic algorithm](./cpp/src/docs/crypto/UseOfLegacyAlgorithm.md "correctness, crypto")|Detects potential instantiations of legacy cryptographic algorithms|warning|medium|
-|[Missing engine initialization](./cpp/src/docs/crypto/MissingEngineInit.md "correctness, crypto")|Finds created OpenSSL engines that may not be properly initialized|warning|medium|
-|[Missing zeroization of random BIGNUMs](./cpp/src/docs/crypto/MissingZeroization.md "correctness, crypto")|Determines if random bignums are properly zeroized|warning|medium|
-|[Proper error handling](./cpp/src/docs/crypto/ErrorHandling.md "correctness, crypto")|Checks if returned error codes are properly checked|warning|high|
-|[Random buffer too small](./cpp/src/docs/crypto/RandomBufferTooSmall.md "crypto, security")|Finds buffer overflows in calls to CSPRNGs|warning|high|
-|[Static key flow](./cpp/src/docs/crypto/StaticKeyFlow.md "crypto, security")|Finds crypto variables initialized using static keys|error|high|
-|[Static password flow](./cpp/src/docs/crypto/StaticPasswordFlow.md "crypto, security")|Finds crypto variables initialized using static passwords|error|high|
-|[Weak randomness taint](./cpp/src/docs/crypto/WeakRandomnessTaint.md "crypto, security")|Finds crypto variables initialized using weak randomness|error|high|
-
+|[Crypto variable initialized using static key](./cpp/src/docs/crypto/StaticKeyFlow.md)|Finds crypto variables initialized using static keys|error|high|
+|[Crypto variable initialized using static password](./cpp/src/docs/crypto/StaticPasswordFlow.md)|Finds crypto variables initialized using static passwords|error|high|
+|[Crypto variable initialized using weak randomness](./cpp/src/docs/crypto/WeakRandomnessTaint.md)|Finds crypto variables initialized using weak randomness|error|high|
+|[Invalid key size](./cpp/src/docs/crypto/InvalidKeySize.md)|Tests if keys passed to EVP_EncryptInit and EVP_EncryptInit_ex have the same size as the key size of the cipher used|warning|medium|
+|[Memory leak related to custom allocator](./cpp/src/docs/crypto/CustomAllocatorLeak.md)|Finds memory leaks from custom allocated memory|warning|medium|
+|[Memory use after free related to custom allocator](./cpp/src/docs/crypto/CustomAllocatorUseAfterFree.md)|Finds use-after-frees related to custom allocators like `BN_new`|warning|medium|
+|[Missing OpenSSL engine initialization](./cpp/src/docs/crypto/MissingEngineInit.md)|Finds created OpenSSL engines that may not be properly initialized|warning|medium|
+|[Missing error handling](./cpp/src/docs/crypto/ErrorHandling.md)|Checks if returned error codes are properly checked|warning|high|
+|[Missing zeroization of potentially sensitive random BIGNUM](./cpp/src/docs/crypto/MissingZeroization.md)|Determines if random bignums are properly zeroized|warning|medium|
+|[Random buffer too small](./cpp/src/docs/crypto/RandomBufferTooSmall.md)|Finds buffer overflows in calls to CSPRNGs|warning|high|
+|[Use of legacy cryptographic algorithm](./cpp/src/docs/crypto/UseOfLegacyAlgorithm.md)|Detects potential instantiations of legacy cryptographic algorithms|warning|medium|
 
 #### Security
 
 | Name | Description | Severity | Precision  |
 | ---  | ----------- | :----:   | :--------: |
-|[CStrNFinder](./cpp/src/docs/security/CStrnFinder/CStrnFinder.md "security")|Finds calls to functions that take as input a string and its size as separate arguments (e.g., `strncmp`, `strncat`, ...) and the size argument is wrong|error|low|
-|[Missing null terminator](./cpp/src/docs/security/NoNullTerminator/NoNullTerminator.md "security")|This query finds incorrectly initialized strings that are passed to functions expecting null-byte-terminated strings|error|high|
-|[Unsafe Implicit Conversions](./cpp/src/docs/security/UnsafeImplicitConversions/UnsafeImplicitConversions.md "experimental, security")|Finds implicit integer casts that may overflow or be truncated, with false positive reduction via Value Range Analysis|warning|low|
-
+|[Invalid string size passed to string manipulation function](./cpp/src/docs/security/CStrnFinder/CStrnFinder.md)|Finds calls to functions that take as input a string and its size as separate arguments (e.g., `strncmp`, `strncat`, ...) and the size argument is wrong|error|low|
+|[Missing null terminator](./cpp/src/docs/security/NoNullTerminator/NoNullTerminator.md)|This query finds incorrectly initialized strings that are passed to functions expecting null-byte-terminated strings|error|high|
+|[Unsafe implicit integer conversion](./cpp/src/docs/security/UnsafeImplicitConversions/UnsafeImplicitConversions.md)|Finds implicit integer casts that may overflow or be truncated, with false positive reduction via Value Range Analysis|warning|low|
 
 ### Go
 
@@ -57,17 +55,15 @@ codeql database analyze database.db --format=sarif-latest --output=./tob.sarif -
 
 | Name | Description | Severity | Precision  |
 | ---  | ----------- | :----:   | :--------: |
-|[Message not hashed before signature verification](./go/src/docs/crypto/MsgNotHashedBeforeSigVerfication/MsgNotHashedBeforeSigVerfication.md "security")|Detects calls to (EC)DSA APIs with a message that was not hashed. If the message is longer than the expected hash digest size, it is silently truncated|error|medium|
-
+|[Message not hashed before signature verification](./go/src/docs/crypto/MsgNotHashedBeforeSigVerfication/MsgNotHashedBeforeSigVerfication.md)|Detects calls to (EC)DSA APIs with a message that was not hashed. If the message is longer than the expected hash digest size, it is silently truncated|error|medium|
 
 #### Security
 
 | Name | Description | Severity | Precision  |
 | ---  | ----------- | :----:   | :--------: |
-|[File permission flaws](./go/src/docs/security/FilePermsFlaws/FilePermsFlaws.md "security")|Finds non-octal (e.g., `755` vs `0o755`) and unsupported (e.g., `04666`) literals used as a filesystem permission parameter (`FileMode`)|error|medium|
-|[Missing MinVersion in tls.Config](./go/src/docs/security/MissingMinVersionTLS/MissingMinVersionTLS.md "security")|This rule finds cases when you do not set the `tls.Config.MinVersion` explicitly for servers. By default version 1.0 is used, which is considered insecure. This rule does not mark explicitly set insecure versions|error|medium|
-|[Trim functions misuse](./go/src/docs/security/TrimMisuse/TrimMisuse.md "security")|Finds calls to `string.{Trim,TrimLeft,TrimRight}` with the 2nd argument not being a cutset but a continuous substring to be trimmed|error|low|
-
+|[Invalid file permission parameter](./go/src/docs/security/FilePermsFlaws/FilePermsFlaws.md)|Finds non-octal (e.g., `755` vs `0o755`) and unsupported (e.g., `04666`) literals used as a filesystem permission parameter (`FileMode`)|error|medium|
+|[Missing MinVersion in tls.Config](./go/src/docs/security/MissingMinVersionTLS/MissingMinVersionTLS.md)|This rule finds cases when you do not set the `tls.Config.MinVersion` explicitly for servers. By default version 1.0 is used, which is considered insecure. This rule does not mark explicitly set insecure versions|error|medium|
+|[Trim functions misuse](./go/src/docs/security/TrimMisuse/TrimMisuse.md)|Finds calls to `string.{Trim,TrimLeft,TrimRight}` with the 2nd argument not being a cutset but a continuous substring to be trimmed|error|low|
 
 ## Query suites
 
@@ -78,7 +74,6 @@ The recommended suit - `tob-cpp-code-scanning.qls` - is chosen and executed when
 * `tob-<lang>-crypto.qls` - queries targeting cryptographic vulnerabilities
 * `tob-<lang>-security.qls` - queries targeting standard security issues
 * `tob-<lang>-full.qls` - all queries, including experimental ones
-
 
 ## Development
 

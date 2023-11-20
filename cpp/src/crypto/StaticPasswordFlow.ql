@@ -1,5 +1,5 @@
 /**
- * @name Static password flow
+ * @name Crypto variable initialized using static password
  * @id tob/cpp/static-password-flow
  * @description Finds crypto variables initialized using static passwords
  * @kind problem
