@@ -1,1 +1,2 @@
-| test.c:8:26:8:41 | test.c:8:26:8:41 | The variable `graph` is allocated on line 8 and leaks on line 12 |
+| test.c:8:26:8:41 | test.c:8:26:8:41 | The variable `graph` is allocated on line 8 and may leak on line 12 |
+| test.c:25:28:25:43 | test.c:25:28:25:43 | The variable `graph` is allocated on line 25 and may leak on line 28 |

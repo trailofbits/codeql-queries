@@ -58,11 +58,11 @@ class GGML_gallocr_get_buffer_size extends MustUse {
 class GraphAllocator extends CustomAllocator {
     GraphAllocator() { this = "GraphAllocator" }
     
-    override predicate isAlloc(Function f) {
+    override predicate isAlloc(Alloc f) {
         (f instanceof GGML_gallocr_new) or (f instanceof GGML_gallocr_new_n)
     }
 
-    override predicate isFree(Function f) {
+    override predicate isFree(Free f) {
         f instanceof GGML_gallocr_free
     }
 }

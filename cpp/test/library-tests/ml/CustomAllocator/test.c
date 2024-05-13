@@ -17,7 +17,6 @@ int bad(int flag) {
   return 0;
 }
 
-
 ggml_gallocr_t good() {
   ggml_gallocr_t graph = ggml_gallocr_new(0);
   return graph;
