@@ -22,11 +22,11 @@ class ContextAllocator extends CustomAllocator {
     ContextAllocator() {
         this = "ContextAllocator"
     }
-    override predicate isAlloc(Function f) {
+    override predicate isAlloc(Alloc f) {
         f instanceof GGML_init
     }
 
-    override predicate isFree(Function f) {
+    override predicate isFree(Free f) {
         f instanceof GGML_free
     }
 }
