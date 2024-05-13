@@ -24,9 +24,9 @@ string toMessage(ControlFlowNode source, ControlFlowNode sink, StackVariable var
 
 from
   LocalUseAfterFree uaf,
-  ControlFlowNode source, 
-  ControlFlowNode sink,
-  StackVariable var
+  FreeCall source, 
+  VariableAccess sink,
+  SemanticStackVariable var
 where 
   uaf.reaches(source, var, sink)
 select 
