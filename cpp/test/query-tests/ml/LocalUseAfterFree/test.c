@@ -22,7 +22,24 @@ int bad(int flag) {
   return 0;
 }
 
+void alsoBad(int count) {
+  ggml_gallocr_t graph = ggml_gallocr_new(0);
+
+  for (int i = 0; i < count; i++) {
+    // Potential use-after-free here when `graph` is
+    // freed in the previous iteration of the loop.
+    use(graph);
+    ggml_gallocr_free(graph);
+  }
+}
+
 ggml_gallocr_t good() {
+  for (int i = 0; i < 8; i++) {
+    ggml_gallocr_t graph = ggml_gallocr_new(0);
+    use(graph);
+    ggml_gallocr_free(graph);
+  }
+  
   ggml_gallocr_t graph = ggml_gallocr_new(0);
   return graph;
 }
