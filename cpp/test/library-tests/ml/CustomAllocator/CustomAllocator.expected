@@ -1,0 +1,5 @@
+| 8 | `graph` is allocated here |
+| 16 | `graph` is freed here |
+| 22 | `graph` is allocated here |
+| 33 | `graph` is freed here |
+| 35 | `graph` is freed here |

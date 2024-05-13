@@ -1,0 +1,5 @@
+- description: ML queries for C and C++
+- queries: 'ml'
+  from: trailofbits/cpp-queries
+- exclude:
+    tags contain: experimental

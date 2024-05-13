@@ -1,0 +1,1 @@
+| test.c:8:26:8:41 | test.c:8:26:8:41 | The variable `graph` is allocated on line 8 and leaks on line 12 |
