@@ -1,7 +1,7 @@
 /**
- * @name Function return value is discarded
- * @id tob/cpp/return-value-not-checked
- * @description Finds function calls where the return value is expected to be used
+ * @name Function return value is not checked
+ * @id tob/cpp/ggml-return-value-not-checked
+ * @description The return value from this function is expected to be checked in some way, but it is not
  * @kind problem
  * @tags correctness ml
  * @problem.severity warning

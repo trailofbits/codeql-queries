@@ -1,7 +1,7 @@
 /**
  * @name Function return value is discarded
- * @id tob/cpp/return-value-not-used
- * @description Finds function calls where the return value is expected to be used
+ * @id tob/cpp/ggml-return-value-not-used
+ * @description The return value from this function is expected to be used, but it is immediately discarded
  * @kind problem
  * @tags correctness ml
  * @problem.severity warning
