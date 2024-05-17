@@ -1,7 +1,7 @@
 /**
- * @name Memory leak related to custom allocator
- * @id tob/cpp/memory-leak
- * @description Finds memory leaks related to GGML custom allocators
+ * @name Memory leak from a GGML custom allocator
+ * @id tob/cpp/ggml-memory-leak
+ * @description A value allocated using a GGML custom allocator is never freed, leaking the corresponding memory
  * @kind problem
  * @tags correctness ml
  * @problem.severity warning
