@@ -5,12 +5,28 @@ import semmle.code.cpp.dataflow.new.DataFlow
 /**
  * Identifies functions where the return value must be used in some way.
  */
-abstract class MustUse extends Function { }
+abstract class MustUse extends Function { 
+  /**
+   * Override this for more detailed messages on why the return value is
+   * expected to be used.
+   */
+  string getMessage() {
+    result = "The return value of `" + this.getName() + "` is discarded here"
+  }
+}
 
 /**
  * Identifies functions where the return value must be checked.
  */
-abstract class MustCheck extends Function { }
+abstract class MustCheck extends Function {
+  /**
+   * Override this method for more detailed messages on why and how the return
+   * value should be checked.
+   */
+  string getMessage() {
+    result = "The return value of `" + this.getName() + "` is not checked"
+  }
+}
 
 /**
  * The return value of a function.

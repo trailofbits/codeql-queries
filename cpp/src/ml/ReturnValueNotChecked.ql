@@ -19,4 +19,4 @@ from
 where
     value.mustCheck() and not value.isChecked()
 select
-    value.getLocation(), "The return value of `" + value.getFunction() + "` is not checked"
+    value.getLocation(), value.getFunction().(MustCheck).getMessage()

@@ -18,4 +18,4 @@ from
 where
     value.mustUse() and not value.isUsed()
 select
-    value.getLocation(), "The return value of `" + value.getFunction() + "` is discarded here"
+    value.getLocation(), value.getFunction().(MustUse).getMessage()

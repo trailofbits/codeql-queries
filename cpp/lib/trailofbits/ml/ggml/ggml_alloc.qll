@@ -28,6 +28,10 @@ class GGML_gallocr_free extends Free {
  */
 class GGML_gallocr_alloc_graph extends MustCheck {
     GGML_gallocr_alloc_graph() { this.getName() = "ggml_gallocr_alloc_graph" }
+
+    override string getMessage() {
+        result = "The return value of `" + this.getName() + "` should be checked to ensure that the buffer allocation succeeded"
+    }
 }
 
 /**
@@ -35,6 +39,10 @@ class GGML_gallocr_alloc_graph extends MustCheck {
  */
 class GGML_gallocr_reserve extends MustCheck {
     GGML_gallocr_reserve() { this.getName() = "ggml_gallocr_reserve" }
+
+    override string getMessage() {
+        result = "The return value of `" + this.getName() + "` should be checked to ensure that the buffer allocation succeeded"
+    }
 } 
 
 /**
@@ -46,6 +54,10 @@ class GGML_gallocr_reserve extends MustCheck {
  */
 class GGML_gallocr_reserve_n extends MustCheck {
     GGML_gallocr_reserve_n() { this.getName() = "ggml_gallocr_reserve_n" }
+    
+    override string getMessage() {
+        result = "The return value of `" + this.getName() + "` should be checked to ensure that the buffer allocation succeeded"
+    }
 }
 
 /**
