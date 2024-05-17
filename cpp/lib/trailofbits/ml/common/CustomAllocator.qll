@@ -107,8 +107,9 @@ class LocalMemoryLeak extends StackVariableReachabilityWithReassignment {
   }
 
   override predicate isBarrier(ControlFlowNode node, StackVariable var) {
-    // A barrier is a call to `free`.
-    alloc.isFreedBy(node, var)
+    // A barrier is a call to `free` or an assignment to a variable which
+    // escapes the current function.
+    alloc.isFreedBy(node, var) or mayEscapeFunctionAt(node, var)
   }
 
   override predicate isSinkActual(ControlFlowNode node, StackVariable var) {
