@@ -1,2 +1,4 @@
 import common.CustomAllocator
+import common.EscapeAnalysis
+import common.MethodCall
 import common.ReturnValue
