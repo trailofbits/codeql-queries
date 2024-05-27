@@ -1,5 +1,5 @@
 import cpp
-import trailofbits.ml.common
+import trailofbits.common
 
 from
     ControlFlowNode node,

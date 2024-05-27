@@ -10,7 +10,7 @@
  */
 
 import cpp
-import trailofbits.ml.common
+import trailofbits.common
 import trailofbits.ml.libraries
 
 from

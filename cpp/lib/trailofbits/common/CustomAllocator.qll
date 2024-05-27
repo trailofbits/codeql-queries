@@ -1,7 +1,6 @@
 import cpp
 import ReturnValue
-
-import trailofbits.ml.libraries
+import EscapeAnalysis
 
 private import semmle.code.cpp.controlflow.Nullness
 private import semmle.code.cpp.dataflow.new.DataFlow

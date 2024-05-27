@@ -10,13 +10,13 @@
  */
 
 import cpp
-import trailofbits.ml.common
+import trailofbits.common
 import trailofbits.ml.libraries
 
 
 from
     ReturnValue value
 where
-    value.mustCheck() and not value.isChecked()
+    value.mustCheck() and not (value.isChecked() or value.isReturned()) 
 select
     value.getLocation(), value.getFunction().(MustCheck).getMessage()
