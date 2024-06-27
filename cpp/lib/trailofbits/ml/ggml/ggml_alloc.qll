@@ -1,7 +1,7 @@
 // *********************************************************************
 //
-//  This library has been automatically generated using the Busy Work
-//  VSCode extension from the file 'ggml-alloc.h'.                   
+//  This library has been automatically generated using the QLL Writer
+//  VSCode extension from the the file ggml-alloc.h
 //
 // *********************************************************************
 import cpp
@@ -9,8 +9,8 @@ import trailofbits.common
 
 // *********************************************************************
 //
-//  Function types matching the individual functions defined by       
-//  'ggml-alloc.h'.                                                  
+//  Function types matching the individual functions defined in       
+//  ggml-alloc.h
 //
 // *********************************************************************
 
@@ -79,7 +79,7 @@ class GGML_gallocr_reserve extends MustUse {
 
 /**
  * GGML_API bool ggml_gallocr_reserve_n(
- *      ggml_gallocr_t galloc,
+ *     ggml_gallocr_t galloc,
  *     struct ggml_cgraph * graph,
  *     const int * node_buffer_ids,
  *     const int * leaf_buffer_ids
@@ -115,21 +115,48 @@ class GGML_gallocr_get_buffer_size extends MustUse {
     }
 }
 
+/**
+ * GGML_API struct ggml_backend_buffer * ggml_backend_alloc_ctx_tensors_from_buft(
+ *     struct ggml_context * ctx,
+ *     ggml_backend_buffer_type_t buft
+ * );
+ */
+class GGML_backend_alloc_ctx_tensors_from_buft extends MustCheck {
+    GGML_backend_alloc_ctx_tensors_from_buft() {
+        this.getName() = "ggml_backend_alloc_ctx_tensors_from_buft"
+    }
+}
+
+/**
+ * GGML_API struct ggml_backend_buffer * ggml_backend_alloc_ctx_tensors(
+ *     struct ggml_context * ctx,
+ *     ggml_backend_t backend
+ * );
+ */
+class GGML_backend_alloc_ctx_tensors extends MustCheck {
+    GGML_backend_alloc_ctx_tensors() {
+        this.getName() = "ggml_backend_alloc_ctx_tensors"
+    }
+}
+
 // *********************************************************************
 //
-//  Custom allocators defined by 'ggml-alloc.h'.                     
+//  Custom allocators defined in ggml-alloc.h
 //
 // *********************************************************************
 
 /**
- * Alloc:
- *     ggml_gallocr_new
+ * GGML_gallocr_allocator
  *
- * Free:
- *     ggml_gallocr_new
+ * Allocation functions:
+ *   - ggml_gallocr_new
+ *   - ggml_gallocr_new_n
+ *
+ * Deallocation functions:
+ *   - ggml_gallocr_free
  */
-class GGMLGraphAllocator extends CustomAllocator {
-    GGMLGraphAllocator() { this = "GGMLGraphAllocator" }
+class GGML_gallocr_allocator extends CustomAllocator {
+    GGML_gallocr_allocator() { this = "GGML_gallocr_allocator" }
 
     override predicate isAlloc(Alloc f) {
         (f instanceof GGML_gallocr_new) or (f instanceof GGML_gallocr_new_n)

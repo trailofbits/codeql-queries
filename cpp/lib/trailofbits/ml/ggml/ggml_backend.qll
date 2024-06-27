@@ -1,7 +1,7 @@
 // *********************************************************************
 //
-//  This library has been automatically generated using the Busy Work
-//  VSCode extension from the file 'ggml-backend.h'.                 
+//  This library has been automatically generated using the QLL Writer
+//  VSCode extension from the the file ggml-backend.h
 //
 // *********************************************************************
 import cpp
@@ -9,10 +9,21 @@ import trailofbits.common
 
 // *********************************************************************
 //
-//  Function types matching the individual functions defined by       
-//  'ggml-backend.h'.                                                
+//  Function types matching the individual functions defined in       
+//  ggml-backend.h
 //
 // *********************************************************************
+
+/**
+ * GGML_API const char * ggml_backend_buft_name (
+ *     ggml_backend_buffer_type_t buft
+ * );
+ */
+class GGML_backend_buft_name extends MustCheck {
+    GGML_backend_buft_name() {
+        this.getName() = "ggml_backend_buft_name"
+    }
+}
 
 /**
  * GGML_API GGML_CALL ggml_backend_buffer_t ggml_backend_buft_alloc_buffer (
@@ -82,11 +93,31 @@ class GGML_backend_buft_is_host extends MustUse {
 }
 
 /**
+ * GGML_API const char * ggml_backend_buffer_name (
+ *     ggml_backend_buffer_t buffer
+ * );
+ */
+class GGML_backend_buffer_name extends MustCheck {
+    GGML_backend_buffer_name() {
+        this.getName() = "ggml_backend_buffer_name"
+    }
+}
+
+/**
  * GGML_API void ggml_backend_buffer_free (ggml_backend_buffer_t buffer);
  */
 class GGML_backend_buffer_free extends Function {
     GGML_backend_buffer_free() {
         this.getName() = "ggml_backend_buffer_free"
+    }
+}
+
+/**
+ * GGML_API void * ggml_backend_buffer_get_base (ggml_backend_buffer_t buffer);
+ */
+class GGML_backend_buffer_get_base extends MustCheck {
+    GGML_backend_buffer_get_base() {
+        this.getName() = "ggml_backend_buffer_get_base"
     }
 }
 
@@ -208,6 +239,15 @@ class GGML_backend_guid extends MustUse {
 }
 
 /**
+ * GGML_API const char * ggml_backend_name(ggml_backend_t backend);
+ */
+class GGML_backend_name extends MustCheck {
+    GGML_backend_name() {
+        this.getName() = "ggml_backend_name"
+    }
+}
+
+/**
  * GGML_API void ggml_backend_free(ggml_backend_t backend);
  */
 class GGML_backend_free extends Function {
@@ -289,7 +329,7 @@ class GGML_backend_tensor_get_async extends Function {
 
 /**
  * GGML_API GGML_CALL void ggml_backend_tensor_set(
- *      struct ggml_tensor * tensor,
+ *     struct ggml_tensor * tensor,
  *     const void * data,
  *     size_t offset,
  *     size_t size
@@ -589,6 +629,15 @@ class GGML_backend_reg_init_backend_from_str extends MustUse {
 }
 
 /**
+ * GGML_API const char * ggml_backend_reg_get_name(size_t i);
+ */
+class GGML_backend_reg_get_name extends MustCheck {
+    GGML_backend_reg_get_name() {
+        this.getName() = "ggml_backend_reg_get_name"
+    }
+}
+
+/**
  * GGML_API ggml_backend_t ggml_backend_reg_init_backend(
  *     size_t i,
  *     const char * params
@@ -846,19 +895,21 @@ class GGML_backend_view_init extends Function {
 
 // *********************************************************************
 //
-//  Custom allocators defined by 'ggml-backend.h'.                   
+//  Custom allocators defined in ggml-backend.h
 //
 // *********************************************************************
 
 /**
- * Alloc:
- *     ggml_backend_event_new
+ * GGML_backend_event_allocator
  *
- * Free:
- *     ggml_backend_event_free
+ * Allocation functions:
+ *   - ggml_backend_event_new
+ *
+ * Deallocation functions:
+ *   - ggml_backend_event_free
  */
-class GGMLBackendEventAllocator extends CustomAllocator {
-    GGMLBackendEventAllocator() { this = "GGMLBackendEventAllocator" }
+class GGML_backend_event_allocator extends CustomAllocator {
+    GGML_backend_event_allocator() { this = "GGML_backend_event_allocator" }
 
     override predicate isAlloc(Alloc f) {
         f instanceof GGML_backend_event_new
@@ -870,14 +921,16 @@ class GGMLBackendEventAllocator extends CustomAllocator {
 }
 
 /**
- * Alloc:
- *     ggml_backend_sched_new
+ * GGML_backend_sched_allocator
  *
- * Free:
- *     ggml_backend_sched_free
+ * Allocation functions:
+ *   - ggml_backend_sched_new
+ *
+ * Deallocation functions:
+ *   - ggml_backend_sched_free
  */
-class GGMLBackendScheduleAllocator extends CustomAllocator {
-    GGMLBackendScheduleAllocator() { this = "GGMLBackendScheduleAllocator" }
+class GGML_backend_sched_allocator extends CustomAllocator {
+    GGML_backend_sched_allocator() { this = "GGML_backend_sched_allocator" }
 
     override predicate isAlloc(Alloc f) {
         f instanceof GGML_backend_sched_new
