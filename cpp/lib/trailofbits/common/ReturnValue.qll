@@ -3,6 +3,11 @@ import cpp
 import semmle.code.cpp.dataflow.new.DataFlow
 
 /**
+ * Identifies deprecated functions that should not be used.
+ */
+abstract class Deprecated extends Function { }
+
+/**
  * Identifies functions where the return value must be used in some way.
  */
 abstract class MustUse extends Function { 
