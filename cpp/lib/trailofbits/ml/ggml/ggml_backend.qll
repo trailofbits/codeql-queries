@@ -31,7 +31,7 @@ class GGML_backend_buft_name extends MustCheck {
  *     size_t size
  * );
  */
-class GGML_backend_buft_alloc_buffer extends MustUse {
+class GGML_backend_buft_alloc_buffer extends Function {
     GGML_backend_buft_alloc_buffer() {
         this.getName() = "ggml_backend_buft_alloc_buffer"
     }
@@ -106,7 +106,7 @@ class GGML_backend_buffer_name extends MustCheck {
 /**
  * GGML_API void ggml_backend_buffer_free (ggml_backend_buffer_t buffer);
  */
-class GGML_backend_buffer_free extends Function {
+class GGML_backend_buffer_free extends Free {
     GGML_backend_buffer_free() {
         this.getName() = "ggml_backend_buffer_free"
     }
@@ -250,7 +250,7 @@ class GGML_backend_name extends MustCheck {
 /**
  * GGML_API void ggml_backend_free(ggml_backend_t backend);
  */
-class GGML_backend_free extends Function {
+class GGML_backend_free extends Free {
     GGML_backend_free() {
         this.getName() = "ggml_backend_free"
     }
@@ -273,7 +273,7 @@ class GGML_backend_get_default_buffer_type extends MustUse {
  *     size_t size
  * );
  */
-class GGML_backend_alloc_buffer extends MustUse {
+class GGML_backend_alloc_buffer extends Alloc {
     GGML_backend_alloc_buffer() {
         this.getName() = "ggml_backend_alloc_buffer"
     }
@@ -527,7 +527,7 @@ class GGML_backend_event_wait extends Function {
 /**
  * GGML_API ggml_backend_t ggml_backend_cpu_init(void);
  */
-class GGML_backend_cpu_init extends MustUse {
+class GGML_backend_cpu_init extends Alloc {
     GGML_backend_cpu_init() {
         this.getName() = "ggml_backend_cpu_init"
     }
@@ -836,7 +836,7 @@ class GGML_backend_sched_set_eval_callback extends Function {
  *     struct ggml_cgraph * graph
  * );
  */
-class GGML_backend_graph_copy extends MustUse {
+class GGML_backend_graph_copy extends Alloc {
     GGML_backend_graph_copy() {
         this.getName() = "ggml_backend_graph_copy"
     }
@@ -847,7 +847,7 @@ class GGML_backend_graph_copy extends MustUse {
  *     struct ggml_backend_graph_copy copy
  * );
  */
-class GGML_backend_graph_copy_free extends Function {
+class GGML_backend_graph_copy_free extends Free {
     GGML_backend_graph_copy_free() {
         this.getName() = "ggml_backend_graph_copy_free"
     }
@@ -938,5 +938,68 @@ class GGML_backend_sched_allocator extends CustomAllocator {
 
     override predicate isFree(Free f) {
         f instanceof GGML_backend_sched_free
+    }
+}
+
+/**
+ * GGML_backend_graph_copy_allocator
+ *
+ * Allocation functions:
+ *   - ggml_backend_graph_copy
+ *
+ * Deallocation functions:
+ *   - ggml_backend_graph_copy_free
+ */
+class GGML_backend_graph_copy_allocator extends CustomAllocator {
+    GGML_backend_graph_copy_allocator() { this = "GGML_backend_graph_copy_allocator" }
+
+    override predicate isAlloc(Alloc f) {
+        f instanceof GGML_backend_graph_copy
+    }
+
+    override predicate isFree(Free f) {
+        f instanceof GGML_backend_graph_copy_free
+    }
+}
+
+/**
+ * GGML_backend_buffer_allocator
+ *
+ * Allocation functions:
+ *   - ggml_backend_alloc_buffer
+ *
+ * Deallocation functions:
+ *   - ggml_backend_buffer_free
+ */
+class GGML_backend_buffer_allocator extends CustomAllocator {
+    GGML_backend_buffer_allocator() { this = "GGML_backend_buffer_allocator" }
+
+    override predicate isAlloc(Alloc f) {
+        f instanceof GGML_backend_alloc_buffer
+    }
+
+    override predicate isFree(Free f) {
+        f instanceof GGML_backend_buffer_free
+    }
+}
+
+/**
+ * GGML_backend_allocator
+ *
+ * Allocation functions:
+ *   - ggml_backend_cpu_init
+ *
+ * Deallocation functions:
+ *   - ggml_backend_free
+ */
+class GGML_backend_allocator extends CustomAllocator {
+    GGML_backend_allocator() { this = "GGML_backend_allocator" }
+
+    override predicate isAlloc(Alloc f) {
+        f instanceof GGML_backend_cpu_init
+    }
+
+    override predicate isFree(Free f) {
+        f instanceof GGML_backend_free
     }
 }

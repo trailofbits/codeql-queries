@@ -425,7 +425,7 @@ class GGML_tensor_overhead extends MustUse {
 /**
  * GGML_API struct ggml_context * ggml_init(struct ggml_init_params params);
  */
-class GGML_init extends MustCheck {
+class GGML_init extends Alloc {
     GGML_init() {
         this.getName() = "ggml_init"
     }
@@ -434,7 +434,7 @@ class GGML_init extends MustCheck {
 /**
  * GGML_API void ggml_free(struct ggml_context * ctx);
  */
-class GGML_free extends Function {
+class GGML_free extends Free {
     GGML_free() {
         this.getName() = "ggml_free"
     }
@@ -4195,5 +4195,32 @@ class GGML_cpu_has_matmul_int8 extends MustUse {
 class GGML_internal_get_type_traits extends MustUse {
     GGML_internal_get_type_traits() {
         this.getName() = "ggml_internal_get_type_traits"
+    }
+}
+
+// *********************************************************************
+//
+//  Custom allocators defined in ggml.h
+//
+// *********************************************************************
+
+/**
+ * GGML_allocator
+ *
+ * Allocation functions:
+ *   - ggml_init
+ *
+ * Deallocation functions:
+ *   - ggml_free
+ */
+class GGML_allocator extends CustomAllocator {
+    GGML_allocator() { this = "GGML_allocator" }
+
+    override predicate isAlloc(Alloc f) {
+        f instanceof GGML_init
+    }
+
+    override predicate isFree(Free f) {
+        f instanceof GGML_free
     }
 }
