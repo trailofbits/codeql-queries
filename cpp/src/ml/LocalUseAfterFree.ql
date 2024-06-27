@@ -1,7 +1,7 @@
 /**
  * @name Use after free using a GGML custom allocator
  * @id tob/cpp/ggml-use-after-free
- * @description A value allocated using a GGML custom allocator is freed, and then reused without being reallocated.
+ * @description A value allocated using a custom allocator is freed, and then reused without being reallocated.
  * @kind problem
  * @tags correctness ml
  * @problem.severity warning
