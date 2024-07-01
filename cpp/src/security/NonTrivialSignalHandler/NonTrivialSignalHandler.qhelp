@@ -1,0 +1,37 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+This is a CodeQL query constructed to find signal handlers that are performing async unsafe operations.
+</p>
+
+<p>
+The kernel defines a list of async-safe signal functions in its <a src="https://man7.org/linux/man-pages/man7/signal-safety.7.html">man page</a>.
+Any signal handler that performs operations that are not safe asynchronously may be vulnerable.
+</p>
+
+<recommendation>
+<p>
+Increase buffer sizes to include a null-byte at the end.
+Alternatively, do not specify buffer sizes explicitly, as these could be automatically computed be a compiler.
+</p>
+</recommendation>
+
+<example>
+<sample src="NonTrivialSignalHandler.c" />
+
+<p>
+
+</p>
+</example>
+
+<references>
+<li>
+    <a href="https://wiki.sei.cmu.edu/confluence/display/c/SIG30-C.+Call+only+asynchronous-safe+functions+within+signal+handlers">SEI CERT C Coding Standard "SIG30-C. Call only asynchronous-safe functions within signal handlers"</a>
+</li>
+</references>
+
+</qhelp>
+
