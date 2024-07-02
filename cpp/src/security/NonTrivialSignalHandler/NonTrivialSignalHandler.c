@@ -14,12 +14,6 @@ void correct_handler(int signum) {
   eflag = 1;
 }
  
-void invalid_handler(int signum) {
-  log_message();
-  free(info);
-  info = NULL;
-}
- 
 int main(void) {
   if (signal(SIGINT, correct_handler) == SIG_ERR) {
     /* Handle error */
