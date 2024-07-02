@@ -50,10 +50,12 @@ predicate isSignalHandlerField(FieldAccess fa) {
   fa.getTarget().getName() in ["__sa_handler", "__sa_sigaction", "sa_handler", "sa_sigaction"]
 }
 
-
 from FunctionCall fc, Function signalHandler, FieldAccess fa
 where
-  fc.getTarget().getName() = "signal" and
+  (
+    fc.getTarget().getName().matches("%_signal") or
+    fc.getTarget().getName() = "signal"
+  ) and
   signalHandler.getName() = fc.getArgument(1).toString() and
   isAsyncUnsafe(signalHandler)
   or
