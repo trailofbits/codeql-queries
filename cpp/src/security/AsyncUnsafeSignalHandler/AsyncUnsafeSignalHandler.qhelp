@@ -1,0 +1,43 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+  <p>
+  This is a CodeQL query constructed to find signal handlers that are performing async unsafe operations.
+  </p>
+
+  <p>
+  The kernel defines a list of async-safe signal functions in its <a href="https://man7.org/linux/man-pages/man7/signal-safety.7.html">man page</a>.
+  Any signal handler that performs operations that are not safe asynchronously may be vulnerable.
+  </p>
+</overview>
+
+<recommendation>
+<p>
+Attempt to keep signal handlers as simple as possible. Only call async-safe functions from signal handlers.
+</p>
+</recommendation>
+
+<example>
+<sample src="AsyncUnsafeSignalHandler.c" />
+
+<p>
+  In this example, while both syntatically valid, a correct handler is defined in the <code>correct_handler</code> function and sets a flag. The function calls <code>log_message</code>, a async unsafe function, within the main loop.
+</p>
+</example>
+
+<references>
+<li>
+    <a href="https://wiki.sei.cmu.edu/confluence/display/c/SIG30-C.+Call+only+asynchronous-safe+functions+within+signal+handlers">SEI CERT C Coding Standard "SIG30-C. Call only asynchronous-safe functions within signal handlers"</a>
+</li>
+<li>
+    <a href="https://www.qualys.com/2024/07/01/cve-2024-6387/regresshion.txt">regreSSHion: RCE in OpenSSH's server, on glibc-based Linux systems</a>
+</li>
+<li>
+    <a href="https://man7.org/linux/man-pages/man7/signal-safety.7.html">signal-safety - async-signal-safe functions</a>
+</li>
+</references>
+
+</qhelp>
+
