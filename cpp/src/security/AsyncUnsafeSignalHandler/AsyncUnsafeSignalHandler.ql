@@ -60,5 +60,4 @@ where
   signalHandler = fa.getTarget().getAnAssignedValue().(AddressOfExpr).getAddressable() and
   isAsyncUnsafe(signalHandler)
 select signalHandler,
-  "is a non-trivial signal handler that may be using not async-safe functions. Registered by $@",
-  fc, fc.toString()
+  "is a non-trivial signal handler that may be using functions that are not async-safe."
