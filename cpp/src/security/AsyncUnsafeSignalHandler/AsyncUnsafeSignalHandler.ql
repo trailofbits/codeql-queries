@@ -56,7 +56,7 @@ where
       fa.getTarget().getName() = "__sa_handler" or
       fa.getTarget().getName() = "__sa_sigaction"
     ) and
-    signalHandler.getName() = fa.getTarget().getAnAssignedValue().toString()
+    signalHandler = fa.getTarget().getAnAssignedValue().(AddressOfExpr).getAddressable()
   ) and
   isAsyncUnsafe(signalHandler)
 select signalHandler, "is a non-trivial signal handler that may be using not async-safe functions. Registered by $@", fc, fc.toString()
