@@ -49,14 +49,16 @@ predicate isAsyncUnsafe(Function signalHandler) {
 from FunctionCall fc, Function signalHandler, FieldAccess fa
 where
   fc.getTarget().getName() = "signal" and
-  signalHandler.getName() = fc.getArgument(1).toString()
-  or
-  (
-    (
-      fa.getTarget().getName() = "__sa_handler" or
-      fa.getTarget().getName() = "__sa_sigaction"
-    ) and
-    signalHandler = fa.getTarget().getAnAssignedValue().(AddressOfExpr).getAddressable()
-  ) and
+  signalHandler.getName() = fc.getArgument(1).toString() and
   isAsyncUnsafe(signalHandler)
-select signalHandler, "is a non-trivial signal handler that may be using not async-safe functions. Registered by $@", fc, fc.toString()
+  or
+  fc.getTarget().getName() = "sigaction" and
+  (
+    fa.getTarget().getName() = "__sa_handler" or
+    fa.getTarget().getName() = "__sa_sigaction"
+  ) and
+  signalHandler = fa.getTarget().getAnAssignedValue().(AddressOfExpr).getAddressable() and
+  isAsyncUnsafe(signalHandler)
+select signalHandler,
+  "is a non-trivial signal handler that may be using not async-safe functions. Registered by $@",
+  fc, fc.toString()
