@@ -71,12 +71,25 @@ class SyslogFunction extends Function {
   }
 }
 
+/* List from https://man7.org/linux/man-pages/man0/stdlib.h.0p.html */
+class StdlibFunction extends Function {
+  StdlibFunction() {
+    this.getName() in [
+      "malloc",
+      "calloc",
+      "realloc",
+      "free",
+    ]
+  }
+}
+
 predicate isAsyncUnsafe(Function signalHandler) {
   exists(Function f |
     signalHandler.calls+(f)
     and (
       f instanceof StdioFunction
       or f instanceof SyslogFunction
+      or f instanceof StdlibFunction
     )
   )
 }
