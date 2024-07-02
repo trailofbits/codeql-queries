@@ -1,0 +1,27 @@
+<!DOCTYPE qhelp PUBLIC
+"-//Semmle//qhelp//EN"
+"qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+    Description of the vulnerability.
+</p>
+</overview>
+<recommendation>
+<p>
+    Do XYZ.
+</p>
+</recommendation>
+<example>
+<p>
+    The following example shows ...:
+</p>
+<sample src="SomeFileInCWD.cpp"/>
+</example>
+<references>
+<li>
+    XYZ:
+    <a href="https://trailofbits.com">XYZ</a>
+</li>
+</references>
+</qhelp>
