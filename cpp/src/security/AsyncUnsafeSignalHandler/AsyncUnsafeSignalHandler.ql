@@ -10,93 +10,53 @@
  * @group security
  */
 
- import cpp
+import cpp
 
 /* List from https://man7.org/linux/man-pages/man3/stdio.3.html */
 class StdioFunction extends Function {
   StdioFunction() {
     this.getName() in [
-      "fopen",
-      "freopen",
-      "fflush",
-      "fclose",
-      "fread",
-      "fwrite",
-      "fgetc",
-      "fgets",
-      "fputc",
-      "fputs",
-      "getc",
-      "getchar",
-      "gets",
-      "putc",
-      "putchar",
-      "puts",
-      "ungetc",
-      "fprintf",
-      "fscanf",
-      "printf",
-      "scanf",
-      "sprintf",
-      "sscanf",
-      "vprintf",
-      "vfprintf",
-      "vsprintf",
-      "fgetpos",
-      "fsetpos",
-      "ftell",
-      "fseek",
-      "rewind",
-      "clearerr",
-      "feof",
-      "ferror",
-      "perror",
-      "setbuf",
-      "setvbuf",
-      "remove",
-      "rename",
-      "tmpfile",
-      "tmpnam",
-    ]
+        "fopen", "freopen", "fflush", "fclose", "fread", "fwrite", "fgetc", "fgets", "fputc",
+        "fputs", "getc", "getchar", "gets", "putc", "putchar", "puts", "ungetc", "fprintf",
+        "fscanf", "printf", "scanf", "sprintf", "sscanf", "vprintf", "vfprintf", "vsprintf",
+        "fgetpos", "fsetpos", "ftell", "fseek", "rewind", "clearerr", "feof", "ferror", "perror",
+        "setbuf", "setvbuf", "remove", "rename", "tmpfile", "tmpnam",
+      ]
   }
 }
 
 /* List from https://man7.org/linux/man-pages/man3/syslog.3.html */
 class SyslogFunction extends Function {
-  SyslogFunction() {
-    this.getName() in [
-      "syslog",
-      "vsyslog",
-    ]
-  }
+  SyslogFunction() { this.getName() in ["syslog", "vsyslog",] }
 }
 
 /* List from https://man7.org/linux/man-pages/man0/stdlib.h.0p.html */
 class StdlibFunction extends Function {
-  StdlibFunction() {
-    this.getName() in [
-      "malloc",
-      "calloc",
-      "realloc",
-      "free",
-    ]
-  }
+  StdlibFunction() { this.getName() in ["malloc", "calloc", "realloc", "free",] }
 }
 
 predicate isAsyncUnsafe(Function signalHandler) {
   exists(Function f |
-    signalHandler.calls+(f)
-    and (
-      f instanceof StdioFunction
-      or f instanceof SyslogFunction
-      or f instanceof StdlibFunction
+    signalHandler.calls+(f) and
+    (
+      f instanceof StdioFunction or
+      f instanceof SyslogFunction or
+      f instanceof StdlibFunction
     )
   )
 }
 
-
-from FunctionCall fc, Function signalHandler
-where fc.getTarget().getName() = "signal"
-  and signalHandler.getName() = fc.getArgument(1).toString()
-  and isAsyncUnsafe(signalHandler)
-select signalHandler, "Async unsafe signal handler registered"
+from FunctionCall fc, Function signalHandler, FieldAccess fa
+where
+  fc.getTarget().getName() = "signal" and
+  signalHandler.getName() = fc.getArgument(1).toString()
+  or
+  (
+    (
+      fa.getTarget().getName() = "__sa_handler" or
+      fa.getTarget().getName() = "__sa_sigaction"
+    ) and
+    signalHandler.getName() = fa.getTarget().getAnAssignedValue().toString()
+  ) and
+  isAsyncUnsafe(signalHandler)
+select signalHandler, "is a non-trivial signal handler that may be Async Unsafe"
