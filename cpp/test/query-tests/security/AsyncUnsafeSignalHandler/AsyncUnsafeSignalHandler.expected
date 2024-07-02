@@ -1,3 +1,4 @@
-| AsyncUnsafeSignalHandler.c:23:6:23:19 | unsafe_handler | is a non-trivial signal handler that may be using functions that are not async-safe. |
-| AsyncUnsafeSignalHandler.c:27:6:27:20 | unsafe_handler2 | is a non-trivial signal handler that may be using functions that are not async-safe. |
-| AsyncUnsafeSignalHandler.c:34:6:34:20 | unsafe_handler3 | is a non-trivial signal handler that may be using functions that are not async-safe. |
+| AsyncUnsafeSignalHandler.c:24:6:24:19 | unsafe_handler | is a non-trivial signal handler that may be using not async-safe functions. Registered by $@ | AsyncUnsafeSignalHandler.c:47:9:47:14 | call to signal | call to signal |
+| AsyncUnsafeSignalHandler.c:28:6:28:20 | unsafe_handler2 | is a non-trivial signal handler that may be using not async-safe functions. Registered by $@ | AsyncUnsafeSignalHandler.c:57:9:57:17 | call to sigaction | call to sigaction |
+| AsyncUnsafeSignalHandler.c:28:6:28:20 | unsafe_handler2 | is a non-trivial signal handler that may be using not async-safe functions. Registered by $@ | AsyncUnsafeSignalHandler.c:64:9:64:17 | call to sigaction | call to sigaction |
+| AsyncUnsafeSignalHandler.c:28:6:28:20 | unsafe_handler2 | is a non-trivial signal handler that may be using not async-safe functions. Registered by $@ | AsyncUnsafeSignalHandler.c:91:9:91:17 | call to sigaction | call to sigaction |
