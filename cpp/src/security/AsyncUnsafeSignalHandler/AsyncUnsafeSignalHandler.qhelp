@@ -14,8 +14,7 @@ Any signal handler that performs operations that are not safe asynchronously may
 
 <recommendation>
 <p>
-Increase buffer sizes to include a null-byte at the end.
-Alternatively, do not specify buffer sizes explicitly, as these could be automatically computed be a compiler.
+Attempt to keep signal handlers as simple as possible. Only call async-safe functions from signal handlers.
 </p>
 </recommendation>
 
@@ -30,6 +29,12 @@ Alternatively, do not specify buffer sizes explicitly, as these could be automat
 <references>
 <li>
     <a href="https://wiki.sei.cmu.edu/confluence/display/c/SIG30-C.+Call+only+asynchronous-safe+functions+within+signal+handlers">SEI CERT C Coding Standard "SIG30-C. Call only asynchronous-safe functions within signal handlers"</a>
+</li>
+<li>
+    <a href="https://www.qualys.com/2024/07/01/cve-2024-6387/regresshion.txt">regreSSHion: RCE in OpenSSH's server, on glibc-based Linux systems</a>
+</li>
+<li>
+    <a href="https://man7.org/linux/man-pages/man7/signal-safety.7.html">signal-safety - async-signal-safe functions</a>
 </li>
 </references>
 
