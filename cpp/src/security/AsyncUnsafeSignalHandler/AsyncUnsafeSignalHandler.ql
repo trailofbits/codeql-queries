@@ -46,6 +46,11 @@ predicate isAsyncUnsafe(Function signalHandler) {
   )
 }
 
+predicate isSignalHandlerField(FieldAccess fa) {
+  fa.getTarget().getName() in ["__sa_handler", "__sa_sigaction", "sa_handler", "sa_sigaction"]
+}
+
+
 from FunctionCall fc, Function signalHandler, FieldAccess fa
 where
   fc.getTarget().getName() = "signal" and
@@ -53,10 +58,7 @@ where
   isAsyncUnsafe(signalHandler)
   or
   fc.getTarget().getName() = "sigaction" and
-  (
-    fa.getTarget().getName() = "__sa_handler" or
-    fa.getTarget().getName() = "__sa_sigaction"
-  ) and
+  isSignalHandlerField(fa) and
   signalHandler = fa.getTarget().getAnAssignedValue().(AddressOfExpr).getAddressable() and
   isAsyncUnsafe(signalHandler)
 select signalHandler,
