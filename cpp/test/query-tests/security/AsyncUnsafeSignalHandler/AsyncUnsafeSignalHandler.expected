@@ -1,1 +1,2 @@
-| AsyncUnsafeSignalHandler.c:15:6:15:19 | unsafe_handler | Async unsafe signal handler registered |
+| AsyncUnsafeSignalHandler.c:17:6:17:17 | safe_handler | is a non-trivial signal handler that may be using not async-safe functions. Registered by $@ | AsyncUnsafeSignalHandler.c:40:9:40:14 | call to signal | call to signal |
+| AsyncUnsafeSignalHandler.c:23:6:23:19 | unsafe_handler | is a non-trivial signal handler that may be using not async-safe functions. Registered by $@ | AsyncUnsafeSignalHandler.c:46:9:46:14 | call to signal | call to signal |

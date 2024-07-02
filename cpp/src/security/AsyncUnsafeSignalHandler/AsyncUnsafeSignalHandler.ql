@@ -59,4 +59,4 @@ where
     signalHandler.getName() = fa.getTarget().getAnAssignedValue().toString()
   ) and
   isAsyncUnsafe(signalHandler)
-select signalHandler, "is a non-trivial signal handler that may be Async Unsafe"
+select signalHandler, "is a non-trivial signal handler that may be using not async-safe functions. Registered by $@", fc, fc.toString()

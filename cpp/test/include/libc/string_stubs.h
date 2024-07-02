@@ -1,5 +1,12 @@
 #ifndef USE_HEADERS
 
+#ifndef HEADER_STRINGSTUB_STUB_H
+#define HEADER_STRINGSTUB_STUB_H
+
+#ifdef  __cplusplus
+extern "C" {
+#endif
+
 #ifndef NULL
     #define NULL 0
 #endif
@@ -10,11 +17,18 @@ extern int _mbsncat(char* dst, char* src, int count);
 extern int _mbsncmp(char* dst, char* src, int count);
 extern int _memicmp(char* a, char* b, long count);
 extern int _mbsnbcmp(char* a, char* b, int count);
-extern void *printf(const char * format, ...);
-extern int strlen(const char *s);
+extern int printf(const char * format, ...);
+extern unsigned long strlen(const char *s);
 extern char* strcpy(char * dst, const char * src);
 extern int wprintf(const wchar_t * format, ...);
 extern wchar_t* wcscpy(wchar_t * s1, const wchar_t * s2);
+extern void perror(const char *s);
+
+#ifdef  __cplusplus
+}
+#endif
+
+#endif
 
 #else
 

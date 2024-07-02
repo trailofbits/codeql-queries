@@ -39,13 +39,13 @@ int main() {
     // Register the safe signal handler
     if (signal(SIGALRM, safe_handler) == SIG_ERR) {
         perror("Unable to catch SIGALRM");
-        exit(EXIT_FAILURE);
+        _Exit(EXIT_FAILURE);
     }
 
     // Unsafe example
     if (signal(SIGALRM, unsafe_handler) == SIG_ERR) {
         perror("Unable to catch SIGALRM");
-        exit(EXIT_FAILURE);
+        _Exit(EXIT_FAILURE);
     }
 
     // Another unsafe example
@@ -54,7 +54,7 @@ int main() {
     act.sa_sigaction = &unsafe_handler2;
     if (sigaction(SIGSEGV, &act, NULL) == -1) {
         perror("sigaction");
-        exit(EXIT_FAILURE);
+        _Exit(EXIT_FAILURE);
     }
 
     struct sigaction act2 = { 0 };
@@ -62,7 +62,7 @@ int main() {
     act2.sa_handler = &unsafe_handler3;
     if (sigaction(SIGALRM, &act2, NULL) == -1) {
         perror("sigaction 2");
-        exit(EXIT_FAILURE);
+        _Exit(EXIT_FAILURE);
     }
 
     return 0;
