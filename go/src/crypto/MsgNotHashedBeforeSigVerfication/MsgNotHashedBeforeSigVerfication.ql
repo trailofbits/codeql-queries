@@ -11,8 +11,6 @@
  */
 
 import go
-import DataFlow::PathGraph
-import semmle.go.dataflow.DataFlow2
 
 /**
  *  Function that performs signing or signature verification on a hash of a message
@@ -90,27 +88,25 @@ class HashFunction extends Function {
     }
 }
 
-class LongestFlowConfig extends DataFlow2::Configuration {
-    LongestFlowConfig() { this = "LongestFlowConfig" }
-    override predicate isSource(DataFlow::Node source) { source = source }
-    override predicate isSink(DataFlow::Node sink) { sink = sink }
+private module LongestFlowConfig implements DataFlow::ConfigSig {
+    predicate isSource(DataFlow::Node source) { source = source }
+    predicate isSink(DataFlow::Node sink) { sink = sink }
 }
+module LongestFlowFlow = TaintTracking::Global<LongestFlowConfig>;
 
 /**
  *  Flows from anything to SignatureMsgTruncationFunction
  *  that do not cross a hash function or slicing expression
  */
-class AnythingToSignatureMsgTrunFuncFlow extends DataFlow::Configuration {
-    AnythingToSignatureMsgTrunFuncFlow() { this = "AnythingToSignatureMsgTrunFuncFlow" }
-    
+module AnythingToSignatureMsgTrunFuncConfig implements DataFlow::ConfigSig {    
     // anything that is not a function's argument
     // TODO: alternatively, set sources to be ExternalInputs
-    override predicate isSource(DataFlow::Node source) {
-        not this.isSink(source, _)
+    predicate isSource(DataFlow::Node source) {
+        not isSink(source)
         and not source.asInstruction() instanceof IR::ReadArgumentInstruction
     }
 
-    override predicate isSink(DataFlow::Node sink) {
+    predicate isSink(DataFlow::Node sink) {
         exists(SignatureMsgTruncationFunction sigUseF, CallExpr sigUseCall, int position | 
             sigUseCall.getTarget() = sigUseF
             and sigUseF.hashArgPosition(position)
@@ -122,7 +118,7 @@ class AnythingToSignatureMsgTrunFuncFlow extends DataFlow::Configuration {
     // * data goes through a hash function
     // * data is truncated with a hardcoded value
     // * TODO: data is of type Hash
-    override predicate isBarrier(DataFlow::Node node) {
+    predicate isBarrier(DataFlow::Node node) {
         // direct hash function call
         exists(HashFunction hf | hf.getACall().getResult(_) = node or hf.getACall().getArgument(_) = node)
         or
@@ -142,14 +138,15 @@ class AnythingToSignatureMsgTrunFuncFlow extends DataFlow::Configuration {
         node.asExpr().getType().getUnderlyingType().(ArrayType).getLength() <= 66
     }
 }
+module AnythingToSignatureMsgTrunFuncFlow = TaintTracking::Global<AnythingToSignatureMsgTrunFuncConfig>;
 
-from AnythingToSignatureMsgTrunFuncFlow config, DataFlow::PathNode source, DataFlow::PathNode sink
+from AnythingToSignatureMsgTrunFuncFlow::PathNode source, AnythingToSignatureMsgTrunFuncFlow::PathNode sink
 where
-    config.hasFlowPath(source, sink)
+    AnythingToSignatureMsgTrunFuncFlow::flowPath(source, sink)
 
     // only the longest flow
-    and not exists(LongestFlowConfig config2, DataFlow::Node source2 |
-        config2.hasFlow(source2, source.getNode())
+    and not exists(DataFlow::Node source2 |
+        LongestFlowFlow::flow(source2, source.getNode())
         and source2 != source.getNode()
     )
 
