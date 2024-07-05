@@ -57,8 +57,8 @@ predicate isSignal(FunctionCall signalCall, Function signalHandler) {
  * struct sigaction sigactVar = ...
  * sigaction(SIGX, &sigactVar, ...)
  */
-predicate isSigaction(FunctionCall sigactionCall, Function signalHandler, boolean isReentrancyBlocked) {
-  exists(Variable sigactVar, Struct sigactStruct, Field handlerField |
+predicate isSigaction(FunctionCall sigactionCall, Function signalHandler, Variable sigactVar) {
+  exists(Struct sigactStruct, Field handlerField |
     sigactionCall.getTarget().getName() = "sigaction"
     and sigactionCall.getArgument(1).getAChild*() = sigactVar.getAnAccess()
 
@@ -79,45 +79,46 @@ predicate isSigaction(FunctionCall sigactionCall, Function signalHandler, boolea
         and dfa.getQualifier+() = sigactVar.getAnAccess()
       )
       or
-      exists(VariableDeclarationEntry varDec, ClassAggregateLiteral init |
+      exists(ClassAggregateLiteral initLit |
         // struct sigaction sigactVar = {.sa_sigaction = signalHandler};
-        varDec.getVariable() = sigactVar
-        and sigactVar.getInitializer().getExpr() = init
-        and signalHandler.getAnAccess() = init.getAFieldExpr(handlerField).getAChild*()
-
-        // new signals are blocked via sa_mask
-        and if exists(Field mask | mask.getName() = "sa_mask" and exists(init.getAFieldExpr(mask))) then
-          isReentrancyBlocked = true
-        else
-          isReentrancyBlocked = false
+        // varDec.getVariable() = sigactVar
+        sigactVar.getInitializer().getExpr() = initLit
+        and signalHandler.getAnAccess() = initLit.getAFieldExpr(handlerField).getAChild*()
       )
     )
-
-    // new signals are blocked via sa_mask
-    and if (isReentrancyBlocked = true or exists(ValueFieldAccess dfa |
-      dfa.getQualifier+() = sigactVar.getAnAccess()
-      and dfa.getTarget().getName() = "sa_mask"
-    )) then
-      isReentrancyBlocked = true
-    else
-      isReentrancyBlocked = false
   )
 }
 
-string fmtMsg(boolean isReentrancyBlocked) {
-  (isReentrancyBlocked = true and result = "")
+predicate isSignalDeliveryBlocked(Variable sigactVar) {
+  // TODO: should only find writes and for specific signals 
+  exists(ValueFieldAccess dfa |
+    dfa.getQualifier+() = sigactVar.getAnAccess() and dfa.getTarget().getName() = "sa_mask"
+  )
   or
-  (isReentrancyBlocked = false and result = "Delivery of new signals may be not blocked when the handler executes. ")
+  exists(Field mask |
+    mask.getName() = "sa_mask"
+    and exists(sigactVar.getInitializer().getExpr().(ClassAggregateLiteral).getAFieldExpr(mask))
+  )
+}
+
+string deliveryNotBlockedMsg() {
+  result = "Delivery of new signals may be not blocked when the handler executes. "
 }
  
-from FunctionCall fc, Function signalHandler, boolean isReentrancyBlocked
+from FunctionCall fc, Function signalHandler, string msg
 where
   isAsyncUnsafe(signalHandler)
   and (
-    (isSignal(fc, signalHandler) and isReentrancyBlocked = false)
+    (isSignal(fc, signalHandler) and msg = deliveryNotBlockedMsg())
     or
-    isSigaction(fc, signalHandler, isReentrancyBlocked)
+    exists(Variable sigactVar |
+      isSigaction(fc, signalHandler, sigactVar)
+      and if isSignalDeliveryBlocked(sigactVar) then
+      msg = ""
+      else
+      msg = deliveryNotBlockedMsg()
+    )
   )
-select signalHandler, "is a non-trivial signal handler that uses not async-safe functions. " + fmtMsg(isReentrancyBlocked) +
+select signalHandler, "is a non-trivial signal handler that uses not async-safe functions. " + msg +
   "Handler is registered by $@", fc, fc.toString()
 

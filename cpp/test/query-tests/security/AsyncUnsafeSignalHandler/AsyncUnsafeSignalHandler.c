@@ -92,13 +92,13 @@ int main() {
         _Exit(EXIT_FAILURE);
     }
 
-    // Unsafe example
+    // Unsafe example 1
     if (signal(SIGALRM, unsafe_handler) == SIG_ERR) {
         perror("Unable to catch SIGALRM");
         _Exit(EXIT_FAILURE);
     }
 
-    // Another unsafe example
+    // Unsafe example 2
     // TODO: decide which signals are exploitable and should produce findings
     struct sigaction act = { 0 };
     act.sa_flags = SA_SIGINFO;
@@ -108,14 +108,14 @@ int main() {
         _Exit(EXIT_FAILURE);
     }
 
-    // Yet another unsafe
+    // Unsafe example 3
     struct sigaction act2 = {.sa_flags = SA_SIGINFO, .sa_sigaction = unsafe_handler2};
     if (sigaction(SIGALRM, &act2, NULL) == -1) {
         perror("sigaction 2");
         _Exit(EXIT_FAILURE);
     }
 
-    // Let's call these safe, because some signals are blocked
+    // Unsafe example 4
     // TODO: not every masked signals should indicate safe signal handling
     sigset_t sigset;
     sigemptyset(&sigset);
@@ -126,6 +126,7 @@ int main() {
         _Exit(EXIT_FAILURE);
     }
 
+    // Unsafe example 5
     struct sigaction act4 = {.sa_flags = SA_SIGINFO, .sa_sigaction = unsafe_handler2};
     act4.sa_mask = sigset;
     if (sigaction(SIGSEGV, &act4, NULL) == -1) {
@@ -133,7 +134,7 @@ int main() {
         _Exit(EXIT_FAILURE);
     }
 
-    // TODO: this example should be not marked as finding
+    // Unsafe example 6
     struct sigaction act5 = {.sa_mask = sigset};
     act5.sa_flags = SA_SIGINFO;
     act5.sa_sigaction = &unsafe_handler2;
@@ -142,7 +143,7 @@ int main() {
         _Exit(EXIT_FAILURE);
     }
 
-    // indirect handler registration
+    // Unsafe example 7, indirect handler registration
     if(register_signal(SIGALRM, df_handler)) {
         _exit(EXIT_FAILURE);
     }
