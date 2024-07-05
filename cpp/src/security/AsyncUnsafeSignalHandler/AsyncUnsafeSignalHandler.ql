@@ -134,7 +134,7 @@ predicate isSignalDeliveryBlocked(Variable sigactVar) {
 string deliveryNotBlockedMsg() {
   result = "Moreover, delivery of new signals may be not blocked. "
 }
- 
+
 from FunctionCall fc, Function signalHandler, string msg
 where
   isAsyncUnsafe(signalHandler)
@@ -151,4 +151,3 @@ where
   )
 select signalHandler, "$@ is a non-trivial signal handler that uses not async-safe functions. " + msg +
   "Handler is registered by $@.", signalHandler, signalHandler.toString(), fc, fc.toString()
-
