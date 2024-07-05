@@ -24,6 +24,10 @@ extern int wprintf(const wchar_t * format, ...);
 extern wchar_t* wcscpy(wchar_t * s1, const wchar_t * s2);
 extern void perror(const char *s);
 
+extern void openlog(const char*, int, int);
+extern void syslog(int, const char*, ...);
+extern void closelog(void)
+
 #ifdef  __cplusplus
 }
 #endif
@@ -37,6 +41,7 @@ extern void perror(const char *s);
 #include <stdio.h>
 #include <stdlib.h>
 #include <wchar.h>
+#include <syslog.h>
 
 #define strcpy_s strcpy
 #define _mbsncat strncat

@@ -1,6 +1,8 @@
 #include "../../../include/libc/string_stubs.h"
 #include "../../../include/libc/signal.h"
 #include "../../../include/libc/stdlib.h"
+#include "../../../include/libc/unistd.h"
+#include "../../../include/libc/stdarg.h"
 
 void transitive_call() {
     printf("UNSAFE");
@@ -34,6 +36,53 @@ void unsafe_handler2(int signo, siginfo_t *info, void *context) {
 
 void unsafe_handler3(int signal) {
     transitive_call3();
+}
+
+// data flow case, regresshion-like
+#define sigdie(...) do_logging_and_die(__FILE__, NULL, __VA_ARGS__)
+
+static void do_log(int level, const char *suffix, const char *fmt, va_list args) {
+	int pri = 0;
+    openlog(suffix, 1, 2);
+    // the unsafe call from the handler
+    syslog(pri, "%.500s", fmt);
+    closelog();
+}
+
+static const int level = 0;
+void logv(const char *file, const char *suffix, const char *fmt, va_list args) {
+    char tmp[] = "sufsuf: ";
+    suffix = tmp;
+    if(!args) {
+        suffix = &tmp[3];
+    }
+	do_log(level, suffix, fmt, args);
+}
+
+void do_logging_and_die(const char *file, const char *suffix, const char *fmt, ...) {
+	va_list args;
+	va_start(args, fmt);
+	logv(file, suffix, fmt, args);
+	va_end(args);
+	_exit(1);
+}
+
+static void df_handler(int sig) {
+	if (2*sig % 5 == 3) {
+		_exit(1);
+	}
+	sigdie("some log %d", sig);
+}
+
+sighandler_t register_signal(int signum, sighandler_t handler) {
+	struct sigaction sa, osa;
+	memset(&sa, 0, sizeof(sa));
+	sa.sa_handler = handler;
+	sigfillset(&sa.sa_mask);
+	if (sigaction(signum, &sa, &osa) == -1) {
+		return NULL;
+	}
+	return osa.sa_handler;
 }
 
 int main() {
@@ -93,6 +142,10 @@ int main() {
         _Exit(EXIT_FAILURE);
     }
 
+    // indirect handler registration
+    if(register_signal(SIGALRM, df_handler)) {
+        _exit(EXIT_FAILURE);
+    }
 
     return 0;
 }

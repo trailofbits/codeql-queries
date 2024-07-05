@@ -57,7 +57,7 @@ predicate isSignal(FunctionCall signalCall, Function signalHandler) {
  * struct sigaction sigactVar = ...
  * sigaction(SIGX, &sigactVar, ...)
  */
-predicate isSigaction(FunctionCall sigactionCall, Function signalHandler) {
+predicate isSigaction(FunctionCall sigactionCall, Function signalHandler, boolean isReentrancyBlocked) {
   exists(Variable sigactVar, Struct sigactStruct, Field handlerField |
     sigactionCall.getTarget().getName() = "sigaction"
     and sigactionCall.getArgument(1).getAChild*() = sigactVar.getAnAccess()
@@ -84,25 +84,40 @@ predicate isSigaction(FunctionCall sigactionCall, Function signalHandler) {
         varDec.getVariable() = sigactVar
         and sigactVar.getInitializer().getExpr() = init
         and signalHandler.getAnAccess() = init.getAFieldExpr(handlerField).getAChild*()
-        // ignore if signals are blocked via sa_mask
-        and not exists(Field mask | mask.getName() = "sa_mask" and exists(init.getAFieldExpr(mask)))
+
+        // new signals are blocked via sa_mask
+        and if exists(Field mask | mask.getName() = "sa_mask" and exists(init.getAFieldExpr(mask))) then
+          isReentrancyBlocked = true
+        else
+          isReentrancyBlocked = false
       )
     )
-    // ignore if signals are blocked via sa_mask
-    and not exists(ValueFieldAccess dfa |
+
+    // new signals are blocked via sa_mask
+    and if (isReentrancyBlocked = true or exists(ValueFieldAccess dfa |
       dfa.getQualifier+() = sigactVar.getAnAccess()
       and dfa.getTarget().getName() = "sa_mask"
-    )
+    )) then
+      isReentrancyBlocked = true
+    else
+      isReentrancyBlocked = false
   )
 }
+
+string fmtMsg(boolean isReentrancyBlocked) {
+  (isReentrancyBlocked = true and result = "")
+  or
+  (isReentrancyBlocked = false and result = "Delivery of new signals may be not blocked when the handler executes. ")
+}
  
-from FunctionCall fc, Function signalHandler  
+from FunctionCall fc, Function signalHandler, boolean isReentrancyBlocked
 where
   isAsyncUnsafe(signalHandler)
   and (
-    isSignal(fc, signalHandler)
+    (isSignal(fc, signalHandler) and isReentrancyBlocked = false)
     or
-    isSigaction(fc, signalHandler)
+    isSigaction(fc, signalHandler, isReentrancyBlocked)
   )
-select signalHandler, "is a non-trivial signal handler that may be using not async-safe functions. Registered by $@", fc, fc.toString()
+select signalHandler, "is a non-trivial signal handler that uses not async-safe functions. " + fmtMsg(isReentrancyBlocked) +
+  "Handler is registered by $@", fc, fc.toString()
 
