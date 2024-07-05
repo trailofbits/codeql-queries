@@ -92,7 +92,7 @@ private module LongestFlowConfig implements DataFlow::ConfigSig {
     predicate isSource(DataFlow::Node source) { source = source }
     predicate isSink(DataFlow::Node sink) { sink = sink }
 }
-module LongestFlowFlow = TaintTracking::Global<LongestFlowConfig>;
+module LongestFlowFlow = DataFlow::Global<LongestFlowConfig>;
 
 /**
  *  Flows from anything to SignatureMsgTruncationFunction
@@ -138,13 +138,15 @@ module AnythingToSignatureMsgTrunFuncConfig implements DataFlow::ConfigSig {
         node.asExpr().getType().getUnderlyingType().(ArrayType).getLength() <= 66
     }
 }
-module AnythingToSignatureMsgTrunFuncFlow = TaintTracking::Global<AnythingToSignatureMsgTrunFuncConfig>;
+module AnythingToSignatureMsgTrunFuncFlow = DataFlow::Global<AnythingToSignatureMsgTrunFuncConfig>;
+import AnythingToSignatureMsgTrunFuncFlow::PathGraph
 
 from AnythingToSignatureMsgTrunFuncFlow::PathNode source, AnythingToSignatureMsgTrunFuncFlow::PathNode sink
 where
     AnythingToSignatureMsgTrunFuncFlow::flowPath(source, sink)
 
     // only the longest flow
+    // TODO: find only flows originating from user input
     and not exists(DataFlow::Node source2 |
         LongestFlowFlow::flow(source2, source.getNode())
         and source2 != source.getNode()
