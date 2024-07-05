@@ -3,8 +3,6 @@
 #ifndef HEADER_SIGNAL_STUB_H
 #define HEADER_SIGNAL_STUB_H
 
-
-
 #define SIGALRM 14
 #define SIGSEGV 11
 #define SIGTERM 15
@@ -13,8 +11,8 @@
 #define SA_SIGINFO 4
 
 {} // to silent error from codeql's extractor
-typedef void (*sighandler_t)(int);
-extern int signal(int, sighandler_t);
+typedef void (*sig_t)(int);
+extern int signal(int, sig_t);
 
 typedef struct {
     unsigned long sig[64];

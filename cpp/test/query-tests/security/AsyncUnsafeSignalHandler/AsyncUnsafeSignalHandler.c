@@ -23,6 +23,12 @@ void safe_handler(int sig) {
     }
 }
 
+void safe_handler2(int signo, siginfo_t *info, void *context) {
+    if (signo == SIGALRM) {
+        kill(1, SIGALRM);
+    }
+}
+
 void unsafe_handler(int sig) {
     transitive_call();
 }
@@ -34,7 +40,7 @@ void unsafe_handler2(int signo, siginfo_t *info, void *context) {
     transitive_call2();
 }
 
-void unsafe_handler3(int signal) {
+void unsafe_handler3(int signo, siginfo_t *info, void *context) {
     transitive_call3();
 }
 
@@ -74,7 +80,7 @@ static void df_handler(int sig) {
 	sigdie("some log %d", sig);
 }
 
-sighandler_t register_signal(int signum, sighandler_t handler) {
+sig_t register_signal(int signum, sig_t handler) {
 	struct sigaction sa, osa;
 	memset(&sa, 0, sizeof(sa));
 	sa.sa_handler = handler;
@@ -89,6 +95,15 @@ int main() {
     // Register the safe signal handler
     if (signal(SIGALRM, safe_handler) == SIG_ERR) {
         perror("Unable to catch SIGALRM");
+        _Exit(EXIT_FAILURE);
+    }
+
+    // Safe handler 2
+    struct sigaction actG2 = {0};
+    actG2.sa_flags = SA_SIGINFO;
+    actG2.sa_sigaction = &safe_handler2;
+    if (sigaction(SIGSEGV, &actG2, NULL) == -1) {
+        perror("sigaction");
         _Exit(EXIT_FAILURE);
     }
 
@@ -127,7 +142,7 @@ int main() {
     }
 
     // Unsafe example 5
-    struct sigaction act4 = {.sa_flags = SA_SIGINFO, .sa_sigaction = unsafe_handler2};
+    struct sigaction act4 = {.sa_flags = SA_SIGINFO, .sa_sigaction = unsafe_handler3};
     act4.sa_mask = sigset;
     if (sigaction(SIGSEGV, &act4, NULL) == -1) {
         perror("sigaction 4");
@@ -137,13 +152,20 @@ int main() {
     // Unsafe example 6
     struct sigaction act5 = {.sa_mask = sigset};
     act5.sa_flags = SA_SIGINFO;
-    act5.sa_sigaction = &unsafe_handler2;
+    act5.sa_sigaction = &unsafe_handler3;
     if (sigaction(SIGSEGV, &act5, NULL) == -1) {
         perror("sigaction 5");
         _Exit(EXIT_FAILURE);
     }
 
-    // Unsafe example 7, indirect handler registration
+        // Unsafe example 7
+    sig_t wrapper = unsafe_handler;
+    if (signal(SIGALRM, wrapper) == SIG_ERR) {
+        perror("Unable to catch SIGALRM");
+        _Exit(EXIT_FAILURE);
+    }
+
+    // Unsafe example 8, indirect handler registration
     if(register_signal(SIGALRM, df_handler)) {
         _exit(EXIT_FAILURE);
     }

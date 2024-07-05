@@ -10,47 +10,68 @@
  * @group security
  */
 
- import cpp
+import cpp
+import semmle.code.cpp.dataflow.new.DataFlow
 
 
- /* List from https://man7.org/linux/man-pages/man3/stdio.3.html */
- class StdioFunction extends Function {
-   StdioFunction() {
-     this.getName() in [
-         "fopen", "freopen", "fflush", "fclose", "fread", "fwrite", "fgetc", "fgets", "fputc",
-         "fputs", "getc", "getchar", "gets", "putc", "putchar", "puts", "ungetc", "fprintf",
-         "fscanf", "printf", "scanf", "sprintf", "sscanf", "vprintf", "vfprintf", "vsprintf",
-         "fgetpos", "fsetpos", "ftell", "fseek", "rewind", "clearerr", "feof", "ferror", "perror",
-         "setbuf", "setvbuf", "remove", "rename", "tmpfile", "tmpnam",
-       ]
-   }
- }
- 
- /* List from https://man7.org/linux/man-pages/man3/syslog.3.html */
- class SyslogFunction extends Function {
-   SyslogFunction() { this.getName() in ["syslog", "vsyslog",] }
- }
- 
- /* List from https://man7.org/linux/man-pages/man0/stdlib.h.0p.html */
- class StdlibFunction extends Function {
-   StdlibFunction() { this.getName() in ["malloc", "calloc", "realloc", "free",] }
- }
- 
- predicate isAsyncUnsafe(Function signalHandler) {
-   exists(Function f |
-     signalHandler.calls+(f) and
-     (
-       f instanceof StdioFunction or
-       f instanceof SyslogFunction or
-       f instanceof StdlibFunction
-     )
-   )
- }
+/* List from https://man7.org/linux/man-pages/man3/stdio.3.html */
+class StdioFunction extends Function {
+  StdioFunction() {
+    this.getName() in [
+        "fopen", "freopen", "fflush", "fclose", "fread", "fwrite", "fgetc", "fgets", "fputc",
+        "fputs", "getc", "getchar", "gets", "putc", "putchar", "puts", "ungetc", "fprintf",
+        "fscanf", "printf", "scanf", "sprintf", "sscanf", "vprintf", "vfprintf", "vsprintf",
+        "fgetpos", "fsetpos", "ftell", "fseek", "rewind", "clearerr", "feof", "ferror", "perror",
+        "setbuf", "setvbuf", "remove", "rename", "tmpfile", "tmpnam",
+      ]
+  }
+}
 
-// signal(SIGX, signalHandler)
+/* List from https://man7.org/linux/man-pages/man3/syslog.3.html */
+class SyslogFunction extends Function {
+  SyslogFunction() { this.getName() in ["syslog", "vsyslog",] }
+}
+
+/* List from https://man7.org/linux/man-pages/man0/stdlib.h.0p.html */
+class StdlibFunction extends Function {
+  StdlibFunction() { this.getName() in ["malloc", "calloc", "realloc", "free",] }
+}
+
+predicate isAsyncUnsafe(Function signalHandler) {
+  exists(Function f |
+    signalHandler.calls+(f) and
+    (
+      f instanceof StdioFunction or
+      f instanceof SyslogFunction or
+      f instanceof StdlibFunction
+    )
+  )
+}
+
+/**
+ * Flows from any function ptr
+ */
+module HandlerToSignalConfiguration implements DataFlow::ConfigSig {
+  predicate isSource(DataFlow::Node source) {
+    source.asExpr() = any(Function f || f.getAnAccess())
+  }
+
+  predicate isSink(DataFlow::Node sink) {
+    sink = sink
+  }
+}
+module HandlerToSignal = DataFlow::Global<HandlerToSignalConfiguration>;
+
+/**
+ * signal(SIGX, signalHandler)
+ */ 
 predicate isSignal(FunctionCall signalCall, Function signalHandler) {
   signalCall.getTarget().getName() = "signal"
-  and signalHandler.getAnAccess() = signalCall.getArgument(1).getAChild*()
+  and exists(DataFlow::Node source, DataFlow::Node sink |
+    HandlerToSignal::flow(source, sink)
+    and source.asExpr() = signalHandler.getAnAccess()
+    and sink.asExpr() = signalCall.getArgument(1)
+  )
 }
 
 /**
@@ -58,7 +79,7 @@ predicate isSignal(FunctionCall signalCall, Function signalHandler) {
  * sigaction(SIGX, &sigactVar, ...)
  */
 predicate isSigaction(FunctionCall sigactionCall, Function signalHandler, Variable sigactVar) {
-  exists(Struct sigactStruct, Field handlerField |
+  exists(Struct sigactStruct, Field handlerField, DataFlow::Node source, DataFlow::Node sink |
     sigactionCall.getTarget().getName() = "sigaction"
     and sigactionCall.getArgument(1).getAChild*() = sigactVar.getAnAccess()
 
@@ -70,27 +91,36 @@ predicate isSigaction(FunctionCall sigactionCall, Function signalHandler, Variab
       or
       exists(Union u | u.getAField() = handlerField and u = sigactStruct.getAField().getType())
     )
+    
     and (
-      exists(Assignment a, ValueFieldAccess dfa |
-        // sigactVar.sa_handler = &signalHandler
-        a.getLValue() = dfa.getAChild*()
-        and a.getRValue().getAChild*() = signalHandler.getAnAccess()
-        and dfa.getTarget() = handlerField
-        and dfa.getQualifier+() = sigactVar.getAnAccess()
+      // sigactVar.sa_handler = &signalHandler
+      exists(Assignment a, ValueFieldAccess vfa |
+        vfa.getTarget() = handlerField
+        and vfa.getQualifier+() = sigactVar.getAnAccess()
+        and a.getLValue() = vfa.getAChild*()
+
+        and source.asExpr() = signalHandler.getAnAccess()
+        and sink.asExpr() = a.getRValue()
+        and HandlerToSignal::flow(source, sink)
       )
       or
+      // struct sigaction sigactVar = {.sa_sigaction = signalHandler};
       exists(ClassAggregateLiteral initLit |
-        // struct sigaction sigactVar = {.sa_sigaction = signalHandler};
-        // varDec.getVariable() = sigactVar
         sigactVar.getInitializer().getExpr() = initLit
-        and signalHandler.getAnAccess() = initLit.getAFieldExpr(handlerField).getAChild*()
+        and source.asExpr() = signalHandler.getAnAccess()
+        and sink.asExpr() = initLit.getAFieldExpr(handlerField).getAChild*()
+        and HandlerToSignal::flow(source, sink)
       )
     )
   )
 }
 
+/**
+ * Determine if new signals are blocked
+ * TODO: should only find writes and only for correct (or all) signals
+ * TODO: should detect other block mechanisms
+ */
 predicate isSignalDeliveryBlocked(Variable sigactVar) {
-  // TODO: should only find writes and for specific signals 
   exists(ValueFieldAccess dfa |
     dfa.getQualifier+() = sigactVar.getAnAccess() and dfa.getTarget().getName() = "sa_mask"
   )
