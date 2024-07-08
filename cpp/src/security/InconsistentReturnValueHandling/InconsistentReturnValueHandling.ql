@@ -16,6 +16,9 @@ import cpp
 import semmle.code.cpp.dataflow.new.DataFlow
 import semmle.code.cpp.controlflow.IRGuards
 
+/**
+ * Categories for uses of functions return values
+ */
 newtype TCmpClass =
   Tint()
   or
@@ -53,24 +56,28 @@ class CmpClass extends TCmpClass {
   }
 }
 
-// TODO: why codeql does not have IntegralLiteral?
+/**
+ * Literals like 3, 123, 43, 2
+ */
+pragma[inline]
 predicate numericLiteral(Expr expr) {
-    (
-        expr instanceof Literal
-        and not (
-            expr instanceof BlockExpr
-            or
-            expr instanceof FormatLiteral	
-            or
-            expr instanceof NULL
-            or
-            expr instanceof TextLiteral
-            or
-            expr instanceof LabelLiteral
-            or
-            expr.getType() instanceof NullPointerType
-        )
-    )
+    expr instanceof Literal
+    and not expr instanceof BlockExpr
+    and not expr instanceof FormatLiteral   
+    and not expr instanceof NULL
+    and not expr instanceof TextLiteral
+    and not expr instanceof LabelLiteral
+    and not expr.getType() instanceof NullPointerType
+    and not expr.getType() instanceof BoolType
+}
+
+/**
+ * Literals like 3, 123, -43, +2
+ * TODO: why codeql for cpp does not have IntegralLiteral?
+ */
+pragma[inline]
+predicate numericArithmLiteral(Expr expr) {
+    numericLiteral(expr)
     or
     (
         expr instanceof UnaryArithmeticOperation
@@ -79,6 +86,7 @@ predicate numericLiteral(Expr expr) {
     )
 }
 
+pragma[inline]
 predicate binaryComputation(Expr e) {
     e instanceof BinaryArithmeticOperation
     or
@@ -87,14 +95,23 @@ predicate binaryComputation(Expr e) {
     e instanceof BinaryLogicalOperation
 }
 
-/**
- * Categorize expressions using literals instead of types, because
- * we want to differentiate between functions calls and hard-coded stuff 
- */
-TCmpClass operandCategory(Expr comparedVal) {
-    (numericLiteral(comparedVal) and not comparedVal.getType() instanceof BoolType and result = Tint())
+pragma[inline]
+Expr getOtherOperand(ComparisonOperation cmp, Expr fcRetVal) {
+    (cmp.getRightOperand().getAChild*() = fcRetVal and result = cmp.getLeftOperand())
     or
-    (numericLiteral(comparedVal) and comparedVal.getType() instanceof BoolType and result = Tbool())
+    (cmp.getLeftOperand().getAChild*() = fcRetVal and result = cmp.getRightOperand())
+}
+
+/**
+ * Categorize expressions using mostly literals instead of types, because
+ * we want to differentiate between functions calls and hard-coded stuff.
+ * We use ugly if-then-else here in hope to speed up computation a bit
+ */
+pragma[inline]
+TCmpClass operandCategory(Expr comparedVal) {
+    (numericArithmLiteral(comparedVal) and result = Tint())
+    or
+    (comparedVal instanceof Literal and comparedVal.getType() instanceof BoolType and result = Tbool())
     or
     ((comparedVal.getType() instanceof NullPointerType or comparedVal instanceof NULL) and result = Tnull())
     or
@@ -113,46 +130,52 @@ TCmpClass operandCategory(Expr comparedVal) {
     (binaryComputation(comparedVal) and result = Tarithm())
 }
 
-module RetValFlowConfig implements DataFlow::ConfigSig {
-    predicate isSource(DataFlow::Node source) {
-        source = source
-    }
+// module RetValFlowConfig implements DataFlow::ConfigSig {
+//     predicate isSource(DataFlow::Node source) {
+//         source.asExpr() = any(FunctionCall f)
+//     }
 
-    predicate isSink(DataFlow::Node sink) {
-        sink = sink
-    }
-}
-module RetValFlow = DataFlow::Global<RetValFlowConfig>;
-
-Expr getOtherOperand(ComparisonOperation cmp, Expr fcRetVal) {
-    if cmp.getRightOperand().getAChild*() = fcRetVal then
-        result = cmp.getLeftOperand()
-    else
-        result = cmp.getRightOperand()
-}
+//     predicate isSink(DataFlow::Node sink) {
+//         exists(IfStmt ifs | ifs.getCondition().getAChild*() = sink.asExpr())
+//     }
+// }
+// module RetValFlow = DataFlow::Global<RetValFlowConfig>;
 
 predicate categorize(Function f, FunctionCall fc, TCmpClass comparedValCategory, IfStmt ifs) {
     exists(Expr fcRetVal |
         fc.getTarget() = f
-        and RetValFlow::flow(
+        and ifs.getCondition().getAChild*() = fcRetVal
+
+        // we could use global DF with a barrier, but that would return a lot of false positives
+        and DataFlow::localFlow(
             DataFlow::exprNode(fc),
             DataFlow::exprNode(fcRetVal)
         )
-        and ifs.getCondition().getAChild*() = fcRetVal
+        
+        // exclude far-reaching flows, when the ret val is not checked but is actually used
+        // in other words, find only the first use in an IF statement 
+        and not exists(IfStmt ifsPrev |
+            ifsPrev != ifs
+            and DataFlow::localFlow(
+                DataFlow::exprNode(fc),
+                DataFlow::exprNode(ifsPrev.getCondition().getAChild*())
+            )
+        )
+
         and
         if
-            // if(func(retVal) == anything)
+            // if(func(retVal))
             exists(FunctionCall anyFc |
                 ifs.getCondition().getAChild*() = anyFc
                 and anyFc.getAnArgument() = fcRetVal
             )
         then
             comparedValCategory = Targ()
-        else
+        else (
             // if (retVal != comparedVal)
-            exists(ComparisonOperation cmp, Expr comparedVal |
+            exists(ComparisonOperation cmp |
                 ifs.getCondition().getAChild*() = cmp
-                and
+                and (
                     // if (2*retVal+1 != comparedVal)
                     // if (retVal > 2*anything()+sizeof(struct))
                     if (
@@ -161,11 +184,13 @@ predicate categorize(Function f, FunctionCall fc, TCmpClass comparedValCategory,
                     )
                     then
                         comparedValCategory = Tarithm()
-                    else
+                    else (
                         // if (retVal != comparedVal)
-                        comparedVal = getOtherOperand(cmp, fcRetVal)
-                        and comparedValCategory = operandCategory(comparedVal)
+                        comparedValCategory = operandCategory(getOtherOperand(cmp, fcRetVal))
+                    )
+                )
             )
+        )
     )
 }
 
@@ -188,12 +213,14 @@ int mostCommonRetValType(Function f, TCmpClass mostCommonCategory) {
 // where
 //     categorize(f, fc, comparedValCategory, ifs)
 //     and x = comparedValCategory
+//     // and f.getName() = "sshbuf_fromb"
 // select f, fc, x, ifs
 
 
 from Function f, int retValsTotalAmount,
     TCmpClass mostCommonCategory, CmpClass mostCommonCategoryClass, int categoryMax,
-    TCmpClass buggyCategory, CmpClass buggyCategoryClass, FunctionCall buggyFc
+    TCmpClass buggyCategory, CmpClass buggyCategoryClass, FunctionCall buggyFc,
+    IfStmt ifs
 where
     // we are interested only in used functions
     exists(FunctionCall fc | fc.getTarget() = f)
@@ -211,9 +238,10 @@ where
     and ((float)(categoryMax * 100) / retValsTotalAmount) >= 74
 
     // // and finally we are looking for calls that use retVal in an uncommon way
-    and categorize(f, buggyFc, buggyCategory, _)
+    and categorize(f, buggyFc, buggyCategory, ifs)
     and buggyCategory != mostCommonCategory
     and buggyCategoryClass = buggyCategory 
     
 select buggyFc, "Function $@ return value is usually compared with" + mostCommonCategoryClass + " (" + categoryMax +
-    " times), but this call compares with" + buggyCategoryClass, f, f.getName()
+    " of " + retValsTotalAmount + " times), but this call compares with" + buggyCategoryClass + " $@",
+    f, f.getName(), ifs, "here"

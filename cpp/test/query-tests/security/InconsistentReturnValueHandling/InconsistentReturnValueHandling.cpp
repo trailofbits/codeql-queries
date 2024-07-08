@@ -11,6 +11,8 @@ struct athing {
     int y;
 };
 
+static int w = 2;
+
 bool cmp_func(int a)
 {
     return a >= 10 ? true : false;
@@ -103,12 +105,15 @@ void test_3_2() {
     if (r > sizeof(struct something)) {
         return;
     }
+    r = target_func_3(1223);
     if (r > sizeof(somethingInstance)) {
         return;
     }
+    r = target_func_3(1323);
     if (r >= sizeof(somethingInstance)) {
         return;
     }
+    r = target_func_3(1523);
     if (r != sizeof(somethingInstance)) {
         return;
     }
@@ -119,6 +124,7 @@ void test_3_2() {
         puts("something2");
     }
 
+    r = target_func_3(-3);
     // BAD: comparing with a different sizeof
     if (r > sizeof(athingInstance)) {
         puts("something2");
@@ -197,7 +203,6 @@ int SomeClass::target_func_4(int a) {
 }
 
 // BAD 5
-static int w = 2;
 int* target_func_5(int a)
 {
     return &w;
@@ -316,6 +321,34 @@ void test_8_2() {
     }
 }
 
+// BAD 9
+int* target_func_9(int a)
+{
+    return a > 10 ? &w : NULL;
+}
+
+void test_9_1() {
+    if (target_func_9(2) == NULL) {
+        puts("something");
+    }
+}
+
+void test_9_2() {
+    int *tt;
+    if ((tt = target_func_9(12)) != NULL) {
+        puts("something");
+    }
+    tt = target_func_9(123);
+    if (tt == NULL) {
+        return;
+    }
+
+    // BAD: comparing with int instead of NULL
+    if ((int)(tt = target_func_9(-3)) != 0) {
+        puts("something8");
+    }
+}
+
 // GOOD 1: always comparing with NULL
 int* target_func_g1(int a)
 {
@@ -366,6 +399,72 @@ void test_g_2_2() {
 
     r = target_func_g2(-3);
     if (r > cmp_func2(-3)) {
+        puts("something2");
+    }
+}
+
+// GOOD 3: always comparing with int, check only first use
+bool target_func_g3(int a)
+{
+    return a > 10 ? true : false;
+}
+
+void test_g_3_1() {
+    if (target_func_g3(2) != 3) {
+        puts("something");
+    }
+}
+
+void test_g_3_2() {
+    if (target_func_g3(-123) != 4) {
+        puts("something");
+    }
+    bool r = target_func_g3(123);
+    if (r == 777) {
+        return;
+    }
+
+    r = target_func_g3(-3);
+    if (r > -123) {
+        puts("something2");
+    }
+    // We don't want to find this use, because it is not a ret val check
+    // but an actuall use
+    if (cmp_func(r)) {
+        return;
+    }
+}
+
+// GOOD 4: always comparing with int, handle multi-condition IFs
+bool target_func_g4(int a)
+{
+    return a > 10 ? true : false;
+}
+
+void test_g_4_1() {
+    if (target_func_g4(2) != 3) {
+        puts("something");
+    }
+}
+
+void test_g_4_2() {
+    int *www = &w;
+
+    if (target_func_g4(-123) != 4) {
+        puts("something");
+    }
+    bool r = target_func_g4(123);
+    if (r == 777) {
+        return;
+    }
+
+    r = target_func_g4(-3);
+    if (r > -123) {
+        puts("something2");
+    }
+
+    bool rr = target_func_g4(-3);
+    if (www == NULL || rr > -123) {
         puts("something2");
     }
 }
