@@ -17,7 +17,7 @@ import semmle.code.cpp.dataflow.new.DataFlow
 import semmle.code.cpp.controlflow.IRGuards
 
 /**
- * Categories for uses of functions return values
+ * Categories for uses of functions' return values
  */
 newtype TCmpClass =
   Tint()
@@ -105,7 +105,6 @@ Expr getOtherOperand(ComparisonOperation cmp, Expr fcRetVal) {
 /**
  * Categorize expressions using mostly literals instead of types, because
  * we want to differentiate between functions calls and hard-coded stuff.
- * We use ugly if-then-else here in hope to speed up computation a bit
  */
 pragma[inline]
 TCmpClass operandCategory(Expr comparedVal) {
@@ -117,7 +116,7 @@ TCmpClass operandCategory(Expr comparedVal) {
     or
     (comparedVal.getUnderlyingType() instanceof DerivedType and result = Tptr())
     or
-    (comparedVal instanceof FunctionCall and result = Tcall())
+    (comparedVal instanceof Call and result = Tcall())
     or
     (comparedVal instanceof SizeofOperator and
         (
@@ -132,7 +131,7 @@ TCmpClass operandCategory(Expr comparedVal) {
 
 // module RetValFlowConfig implements DataFlow::ConfigSig {
 //     predicate isSource(DataFlow::Node source) {
-//         source.asExpr() = any(FunctionCall f)
+//         source.asExpr() = any(Call f)
 //     }
 
 //     predicate isSink(DataFlow::Node sink) {
@@ -141,7 +140,11 @@ TCmpClass operandCategory(Expr comparedVal) {
 // }
 // module RetValFlow = DataFlow::Global<RetValFlowConfig>;
 
-predicate categorize(Function f, FunctionCall fc, TCmpClass comparedValCategory, IfStmt ifs) {
+/**
+ * Given function's return value, find its first use in an IF statement
+ * and assign proper TCmpClass category
+ */
+predicate categorize(Function f, Call fc, TCmpClass comparedValCategory, IfStmt ifs) {
     exists(Expr fcRetVal |
         fc.getTarget() = f
         and ifs.getCondition().getAChild*() = fcRetVal
@@ -165,9 +168,9 @@ predicate categorize(Function f, FunctionCall fc, TCmpClass comparedValCategory,
         and
         if
             // if(func(retVal))
-            exists(FunctionCall anyFc |
+            exists(Call anyFc |
                 ifs.getCondition().getAChild*() = anyFc
-                and anyFc.getAnArgument() = fcRetVal
+                and anyFc.getAnArgument().getAChild*() = fcRetVal
             )
         then
             comparedValCategory = Targ()
@@ -175,6 +178,11 @@ predicate categorize(Function f, FunctionCall fc, TCmpClass comparedValCategory,
             // if (retVal != comparedVal)
             exists(ComparisonOperation cmp |
                 ifs.getCondition().getAChild*() = cmp
+                // skip if we are passing the return value to some function
+                and not exists(Call tmpCall |
+                    cmp.getAChild*() = tmpCall
+                    and tmpCall.getAnArgument().getAChild*() = fcRetVal
+                )
                 and (
                     // if (2*retVal+1 != comparedVal)
                     // if (retVal > 2*anything()+sizeof(struct))
@@ -194,6 +202,10 @@ predicate categorize(Function f, FunctionCall fc, TCmpClass comparedValCategory,
     )
 }
 
+/**
+ * Count all eligible IF statements that
+ * checks return values of the given function
+ */
 int countAllRetValTypes(Function f) {
     result = count(IfStmt ifs |
         categorize(f, _, _, ifs) |
@@ -201,6 +213,10 @@ int countAllRetValTypes(Function f) {
     )
 }
 
+/**
+ * Determine what is the most commont TCmpClass category
+ * for the given function (by counting eligible IF statements)
+ */
 int mostCommonRetValType(Function f, TCmpClass mostCommonCategory) {
     result = max(int numberOfRetValTypeInstances |
         categorize(f, _, mostCommonCategory, _)
@@ -209,7 +225,7 @@ int mostCommonRetValType(Function f, TCmpClass mostCommonCategory) {
 }
 
 // uncomment for testing:
-// from Function f, FunctionCall fc, TCmpClass comparedValCategory, CmpClass x, IfStmt ifs
+// from Function f, Call fc, TCmpClass comparedValCategory, CmpClass x, IfStmt ifs
 // where
 //     categorize(f, fc, comparedValCategory, ifs)
 //     and x = comparedValCategory
@@ -219,12 +235,12 @@ int mostCommonRetValType(Function f, TCmpClass mostCommonCategory) {
 
 from Function f, int retValsTotalAmount,
     TCmpClass mostCommonCategory, CmpClass mostCommonCategoryClass, int categoryMax,
-    TCmpClass buggyCategory, CmpClass buggyCategoryClass, FunctionCall buggyFc,
+    TCmpClass buggyCategory, CmpClass buggyCategoryClass, Call buggyFc,
     IfStmt ifs
 where
-    // we are interested only in used functions
-    exists(FunctionCall fc | fc.getTarget() = f)
-    // and f.hasDefinition()
+    // we are interested only in defined (e.g., not libc) and used functions
+    exists(Call fc | fc.getTarget() = f)
+    and f.hasDefinition()
 
     // the function's retVal must be used in some IF statements
     and retValsTotalAmount = countAllRetValTypes(f)
@@ -240,7 +256,11 @@ where
     // // and finally we are looking for calls that use retVal in an uncommon way
     and categorize(f, buggyFc, buggyCategory, ifs)
     and buggyCategory != mostCommonCategory
-    and buggyCategoryClass = buggyCategory 
+    and buggyCategoryClass = buggyCategory
+
+    // return value could be used multiple times in a single IF statement
+    // don't show such findings
+    and not categoryMax = retValsTotalAmount
     
 select buggyFc, "Function $@ return value is usually compared with" + mostCommonCategoryClass + " (" + categoryMax +
     " of " + retValsTotalAmount + " times), but this call compares with" + buggyCategoryClass + " $@",
