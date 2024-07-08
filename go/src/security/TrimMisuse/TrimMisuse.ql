@@ -11,24 +11,23 @@
  */
 
 import go
-import DataFlow
+import DataFlow2
 
 /*
  * Flows from a string to TrimFamilyCall cutSet argument
  */
-class Trim2ndArg extends DataFlow::Configuration {
-  Trim2ndArg() { this = "Trim2ndArg" }
-
-  override predicate isSource(DataFlow::Node source) {
+module Trim2ndArgConfig implements DataFlow::ConfigSig {
+  predicate isSource(DataFlow::Node source) {
     source.asExpr() instanceof StringLit
   }
 
-  override predicate isSink(DataFlow::Node sink) {
+  predicate isSink(DataFlow::Node sink) {
     exists(TrimFamilyCall trimCall | 
       sink.asExpr() = trimCall.getCutSetArg()
     )
   }
 }
+module Trim2ndArgFlow = DataFlow::Global<Trim2ndArgConfig>;
 
 /*
  * Calls to Trim methods that we are interested in
@@ -49,8 +48,8 @@ class TrimFamilyCall extends CallNode {
 from TrimFamilyCall trimCall, StringLit cutset
 where
   // get 2nd argument value, if possible
-  exists(Trim2ndArg config, DataFlow::Node source, DataFlow::Node sink |
-    config.hasFlow(source, sink)
+  exists(DataFlow::Node source, DataFlow::Node sink |
+    Trim2ndArgFlow::flow(source, sink)
     and source.asExpr() = cutset
     and sink.asExpr() = trimCall.getCutSetArg()
   )
