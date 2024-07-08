@@ -14,6 +14,7 @@ extern "C" {
 #ifndef __cplusplus
 typedef int wchar_t;
 #endif
+
 extern void *memcpy(void *dst, const void *src, unsigned long n);
 extern char* strcpy_s(char* dst, int max_amount, char* src);
 extern int _mbsncat(char* dst, char* src, int count);
