@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include "../../../include/libc/string_stubs.h"
 
 struct something {
     int x;
@@ -59,17 +59,17 @@ int target_func_2(int a)
 }
 
 void test_2_1() {
-    if (target_func_2(2) != sizeof(something)) {
+    if (target_func_2(2) != sizeof(struct something)) {
         puts("something");
     }
 }
 
 void test_2_2() {
-    if (target_func_2(-123) != sizeof(something)) {
+    if (target_func_2(-123) != sizeof(struct something)) {
         puts("something");
     }
     int r = target_func_2(123);
-    if (r > sizeof(something)) {
+    if (r > sizeof(struct something)) {
         return;
     }
 
@@ -87,23 +87,40 @@ int target_func_3(int a)
 }
 
 void test_3_1() {
-    if (target_func_3(2) != sizeof(something)) {
+    if (target_func_3(2) != sizeof(struct something)) {
         puts("something");
     }
 }
 
 void test_3_2() {
+    auto athingInstance = athing{};
+    auto somethingInstance = something{};
+
     if (target_func_3(-123) != sizeof(something)) {
         puts("something");
     }
     int r = target_func_3(123);
-    if (r > sizeof(something)) {
+    if (r > sizeof(struct something)) {
+        return;
+    }
+    if (r > sizeof(somethingInstance)) {
+        return;
+    }
+    if (r >= sizeof(somethingInstance)) {
+        return;
+    }
+    if (r != sizeof(somethingInstance)) {
         return;
     }
 
     r = target_func_3(-3);
     // BAD: comparing with a different sizeof
-    if (r > sizeof(athing)) {
+    if (r > sizeof(struct athing)) {
+        puts("something2");
+    }
+
+    // BAD: comparing with a different sizeof
+    if (r > sizeof(athingInstance)) {
         puts("something2");
     }
 }
@@ -246,13 +263,13 @@ bool some_func_cmp(bool x) {
     return !x;
 }
 
-void test_6_1() {
+void test_7_1() {
     if (some_func_cmp(target_func_7(2))) {
         puts("something");
     }
 }
 
-void test_6_2() {
+void test_7_2() {
     if (some_func_cmp(target_func_7(12)) != cmp_func2(-123)) {
         puts("something");
     }
@@ -265,6 +282,37 @@ void test_6_2() {
     // BAD: comparing with something instead of using as argument to a function
     if (r != cmp_func2(-123)) {
         puts("something2");
+    }
+}
+
+// BAD 8
+bool target_func_8(int a)
+{
+    return a > 10 ? true : false;
+}
+int some_func_arithmetic(int x) {
+    return x*3;
+}
+
+void test_8_1() {
+    if (target_func_8(2)*4 == 2*5+6) {
+        puts("something");
+    }
+}
+
+void test_8_2() {
+    if (target_func_8(12) != 4*some_func_arithmetic(-3)) {
+        puts("something");
+    }
+    bool r = target_func_8(123);
+    if (r*2 < sizeof(something)) {
+        return;
+    }
+
+    r = target_func_8(-3);
+    // BAD: comparing with constant instead of dynamically computed value
+    if (r != 3) {
+        puts("something8");
     }
 }
 
