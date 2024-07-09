@@ -52,7 +52,7 @@ class CmpClass extends TCmpClass {
     or
     this = Tarithm() and result = " arithmetic expression"
     or
-    this = Targ() and result = "in call to some function"
+    this = Targ() and result = "in a function"
   }
 }
 
@@ -238,8 +238,9 @@ from Function f, int retValsTotalAmount,
     TCmpClass buggyCategory, CmpClass buggyCategoryClass, Call buggyFc,
     IfStmt ifs
 where
+    not buggyFc.getLocation().getFile().toString().toLowerCase().regexpMatch(".*test.*")
     // we are interested only in defined (e.g., not libc) and used functions
-    exists(Call fc | fc.getTarget() = f)
+    and exists(Call fc | fc.getTarget() = f)
     and f.hasDefinition()
 
     // the function's retVal must be used in some IF statements
