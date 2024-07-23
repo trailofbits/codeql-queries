@@ -8,8 +8,22 @@
   </p>
 
   <p>
+  Because a signal may be delivered at any moment, e.g., in the middle of a malloc, the handler shouldn't touch
+  the program's internal state.
+  </p>
+
+  <p>
   The kernel defines a list of async-safe signal functions in its <a href="https://man7.org/linux/man-pages/man7/signal-safety.7.html">man page</a>.
-  Any signal handler that performs operations that are not safe asynchronously may be vulnerable.
+  Any signal handler that performs operations that are not safe for asynchronous execution may be vulnerable.
+  </p>
+
+  <p>
+  Moreover, signal handlers may be re-entered. Handlers' logic should take that possibility into account.
+  </p>
+
+  <p>
+  If the issue is exploitable depends on attacker's ability to deliver the signal.
+  Remote attacks may be limitted to some signals (like SIGALRM and SIGURG), while local attacks could use all signals.
   </p>
 </overview>
 
@@ -17,17 +31,24 @@
 <p>
 Attempt to keep signal handlers as simple as possible. Only call async-safe functions from signal handlers.
 </p>
+<p>
+Block delivery of new signals inside signal handlers to prevent handler re-entrancy issues.
+</p>
 </recommendation>
 
 <example>
 <sample src="AsyncUnsafeSignalHandler.c" />
 
 <p>
-  In this example, while both syntatically valid, a correct handler is defined in the <code>correct_handler</code> function and sets a flag. The function calls <code>log_message</code>, a async unsafe function, within the main loop.
+  In this example, while both syntatically valid, a correct handler is defined in the <code>correct_handler</code> function and sets a flag.
+  The function calls <code>log_message</code>, a async unsafe function, within the main loop.
 </p>
 </example>
 
 <references>
+<li>
+  <a href="https://lcamtuf.coredump.cx/signals.txt">Michal Zalewski, "Delivering Signals for Fun and Profit"</a>
+</li>
 <li>
     <a href="https://wiki.sei.cmu.edu/confluence/display/c/SIG30-C.+Call+only+asynchronous-safe+functions+within+signal+handlers">SEI CERT C Coding Standard "SIG30-C. Call only asynchronous-safe functions within signal handlers"</a>
 </li>

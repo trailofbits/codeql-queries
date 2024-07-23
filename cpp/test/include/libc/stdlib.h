@@ -16,6 +16,7 @@ long lrand48(void) {
 }
 
 void _Exit(int);
+void exit(int);
 
 void free(void*);
 void *malloc(unsigned long);
