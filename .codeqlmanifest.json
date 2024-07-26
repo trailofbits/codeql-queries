@@ -1,6 +1,6 @@
 {
     "provide": [
-        "cpp/*/qlpack.yml",
-        "go/*/qlpack.yml"
+        "cpp/*/codeql-pack.yml",
+        "go/*/codeql-pack.yml"
     ]
 }

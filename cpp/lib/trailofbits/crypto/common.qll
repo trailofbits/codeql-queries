@@ -1,13 +1,13 @@
-import common.InitUpdateFinalPattern
-import common.SymmetricCipherContext
+import trailofbits.crypto.common.InitUpdateFinalPattern
+import trailofbits.crypto.common.SymmetricCipherContext
 
-import common.Csprng
-import common.ErrorCode
-import common.HashFunction
-import common.CustomAllocator
-import common.CsprngInitializer
-import common.StrongPasswordSink
-import common.StrongRandomnessSink
-import common.WeakRandomnessSource
-import common.StaticCryptoVariable
-import common.KeyDerivationFunction
+import trailofbits.crypto.common.Csprng
+import trailofbits.crypto.common.ErrorCode
+import trailofbits.crypto.common.HashFunction
+import trailofbits.crypto.common.CustomAllocator
+import trailofbits.crypto.common.CsprngInitializer
+import trailofbits.crypto.common.StrongPasswordSink
+import trailofbits.crypto.common.StrongRandomnessSink
+import trailofbits.crypto.common.WeakRandomnessSource
+import trailofbits.crypto.common.StaticCryptoVariable
+import trailofbits.crypto.common.KeyDerivationFunction

@@ -1,0 +1,10 @@
+| test.cpp:18:3:18:10 | test.cpp:18:3:18:10 | x |
+| test.cpp:24:3:24:13 | test.cpp:24:3:24:13 | x |
+| test.cpp:30:3:30:9 | test.cpp:30:3:30:9 | x |
+| test.cpp:36:3:36:11 | test.cpp:36:3:36:11 | x |
+| test.cpp:42:5:42:13 | test.cpp:42:5:42:13 | x |
+| test.cpp:48:6:48:14 | test.cpp:48:6:48:14 | x |
+| test.cpp:54:9:54:17 | test.cpp:54:9:54:17 | x |
+| test.cpp:60:10:60:18 | test.cpp:60:10:60:18 | x |
+| test.cpp:66:5:66:13 | test.cpp:66:5:66:13 | x |
+| test.cpp:72:5:72:31 | test.cpp:72:5:72:31 | x |
