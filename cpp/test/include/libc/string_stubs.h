@@ -26,7 +26,7 @@ extern void perror(const char *s);
 
 extern void openlog(const char*, int, int);
 extern void syslog(int, const char*, ...);
-extern void closelog(void)
+extern void closelog(void);
 
 #ifdef  __cplusplus
 }

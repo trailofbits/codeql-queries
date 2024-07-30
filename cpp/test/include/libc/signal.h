@@ -3,6 +3,10 @@
 #ifndef HEADER_SIGNAL_STUB_H
 #define HEADER_SIGNAL_STUB_H
 
+#ifdef  __cplusplus
+extern "C" {
+#endif
+
 #define SIGALRM 14
 #define SIGSEGV 11
 #define SIGTERM 15
@@ -10,7 +14,6 @@
 #define EXIT_FAILURE 2
 #define SA_SIGINFO 4
 
-{} // to silent error from codeql's extractor
 typedef void (*sig_t)(int);
 extern int signal(int, sig_t);
 
@@ -35,6 +38,9 @@ struct sigaction {
 extern int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact);
 extern int kill(int pid, int sig);
 
+#ifdef  __cplusplus
+}
+#endif
 
 #endif
 
