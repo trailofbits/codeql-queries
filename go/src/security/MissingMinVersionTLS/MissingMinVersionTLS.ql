@@ -15,13 +15,11 @@ import go
 /**
  * Flow of a `tls.Config` to a write to the `MinVersion` field.
  */
-class TlsVersionFlowConfig extends TaintTracking::Configuration {
-    TlsVersionFlowConfig() { this = "TlsVersionFlowConfig" }
-  
+module TlsVersionConfig implements DataFlow::ConfigSig {
     /**
      * Holds if `source` is a TLS.Config instance.
      */
-    override predicate isSource(DataFlow::Node source) {
+    predicate isSource(DataFlow::Node source) {
         exists(Variable v | 
             configOrConfigPointer(v.getType()) and 
             source.asExpr() = v.getAReference()
@@ -31,21 +29,21 @@ class TlsVersionFlowConfig extends TaintTracking::Configuration {
     /**
      * Holds if a write to `sink`.MinVersion exists.
      */
-    override predicate isSink(DataFlow::Node sink) {
+    predicate isSink(DataFlow::Node sink) {
       exists(Write fieldWrite, Field fld |
         fld.hasQualifiedName( "crypto/tls", "Config", "MinVersion") and
         fieldWrite.writesField(sink, fld, _)
       )
     }
 }
+module TlsVersionFlow = TaintTracking::Global<TlsVersionConfig>;
+
 
 /**
  * Flow of a `tls.Config` with `MinVersion` to a variable.
  */
-class TlsConfigCreation extends TaintTracking::Configuration {
-    TlsConfigCreation() { this = "TlsConfigCreation" }
-
-    predicate isSecure(DataFlow::Node source) {
+module TlsConfigCreationConfig implements DataFlow::ConfigSig {
+    additional predicate isSecure(DataFlow::Node source) {
         exists(StructLit lit, Field fld |
             lit.getType().hasQualifiedName("crypto/tls", "Config") and
             fld.hasQualifiedName("crypto/tls", "Config", "MinVersion") and
@@ -58,18 +56,19 @@ class TlsConfigCreation extends TaintTracking::Configuration {
     /**
      * Holds if `source` is a TLS.Config literal.
      */
-    override predicate isSource(DataFlow::Node source) {
+    predicate isSource(DataFlow::Node source) {
         exists(StructLit lit, Field fld |
             lit.getType().hasQualifiedName("crypto/tls", "Config") and
             fld.hasQualifiedName("crypto/tls", "Config", "MinVersion") and
             source.asExpr() = lit
         )
+        and not isSecure(source)
     }
   
     /**
      * Holds if it is TLS.Config instance (a Variable).
      */
-    override predicate isSink(DataFlow::Node sink) {
+    predicate isSink(DataFlow::Node sink) {
         exists(Variable v |
             sink.asExpr() = v.getAReference()
         )
@@ -78,10 +77,11 @@ class TlsConfigCreation extends TaintTracking::Configuration {
     /**
      * Holds if TLS.Config literal is saved in a structure's field
      */
-    override predicate isAdditionalTaintStep(DataFlow::Node pred, DataFlow::Node succ) {
+    predicate isAdditionalFlowStep(DataFlow::Node pred, DataFlow::Node succ) {
           exists(Write w | w.writesField(succ, _, pred))
     }
 }
+module TlsConfigCreationFlow = TaintTracking::Global<TlsConfigCreationConfig>;
 
 /**
  * Holds if `t` is a TLS.Config type or a pointer to it (or ptr to ptr...) or a struct containing it.
@@ -104,14 +104,13 @@ predicate configOrConfigPointer(Type t) {
 }
 
 // v - a variable holding any structure which is or contains the tls.Config
-from StructLit configStruct, Variable v, TlsConfigCreation cfg, DataFlow::Node source, DataFlow::Node sink
+from StructLit configStruct, Variable v, DataFlow::Node source, DataFlow::Node sink
 where
     // find tls.Config structures with MinVersion not set on the structure initialization
     (
-        cfg.hasFlow(source, sink) and
+        TlsConfigCreationFlow::flow(source, sink) and
         sink.asExpr() = v.getAReference() and
-        source.asExpr() = configStruct and
-        not cfg.isSecure(source)
+        source.asExpr() = configStruct
     )
     
     // exclude if tls.Config is used as TLSClientConfig, as default for clients is TLS 1.2
@@ -143,8 +142,8 @@ where
     and if configOrConfigPointer(v.getType()) then
     (   
         // exclude if there is a later write to MinVersion
-        not exists(TlsVersionFlowConfig cfg2, DataFlow::Node source2, DataFlow::Node sink2 | 
-            cfg2.hasFlow(source2, sink2) and
+        not exists(DataFlow::Node source2, DataFlow::Node sink2 | 
+            TlsVersionFlow::flow(source2, sink2) and
             source2.asExpr() = v.getAReference()
         )
     ) else

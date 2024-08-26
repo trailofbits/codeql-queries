@@ -3,9 +3,9 @@
 #ifndef HEADER_STDLIB_STUB_H
 #define HEADER_STDLIB_STUB_H
 
-# ifdef  __cplusplus
+#ifdef  __cplusplus
 extern "C" {
-# endif
+#endif
 
 int rand(void) {
   return 42;
@@ -15,9 +15,15 @@ long lrand48(void) {
   return 42;
 }
 
-# ifdef  __cplusplus
+void _Exit(int);
+void exit(int);
+
+void free(void*);
+void *malloc(unsigned long);
+
+#ifdef  __cplusplus
 }
-# endif
+#endif
 
 #endif
 

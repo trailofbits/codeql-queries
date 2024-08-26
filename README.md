@@ -36,7 +36,7 @@ codeql database analyze database.db --format=sarif-latest --output=./tob.sarif -
 |[Memory leak related to custom allocator](./cpp/src/docs/crypto/CustomAllocatorLeak.md)|Finds memory leaks from custom allocated memory|warning|medium|
 |[Memory use after free related to custom allocator](./cpp/src/docs/crypto/CustomAllocatorUseAfterFree.md)|Finds use-after-frees related to custom allocators like `BN_new`|warning|medium|
 |[Missing OpenSSL engine initialization](./cpp/src/docs/crypto/MissingEngineInit.md)|Finds created OpenSSL engines that may not be properly initialized|warning|medium|
-|[Missing error handling](./cpp/src/docs/crypto/ErrorHandling.md)|Checks if returned error codes are properly checked|warning|high|
+|[Missing error handling](./cpp/src/docs/crypto/MissingErrorHandling.md)|Checks if returned error codes are properly checked|warning|high|
 |[Missing zeroization of potentially sensitive random BIGNUM](./cpp/src/docs/crypto/MissingZeroization.md)|Determines if random bignums are properly zeroized|warning|medium|
 |[Random buffer too small](./cpp/src/docs/crypto/RandomBufferTooSmall.md)|Finds buffer overflows in calls to CSPRNGs|warning|high|
 |[Use of legacy cryptographic algorithm](./cpp/src/docs/crypto/UseOfLegacyAlgorithm.md)|Detects potential instantiations of legacy cryptographic algorithms|warning|medium|
@@ -45,6 +45,7 @@ codeql database analyze database.db --format=sarif-latest --output=./tob.sarif -
 
 | Name | Description | Severity | Precision  |
 | ---  | ----------- | :----:   | :--------: |
+|[Async unsafe signal handler](./cpp/src/docs/security/AsyncUnsafeSignalHandler/AsyncUnsafeSignalHandler.md)|Async unsafe signal handler (like the one used in CVE-2024-6387)|warning|high|
 |[Invalid string size passed to string manipulation function](./cpp/src/docs/security/CStrnFinder/CStrnFinder.md)|Finds calls to functions that take as input a string and its size as separate arguments (e.g., `strncmp`, `strncat`, ...) and the size argument is wrong|error|low|
 |[Missing null terminator](./cpp/src/docs/security/NoNullTerminator/NoNullTerminator.md)|This query finds incorrectly initialized strings that are passed to functions expecting null-byte-terminated strings|error|high|
 |[Unsafe implicit integer conversion](./cpp/src/docs/security/UnsafeImplicitConversions/UnsafeImplicitConversions.md)|Finds implicit integer casts that may overflow or be truncated, with false positive reduction via Value Range Analysis|warning|low|
