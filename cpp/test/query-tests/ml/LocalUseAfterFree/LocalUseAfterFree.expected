@@ -1,0 +1,4 @@
+| test.c:20:7:20:11 | test.c:20:7:20:11 | The variable `graph` is deallocated on line 16 and subsequently used on line 20 |
+| test.c:21:21:21:25 | test.c:21:21:21:25 | The variable `graph` is deallocated on line 16 and subsequently used on line 21 |
+| test.c:31:9:31:13 | test.c:31:9:31:13 | The variable `graph` is deallocated on line 32 and subsequently used on line 31 |
+| test.c:32:23:32:27 | test.c:32:23:32:27 | The variable `graph` is deallocated on line 32 and subsequently used on line 32 |

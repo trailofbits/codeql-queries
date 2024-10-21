@@ -1,9 +1,10 @@
 ---
 name: trailofbits/cpp-all
 authors: Trail of Bits
-version: 0.2.1
 license: AGPL
+version: 1.0.0
 library: true
 extractor: cpp
+warnOnImplicitThis: false
 dependencies:
-  codeql/cpp-all: "*"
+  codeql/cpp-all: ^0.13.0

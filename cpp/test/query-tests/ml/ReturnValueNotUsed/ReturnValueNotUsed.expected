@@ -1,0 +1,1 @@
+| test.c:9:3:9:18 | test.c:9:3:9:18 | The return value of `ggml_gallocr_new` is discarded here |
