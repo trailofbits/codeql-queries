@@ -1,0 +1,3 @@
+| Recursion.java:8:16:8:20 | bar(...) | $@ | Recursion.java:8:16:8:20 | bar(...) | Recursion(2): bar(2) -> foo(7) -> bar |
+| Recursion.java:12:16:12:32 | directRecursive(...) | $@ | Recursion.java:12:16:12:32 | directRecursive(...) | Recursion(1): directRecursive(11) -> directRecursive |
+| Recursion.java:31:16:31:23 | level0(...) | $@ | Recursion.java:31:16:31:23 | level0(...) | Recursion(3): level0(15) -> level1(21) -> level2(27) -> level0 |

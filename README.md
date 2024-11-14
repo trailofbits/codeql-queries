@@ -66,6 +66,14 @@ codeql database analyze database.db --format=sarif-latest --output=./tob.sarif -
 |[Missing MinVersion in tls.Config](./go/src/docs/security/MissingMinVersionTLS/MissingMinVersionTLS.md)|This rule finds cases when you do not set the `tls.Config.MinVersion` explicitly for servers. By default version 1.0 is used, which is considered insecure. This rule does not mark explicitly set insecure versions|error|medium|
 |[Trim functions misuse](./go/src/docs/security/TrimMisuse/TrimMisuse.md)|Finds calls to `string.{Trim,TrimLeft,TrimRight}` with the 2nd argument not being a cutset but a continuous substring to be trimmed|error|low|
 
+### Java-kotlin
+
+#### Security
+
+| Name | Description | Severity | Precision  |
+| ---  | ----------- | :----:   | :--------: |
+|[Recursive functions](./java-kotlin/src/docs/security/Recursion/Recursion.md)|Detects recursive calls|warning|low|
+
 ## Query suites
 
 CodeQL queries are grouped into "suites". To execute queries from a specific suit add its name after a colon: `trailofbits/cpp-queries:codeql-suites/tob-cpp-full.qls`.
@@ -89,7 +97,7 @@ echo "--search-path '$PWD/codeql-queries'" > "${HOME}/.config/codeql/config"
 
 Check that CodeQL CLI detects the new qlpacks:
 ```sh
-codeql resolve qlpacks | grep trailofbits
+codeql resolve packs | grep trailofbits
 ```
 
 #### Before committing
@@ -99,6 +107,7 @@ Run tests:
 cd codeql-queries
 codeql test run ./cpp/test
 codeql test run ./go/test
+codeql test run ./java/test
 ```
 
 Update dependencies:
@@ -115,4 +124,5 @@ Generate markdown query help files
 ```sh
 codeql generate query-help ./cpp/src/ --format=markdown --output ./cpp/src/docs
 codeql generate query-help ./go/src/ --format=markdown --output ./go/src/docs
+codeql generate query-help ./java/src/ --format=markdown --output ./java/src/docs
 ```

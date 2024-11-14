@@ -16,3 +16,4 @@ jobs:
         run: |
           ${{ steps.init.outputs.codeql-path }} test run ./cpp/test/
           ${{ steps.init.outputs.codeql-path }} test run ./go/test/
+          ${{ steps.init.outputs.codeql-path }} test run ./java/test/
