@@ -2,7 +2,7 @@
  * @name Recursive functions
  * @id tob/java/unbounded-recursion
  * @description Detects possibly unbounded recursive calls
- * @kind problem
+ * @kind path-problem
  * @tags security
  * @precision low
  * @problem.severity warning
@@ -12,6 +12,7 @@
 
 import java
 
+
 predicate isTestPackage(RefType referenceType) {
   referenceType.getPackage().getName().toLowerCase().matches("%test%") or
   referenceType.getPackage().getName().toLowerCase().matches("%benchmark%") or
@@ -19,10 +20,39 @@ predicate isTestPackage(RefType referenceType) {
 }
 
 class RecursiveMethod extends Method {
+  Call entryCall;
+  Call lastCall;
+
   RecursiveMethod() {
-    exists(Method m | this.calls+(m) and this = m)
+    not isTestPackage(this.getDeclaringType())
+    and entryCall.getEnclosingCallable() = this
+    and edges+(entryCall, lastCall) and lastCall.getCallee() = this
   }
+
+  Call getEntryCall() { result = entryCall}
+
+  Call getLastCall() { result = lastCall}
 }
+
+query predicate edges(Call a, Call b) {
+  exists(Callable c |
+    a.getCallee() = c and b.getCaller() = c
+  )
+}
+
+from RecursiveMethod recursiveMethod
+where
+  /* for a single recursion loop we would return multiple results so we deduplicate redundant findings
+     returning only the one starting from a method with "greatest" name
+  */
+  not exists(RecursiveMethod rm2 |
+    edges+(rm2.getEntryCall(), recursiveMethod.getLastCall())
+    and exists(Call x | edges(recursiveMethod.getLastCall(), x) and edges(x, rm2.getEntryCall()))
+    and rm2 != recursiveMethod
+    and rm2.getQualifiedName() > recursiveMethod.getQualifiedName()
+  )
+select recursiveMethod.getLastCall(), recursiveMethod.getEntryCall(), recursiveMethod.getLastCall(),
+  "Found a recursion path from/to method $@", recursiveMethod, recursiveMethod.toString()
 
 /**
  * TODO ideas:
@@ -31,7 +61,3 @@ class RecursiveMethod extends Method {
  *   - do not return methods that have calls to self (or unbounded recursion) that are conditional
  *   - gather and print whole call graph (list of calls from recursiveMethod to itself) 
  */
-from RecursiveMethod recursiveMethod
-where
-  not isTestPackage(recursiveMethod.getDeclaringType())
-select recursiveMethod, "Method $@ has unbounded, possibly infinite recursive calls", recursiveMethod, recursiveMethod.toString()
