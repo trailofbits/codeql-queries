@@ -117,7 +117,7 @@ class RecursiveCallWronglyLimited {
 }
 
 class RecursiveCallLimited {
-    // todook: recursion is limited
+    // ok: recursion is limited
     public boolean directRecursiveDepth(int depth) {
         if (depth == 0) {
             return true;
@@ -125,7 +125,17 @@ class RecursiveCallLimited {
         return directRecursiveDepth(depth - 1);
     }
 
-    // todook: level0->level1->level2->level0 with bound
+    // ok: recursion is limited
+    public boolean directRecursiveComputedDepth(int depth) {
+        if (depth == 0) {
+            return true;
+        }
+
+        int newDepth = depth - 2;
+        return directRecursiveComputedDepth(newDepth);
+    }
+
+    // ok: level0->level1->level2->level0 with bound
     public boolean level0D(int depth) {
         if (depth == 0) {
             return true;
