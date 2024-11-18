@@ -106,6 +106,39 @@ class RecursiveCallBasic {
     }
 }
 
+class RecursiveCallNonLinear {
+    // finding: level0->...->level0
+    public boolean level0() {
+        if (someOtherCondition()) {
+            return true;
+        }
+        if (someCondition()) {
+            return level1();
+        }        
+        return level2();
+    }
+    public boolean level1() {
+        if (someCondition()) {
+            return true;
+        }        
+        return level2();
+    }
+    public boolean level2() {
+        if (someCondition()) {
+            return level1();
+        }
+        return level0();
+    }
+
+    private boolean someCondition() {
+        return false;
+    }
+
+    private boolean someOtherCondition() {
+        return true;
+    }
+}
+
 class RecursiveCallWronglyLimited {
     // finding: recursion is not limited
     public boolean directRecursiveNoDepth(int anything, int depth) {
@@ -170,39 +203,6 @@ class NotRecursive {
     }
 
     public static boolean bar() {
-        return true;
-    }
-}
-
-class RecursiveCallNonLinear {
-    // finding: level0->...->level0
-    public boolean level0() {
-        if (someOtherCondition()) {
-            return true;
-        }
-        if (someCondition()) {
-            return level1();
-        }        
-        return level2();
-    }
-    public boolean level1() {
-        if (someCondition()) {
-            return true;
-        }        
-        return level2();
-    }
-    public boolean level2() {
-        if (someCondition()) {
-            return level1();
-        }
-        return level0();
-    }
-
-    private boolean someCondition() {
-        return false;
-    }
-
-    private boolean someOtherCondition() {
         return true;
     }
 }

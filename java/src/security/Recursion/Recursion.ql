@@ -13,6 +13,7 @@
 import java
 import semmle.code.java.dataflow.DataFlow
 
+
 predicate isTestPackage(RefType referenceType) {
   referenceType.getPackage().getName().toLowerCase().matches("%test%") or
   referenceType.getPackage().getName().toLowerCase().matches("%benchmark%") or
@@ -25,6 +26,7 @@ class RecursionSource extends MethodCall {
   override string toString() {
     result = this.getCaller().toString() + " calls " + this.getCallee().toString()
   }
+
 }
 
 module RecursiveConfig implements DataFlow::StateConfigSig {
