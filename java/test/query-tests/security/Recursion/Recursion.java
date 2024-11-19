@@ -158,14 +158,32 @@ class RecursiveCallLimited {
         return directRecursiveDepth(depth - 1);
     }
 
-    // ok: recursion is limited
-    public boolean directRecursiveComputedDepth(int depth) {
+    // todook: recursion is limited
+    // public boolean directRecursiveComputedDepth(int depth) {
+    //     if (depth == 0) {
+    //         return true;
+    //     }
+
+    //     int newDepth = depth - 2;
+    //     return directRecursiveComputedDepth(newDepth);
+    // }
+
+    //finding: check is performed on a local variable
+    public boolean directRecLocalFlow(int depth) {
+        if (depth == 0) {
+            return true;
+        }
+        int newDepth = 2;
+        return directRecLocalFlow(newDepth - 1);
+    }
+
+    // ok: recursion is limited with unary op
+    public boolean directRecUnaryDec(int depth) {
         if (depth == 0) {
             return true;
         }
 
-        int newDepth = depth - 2;
-        return directRecursiveComputedDepth(newDepth);
+        return directRecUnaryDec(depth--);
     }
 
     // ok: level0->level1->level2->level0 with bound
@@ -184,11 +202,11 @@ class RecursiveCallLimited {
         }        
         return level2D(depth);
     }
-    public boolean level2D(int depth) {
+    public boolean level2D(int depth_value) {
         if (someCondition()) {
             return true;
         }
-        return level0D(depth-1);
+        return level0D(depth_value-1);
     }
 
     private boolean someCondition() {

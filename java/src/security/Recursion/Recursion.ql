@@ -13,7 +13,6 @@
 import java
 import semmle.code.java.dataflow.DataFlow
 
-
 predicate isTestPackage(RefType referenceType) {
   referenceType.getPackage().getName().toLowerCase().matches("%test%") or
   referenceType.getPackage().getName().toLowerCase().matches("%benchmark%") or
@@ -24,9 +23,23 @@ class RecursionSource extends MethodCall {
   RecursionSource() { not isTestPackage(this.getCaller().getDeclaringType()) }
 
   override string toString() {
-    result = this.getCaller().toString() + " calls " + this.getCallee().toString()
+    result = this.getCaller().toString() + " clls " + this.getCallee().toString()
   }
 
+}
+
+/**
+ * Check if the Expr uses directly an argument of the enclosing function
+ */
+class ParameterOperation extends Expr {
+  ParameterOperation() {
+      this instanceof BinaryExpr or this instanceof UnaryAssignExpr
+      and exists(
+        VarAccess va |
+        va.getVariable() = this.getEnclosingCallable().getAParameter() |
+        this.getAChildExpr+() = va
+      )
+  }
 }
 
 module RecursiveConfig implements DataFlow::StateConfigSig {
@@ -44,11 +57,25 @@ module RecursiveConfig implements DataFlow::StateConfigSig {
   }
 
   predicate isBarrier(DataFlow::Node node) {
-    node.asExpr() instanceof MethodCall and
-    exists(Expr arg | arg = node.asExpr().(MethodCall).getAnArgument() |
-      arg instanceof BinaryExpr or
-      exists(BinaryExpr b | DataFlow::localFlow(DataFlow::exprNode(b), DataFlow::exprNode(arg)))
+    exists(MethodCall ma  |
+      ma = node.asExpr()
+      and (
+        exists(Expr e | e = ma.getAnArgument() and e instanceof ParameterOperation)
+        // or exists(
+        //   VarAccess e| 
+        //   e = ma.getAnArgument() |
+        //   e.getVariable().getAnAssignedValue().getAChildExpr() instanceof ParameterOperation
+        // )
+      )
     )
+  }
+
+  /**
+   * Weird but useful deduplication logic
+   */
+  predicate isBarrierIn(DataFlow::Node node, FlowState state) {
+    not node.asExpr() instanceof MethodCall
+    or node.asExpr().(MethodCall).getCaller().getLocation().getStartLine() > state.getLocation().getStartLine()
   }
 }
 
