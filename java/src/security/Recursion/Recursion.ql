@@ -32,9 +32,7 @@ class RecursionSource extends MethodCall {
  */
 class ParameterOperation extends Expr {
   ParameterOperation() {
-    this instanceof BinaryExpr
-    or
-    this instanceof UnaryAssignExpr and
+    (this instanceof BinaryExpr or this instanceof UnaryAssignExpr) and
     exists(VarAccess va | va.getVariable() = this.getEnclosingCallable().getAParameter() |
       this.getAChildExpr+() = va
     )
@@ -44,15 +42,15 @@ class ParameterOperation extends Expr {
 module RecursiveConfig implements DataFlow::StateConfigSig {
   class FlowState = Method;
 
-  predicate isSource(DataFlow::Node node, FlowState state) {
+  predicate isSource(DataFlow::Node node, FlowState firstMethod) {
     node.asExpr() instanceof RecursionSource and
-    state = node.asExpr().(MethodCall).getCaller()
+    firstMethod = node.asExpr().(MethodCall).getCaller()
   }
 
-  predicate isSink(DataFlow::Node node, FlowState state) {
+  predicate isSink(DataFlow::Node node, FlowState firstMethod) {
     node.asExpr() instanceof RecursionSource and
-    state.calls+(node.asExpr().(MethodCall).getCaller()) and
-    node.asExpr().(MethodCall).getCallee().calls(state)
+    firstMethod.calls+(node.asExpr().(MethodCall).getCaller()) and
+    node.asExpr().(MethodCall).getCallee().calls(firstMethod)
   }
 
   predicate isBarrier(DataFlow::Node node) {
