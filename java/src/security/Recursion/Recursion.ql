@@ -23,9 +23,8 @@ class RecursionSource extends MethodCall {
   RecursionSource() { not isTestPackage(this.getCaller().getDeclaringType()) }
 
   override string toString() {
-    result = this.getCaller().toString() + " clls " + this.getCallee().toString()
+    result = this.getCaller().toString() + " calls " + this.getCallee().toString()
   }
-
 }
 
 /**
@@ -33,12 +32,12 @@ class RecursionSource extends MethodCall {
  */
 class ParameterOperation extends Expr {
   ParameterOperation() {
-      this instanceof BinaryExpr or this instanceof UnaryAssignExpr
-      and exists(
-        VarAccess va |
-        va.getVariable() = this.getEnclosingCallable().getAParameter() |
-        this.getAChildExpr+() = va
-      )
+    this instanceof BinaryExpr
+    or
+    this instanceof UnaryAssignExpr and
+    exists(VarAccess va | va.getVariable() = this.getEnclosingCallable().getAParameter() |
+      this.getAChildExpr+() = va
+    )
   }
 }
 
@@ -57,16 +56,14 @@ module RecursiveConfig implements DataFlow::StateConfigSig {
   }
 
   predicate isBarrier(DataFlow::Node node) {
-    exists(MethodCall ma  |
-      ma = node.asExpr()
-      and (
-        exists(Expr e | e = ma.getAnArgument() and e instanceof ParameterOperation)
-        // or exists(
-        //   VarAccess e| 
-        //   e = ma.getAnArgument() |
-        //   e.getVariable().getAnAssignedValue().getAChildExpr() instanceof ParameterOperation
-        // )
-      )
+    exists(MethodCall ma |
+      ma = node.asExpr() and
+      exists(Expr e | e = ma.getAnArgument() and e instanceof ParameterOperation)
+      // or exists(
+      //   VarAccess e|
+      //   e = ma.getAnArgument() |
+      //   e.getVariable().getAnAssignedValue().getAChildExpr() instanceof ParameterOperation
+      // )
     )
   }
 
@@ -74,8 +71,9 @@ module RecursiveConfig implements DataFlow::StateConfigSig {
    * Weird but useful deduplication logic
    */
   predicate isBarrierIn(DataFlow::Node node, FlowState state) {
-    not node.asExpr() instanceof MethodCall
-    or node.asExpr().(MethodCall).getCaller().getLocation().getStartLine() > state.getLocation().getStartLine()
+    not node.asExpr() instanceof MethodCall or
+    node.asExpr().(MethodCall).getCaller().getLocation().getStartLine() >
+      state.getLocation().getStartLine()
   }
 }
 
@@ -92,5 +90,4 @@ import RecursiveFlow::PathGraph
 
 from RecursiveFlow::PathNode source, RecursiveFlow::PathNode sink
 where RecursiveFlow::flowPath(source, sink)
-// TODO(dm): de-duplicate results
 select sink.getNode(), source, sink, "Found a recursion: "
