@@ -1,73 +1,148 @@
 edges
-| Recursion.java:57:24:57:34 | readToken calls readToken : Token | Recursion.java:57:24:57:34 | readToken calls readToken | provenance |  |
-| Recursion.java:57:24:57:34 | readToken calls readToken : Token | Recursion.java:57:24:57:34 | readToken calls readToken : Token | provenance |  |
-| Recursion.java:81:16:81:32 | directRecursive calls directRecursive : Boolean | Recursion.java:81:16:81:32 | directRecursive calls directRecursive | provenance |  |
-| Recursion.java:81:16:81:32 | directRecursive calls directRecursive : Boolean | Recursion.java:81:16:81:32 | directRecursive calls directRecursive : Boolean | provenance |  |
-| Recursion.java:89:16:89:23 | level0 calls level1 : Boolean | Recursion.java:101:16:101:23 | level2 calls level0 : Boolean | provenance |  |
-| Recursion.java:95:16:95:23 | level1 calls level2 : Boolean | Recursion.java:89:16:89:23 | level0 calls level1 | provenance |  |
-| Recursion.java:95:16:95:23 | level1 calls level2 : Boolean | Recursion.java:89:16:89:23 | level0 calls level1 : Boolean | provenance |  |
-| Recursion.java:101:16:101:23 | level2 calls level0 : Boolean | Recursion.java:95:16:95:23 | level1 calls level2 : Boolean | provenance |  |
-| Recursion.java:116:20:116:27 | level0 calls level1 : Boolean | Recursion.java:130:16:130:23 | level2 calls level0 | provenance |  |
-| Recursion.java:116:20:116:27 | level0 calls level1 : Boolean | Recursion.java:130:16:130:23 | level2 calls level0 : Boolean | provenance |  |
-| Recursion.java:118:16:118:23 | level0 calls level2 : Boolean | Recursion.java:130:16:130:23 | level2 calls level0 | provenance |  |
-| Recursion.java:118:16:118:23 | level0 calls level2 : Boolean | Recursion.java:130:16:130:23 | level2 calls level0 : Boolean | provenance |  |
-| Recursion.java:124:16:124:23 | level1 calls level2 : Boolean | Recursion.java:116:20:116:27 | level0 calls level1 | provenance |  |
-| Recursion.java:124:16:124:23 | level1 calls level2 : Boolean | Recursion.java:116:20:116:27 | level0 calls level1 : Boolean | provenance |  |
-| Recursion.java:124:16:124:23 | level1 calls level2 : Boolean | Recursion.java:128:20:128:27 | level2 calls level1 | provenance |  |
-| Recursion.java:124:16:124:23 | level1 calls level2 : Boolean | Recursion.java:128:20:128:27 | level2 calls level1 : Boolean | provenance |  |
-| Recursion.java:128:20:128:27 | level2 calls level1 : Boolean | Recursion.java:118:16:118:23 | level0 calls level2 : Boolean | provenance |  |
-| Recursion.java:128:20:128:27 | level2 calls level1 : Boolean | Recursion.java:124:16:124:23 | level1 calls level2 : Boolean | provenance |  |
-| Recursion.java:130:16:130:23 | level2 calls level0 : Boolean | Recursion.java:118:16:118:23 | level0 calls level2 : Boolean | provenance |  |
-| Recursion.java:130:16:130:23 | level2 calls level0 : Boolean | Recursion.java:124:16:124:23 | level1 calls level2 : Boolean | provenance |  |
-| Recursion.java:148:16:148:54 | directRecursiveNoDepth calls directRecursiveNoDepth : Boolean | Recursion.java:148:16:148:54 | directRecursiveNoDepth calls directRecursiveNoDepth | provenance |  |
-| Recursion.java:148:16:148:54 | directRecursiveNoDepth calls directRecursiveNoDepth : Boolean | Recursion.java:148:16:148:54 | directRecursiveNoDepth calls directRecursiveNoDepth : Boolean | provenance |  |
-| Recursion.java:177:16:177:47 | directRecLocalFlow calls directRecLocalFlow : Boolean | Recursion.java:177:16:177:47 | directRecLocalFlow calls directRecLocalFlow | provenance |  |
-| Recursion.java:177:16:177:47 | directRecLocalFlow calls directRecLocalFlow : Boolean | Recursion.java:177:16:177:47 | directRecLocalFlow calls directRecLocalFlow : Boolean | provenance |  |
+| Recursion.java:57:24:57:34 | readToken(...) : Token | Recursion.java:57:24:57:34 | readToken(...) | provenance |  |
+| Recursion.java:57:24:57:34 | readToken(...) : Token | Recursion.java:57:24:57:34 | readToken(...) : Token | provenance |  |
+| Recursion.java:71:29:71:33 | foo(...) : Boolean | Recursion.java:72:16:72:24 | fooResult : Boolean | provenance |  |
+| Recursion.java:71:29:71:33 | foo(...) : Boolean | Recursion.java:72:16:72:24 | fooResult : Boolean | provenance |  |
+| Recursion.java:72:16:72:24 | fooResult : Boolean | Recursion.java:76:16:76:20 | bar(...) | provenance |  |
+| Recursion.java:72:16:72:24 | fooResult : Boolean | Recursion.java:76:16:76:20 | bar(...) : Boolean | provenance |  |
+| Recursion.java:72:16:72:24 | fooResult : Boolean | Recursion.java:76:16:76:20 | bar(...) : Boolean | provenance |  |
+| Recursion.java:76:16:76:20 | bar(...) : Boolean | Recursion.java:71:29:71:33 | foo(...) | provenance |  |
+| Recursion.java:76:16:76:20 | bar(...) : Boolean | Recursion.java:71:29:71:33 | foo(...) : Boolean | provenance |  |
+| Recursion.java:76:16:76:20 | bar(...) : Boolean | Recursion.java:71:29:71:33 | foo(...) : Boolean | provenance |  |
+| Recursion.java:81:16:81:32 | directRecursive(...) : Boolean | Recursion.java:81:16:81:32 | directRecursive(...) | provenance |  |
+| Recursion.java:81:16:81:32 | directRecursive(...) : Boolean | Recursion.java:81:16:81:32 | directRecursive(...) : Boolean | provenance |  |
+| Recursion.java:89:16:89:23 | level1(...) : Boolean | Recursion.java:101:16:101:23 | level0(...) | provenance |  |
+| Recursion.java:89:16:89:23 | level1(...) : Boolean | Recursion.java:101:16:101:23 | level0(...) : Boolean | provenance |  |
+| Recursion.java:89:16:89:23 | level1(...) : Boolean | Recursion.java:101:16:101:23 | level0(...) : Boolean | provenance |  |
+| Recursion.java:89:16:89:23 | level1(...) : Boolean | Recursion.java:101:16:101:23 | level0(...) : Boolean | provenance |  |
+| Recursion.java:95:16:95:23 | level2(...) : Boolean | Recursion.java:89:16:89:23 | level1(...) | provenance |  |
+| Recursion.java:95:16:95:23 | level2(...) : Boolean | Recursion.java:89:16:89:23 | level1(...) : Boolean | provenance |  |
+| Recursion.java:95:16:95:23 | level2(...) : Boolean | Recursion.java:89:16:89:23 | level1(...) : Boolean | provenance |  |
+| Recursion.java:95:16:95:23 | level2(...) : Boolean | Recursion.java:89:16:89:23 | level1(...) : Boolean | provenance |  |
+| Recursion.java:101:16:101:23 | level0(...) : Boolean | Recursion.java:95:16:95:23 | level2(...) | provenance |  |
+| Recursion.java:101:16:101:23 | level0(...) : Boolean | Recursion.java:95:16:95:23 | level2(...) : Boolean | provenance |  |
+| Recursion.java:101:16:101:23 | level0(...) : Boolean | Recursion.java:95:16:95:23 | level2(...) : Boolean | provenance |  |
+| Recursion.java:101:16:101:23 | level0(...) : Boolean | Recursion.java:95:16:95:23 | level2(...) : Boolean | provenance |  |
+| Recursion.java:116:20:116:27 | level1(...) : Boolean | Recursion.java:130:16:130:23 | level0(...) | provenance |  |
+| Recursion.java:116:20:116:27 | level1(...) : Boolean | Recursion.java:130:16:130:23 | level0(...) | provenance |  |
+| Recursion.java:116:20:116:27 | level1(...) : Boolean | Recursion.java:130:16:130:23 | level0(...) : Boolean | provenance |  |
+| Recursion.java:116:20:116:27 | level1(...) : Boolean | Recursion.java:130:16:130:23 | level0(...) : Boolean | provenance |  |
+| Recursion.java:116:20:116:27 | level1(...) : Boolean | Recursion.java:130:16:130:23 | level0(...) : Boolean | provenance |  |
+| Recursion.java:118:16:118:23 | level2(...) : Boolean | Recursion.java:130:16:130:23 | level0(...) | provenance |  |
+| Recursion.java:118:16:118:23 | level2(...) : Boolean | Recursion.java:130:16:130:23 | level0(...) | provenance |  |
+| Recursion.java:118:16:118:23 | level2(...) : Boolean | Recursion.java:130:16:130:23 | level0(...) : Boolean | provenance |  |
+| Recursion.java:118:16:118:23 | level2(...) : Boolean | Recursion.java:130:16:130:23 | level0(...) : Boolean | provenance |  |
+| Recursion.java:118:16:118:23 | level2(...) : Boolean | Recursion.java:130:16:130:23 | level0(...) : Boolean | provenance |  |
+| Recursion.java:124:16:124:23 | level2(...) : Boolean | Recursion.java:116:20:116:27 | level1(...) | provenance |  |
+| Recursion.java:124:16:124:23 | level2(...) : Boolean | Recursion.java:116:20:116:27 | level1(...) : Boolean | provenance |  |
+| Recursion.java:124:16:124:23 | level2(...) : Boolean | Recursion.java:116:20:116:27 | level1(...) : Boolean | provenance |  |
+| Recursion.java:124:16:124:23 | level2(...) : Boolean | Recursion.java:116:20:116:27 | level1(...) : Boolean | provenance |  |
+| Recursion.java:124:16:124:23 | level2(...) : Boolean | Recursion.java:128:20:128:27 | level1(...) | provenance |  |
+| Recursion.java:124:16:124:23 | level2(...) : Boolean | Recursion.java:128:20:128:27 | level1(...) : Boolean | provenance |  |
+| Recursion.java:124:16:124:23 | level2(...) : Boolean | Recursion.java:128:20:128:27 | level1(...) : Boolean | provenance |  |
+| Recursion.java:124:16:124:23 | level2(...) : Boolean | Recursion.java:128:20:128:27 | level1(...) : Boolean | provenance |  |
+| Recursion.java:128:20:128:27 | level1(...) : Boolean | Recursion.java:118:16:118:23 | level2(...) | provenance |  |
+| Recursion.java:128:20:128:27 | level1(...) : Boolean | Recursion.java:118:16:118:23 | level2(...) | provenance |  |
+| Recursion.java:128:20:128:27 | level1(...) : Boolean | Recursion.java:118:16:118:23 | level2(...) : Boolean | provenance |  |
+| Recursion.java:128:20:128:27 | level1(...) : Boolean | Recursion.java:118:16:118:23 | level2(...) : Boolean | provenance |  |
+| Recursion.java:128:20:128:27 | level1(...) : Boolean | Recursion.java:118:16:118:23 | level2(...) : Boolean | provenance |  |
+| Recursion.java:128:20:128:27 | level1(...) : Boolean | Recursion.java:124:16:124:23 | level2(...) | provenance |  |
+| Recursion.java:128:20:128:27 | level1(...) : Boolean | Recursion.java:124:16:124:23 | level2(...) | provenance |  |
+| Recursion.java:128:20:128:27 | level1(...) : Boolean | Recursion.java:124:16:124:23 | level2(...) : Boolean | provenance |  |
+| Recursion.java:128:20:128:27 | level1(...) : Boolean | Recursion.java:124:16:124:23 | level2(...) : Boolean | provenance |  |
+| Recursion.java:128:20:128:27 | level1(...) : Boolean | Recursion.java:124:16:124:23 | level2(...) : Boolean | provenance |  |
+| Recursion.java:130:16:130:23 | level0(...) : Boolean | Recursion.java:118:16:118:23 | level2(...) | provenance |  |
+| Recursion.java:130:16:130:23 | level0(...) : Boolean | Recursion.java:118:16:118:23 | level2(...) | provenance |  |
+| Recursion.java:130:16:130:23 | level0(...) : Boolean | Recursion.java:118:16:118:23 | level2(...) : Boolean | provenance |  |
+| Recursion.java:130:16:130:23 | level0(...) : Boolean | Recursion.java:118:16:118:23 | level2(...) : Boolean | provenance |  |
+| Recursion.java:130:16:130:23 | level0(...) : Boolean | Recursion.java:118:16:118:23 | level2(...) : Boolean | provenance |  |
+| Recursion.java:130:16:130:23 | level0(...) : Boolean | Recursion.java:124:16:124:23 | level2(...) | provenance |  |
+| Recursion.java:130:16:130:23 | level0(...) : Boolean | Recursion.java:124:16:124:23 | level2(...) | provenance |  |
+| Recursion.java:130:16:130:23 | level0(...) : Boolean | Recursion.java:124:16:124:23 | level2(...) : Boolean | provenance |  |
+| Recursion.java:130:16:130:23 | level0(...) : Boolean | Recursion.java:124:16:124:23 | level2(...) : Boolean | provenance |  |
+| Recursion.java:130:16:130:23 | level0(...) : Boolean | Recursion.java:124:16:124:23 | level2(...) : Boolean | provenance |  |
+| Recursion.java:148:16:148:54 | directRecursiveNoDepth(...) : Boolean | Recursion.java:148:16:148:54 | directRecursiveNoDepth(...) | provenance |  |
+| Recursion.java:148:16:148:54 | directRecursiveNoDepth(...) : Boolean | Recursion.java:148:16:148:54 | directRecursiveNoDepth(...) : Boolean | provenance |  |
+| Recursion.java:177:16:177:47 | directRecLocalFlow(...) : Boolean | Recursion.java:177:16:177:47 | directRecLocalFlow(...) | provenance |  |
+| Recursion.java:177:16:177:47 | directRecLocalFlow(...) : Boolean | Recursion.java:177:16:177:47 | directRecLocalFlow(...) : Boolean | provenance |  |
 nodes
-| Recursion.java:57:24:57:34 | readToken calls readToken | semmle.label | readToken calls readToken |
-| Recursion.java:57:24:57:34 | readToken calls readToken : Token | semmle.label | readToken calls readToken : Token |
-| Recursion.java:71:29:71:33 | bar calls foo | semmle.label | bar calls foo |
-| Recursion.java:76:16:76:20 | foo calls bar | semmle.label | foo calls bar |
-| Recursion.java:81:16:81:32 | directRecursive calls directRecursive | semmle.label | directRecursive calls directRecursive |
-| Recursion.java:81:16:81:32 | directRecursive calls directRecursive : Boolean | semmle.label | directRecursive calls directRecursive : Boolean |
-| Recursion.java:89:16:89:23 | level0 calls level1 | semmle.label | level0 calls level1 |
-| Recursion.java:89:16:89:23 | level0 calls level1 : Boolean | semmle.label | level0 calls level1 : Boolean |
-| Recursion.java:95:16:95:23 | level1 calls level2 : Boolean | semmle.label | level1 calls level2 : Boolean |
-| Recursion.java:101:16:101:23 | level2 calls level0 : Boolean | semmle.label | level2 calls level0 : Boolean |
-| Recursion.java:116:20:116:27 | level0 calls level1 | semmle.label | level0 calls level1 |
-| Recursion.java:116:20:116:27 | level0 calls level1 : Boolean | semmle.label | level0 calls level1 : Boolean |
-| Recursion.java:118:16:118:23 | level0 calls level2 | semmle.label | level0 calls level2 |
-| Recursion.java:118:16:118:23 | level0 calls level2 : Boolean | semmle.label | level0 calls level2 : Boolean |
-| Recursion.java:124:16:124:23 | level1 calls level2 | semmle.label | level1 calls level2 |
-| Recursion.java:124:16:124:23 | level1 calls level2 : Boolean | semmle.label | level1 calls level2 : Boolean |
-| Recursion.java:128:20:128:27 | level2 calls level1 | semmle.label | level2 calls level1 |
-| Recursion.java:128:20:128:27 | level2 calls level1 : Boolean | semmle.label | level2 calls level1 : Boolean |
-| Recursion.java:130:16:130:23 | level2 calls level0 | semmle.label | level2 calls level0 |
-| Recursion.java:130:16:130:23 | level2 calls level0 : Boolean | semmle.label | level2 calls level0 : Boolean |
-| Recursion.java:148:16:148:54 | directRecursiveNoDepth calls directRecursiveNoDepth | semmle.label | directRecursiveNoDepth calls directRecursiveNoDepth |
-| Recursion.java:148:16:148:54 | directRecursiveNoDepth calls directRecursiveNoDepth : Boolean | semmle.label | directRecursiveNoDepth calls directRecursiveNoDepth : Boolean |
-| Recursion.java:177:16:177:47 | directRecLocalFlow calls directRecLocalFlow | semmle.label | directRecLocalFlow calls directRecLocalFlow |
-| Recursion.java:177:16:177:47 | directRecLocalFlow calls directRecLocalFlow : Boolean | semmle.label | directRecLocalFlow calls directRecLocalFlow : Boolean |
+| Recursion.java:57:24:57:34 | readToken(...) | semmle.label | readToken(...) |
+| Recursion.java:57:24:57:34 | readToken(...) : Token | semmle.label | readToken(...) : Token |
+| Recursion.java:71:29:71:33 | foo(...) | semmle.label | foo(...) |
+| Recursion.java:71:29:71:33 | foo(...) : Boolean | semmle.label | foo(...) : Boolean |
+| Recursion.java:71:29:71:33 | foo(...) : Boolean | semmle.label | foo(...) : Boolean |
+| Recursion.java:72:16:72:24 | fooResult : Boolean | semmle.label | fooResult : Boolean |
+| Recursion.java:72:16:72:24 | fooResult : Boolean | semmle.label | fooResult : Boolean |
+| Recursion.java:76:16:76:20 | bar(...) | semmle.label | bar(...) |
+| Recursion.java:76:16:76:20 | bar(...) : Boolean | semmle.label | bar(...) : Boolean |
+| Recursion.java:76:16:76:20 | bar(...) : Boolean | semmle.label | bar(...) : Boolean |
+| Recursion.java:81:16:81:32 | directRecursive(...) | semmle.label | directRecursive(...) |
+| Recursion.java:81:16:81:32 | directRecursive(...) : Boolean | semmle.label | directRecursive(...) : Boolean |
+| Recursion.java:89:16:89:23 | level1(...) | semmle.label | level1(...) |
+| Recursion.java:89:16:89:23 | level1(...) : Boolean | semmle.label | level1(...) : Boolean |
+| Recursion.java:89:16:89:23 | level1(...) : Boolean | semmle.label | level1(...) : Boolean |
+| Recursion.java:89:16:89:23 | level1(...) : Boolean | semmle.label | level1(...) : Boolean |
+| Recursion.java:95:16:95:23 | level2(...) | semmle.label | level2(...) |
+| Recursion.java:95:16:95:23 | level2(...) : Boolean | semmle.label | level2(...) : Boolean |
+| Recursion.java:95:16:95:23 | level2(...) : Boolean | semmle.label | level2(...) : Boolean |
+| Recursion.java:95:16:95:23 | level2(...) : Boolean | semmle.label | level2(...) : Boolean |
+| Recursion.java:101:16:101:23 | level0(...) | semmle.label | level0(...) |
+| Recursion.java:101:16:101:23 | level0(...) : Boolean | semmle.label | level0(...) : Boolean |
+| Recursion.java:101:16:101:23 | level0(...) : Boolean | semmle.label | level0(...) : Boolean |
+| Recursion.java:101:16:101:23 | level0(...) : Boolean | semmle.label | level0(...) : Boolean |
+| Recursion.java:116:20:116:27 | level1(...) | semmle.label | level1(...) |
+| Recursion.java:116:20:116:27 | level1(...) : Boolean | semmle.label | level1(...) : Boolean |
+| Recursion.java:116:20:116:27 | level1(...) : Boolean | semmle.label | level1(...) : Boolean |
+| Recursion.java:116:20:116:27 | level1(...) : Boolean | semmle.label | level1(...) : Boolean |
+| Recursion.java:118:16:118:23 | level2(...) | semmle.label | level2(...) |
+| Recursion.java:118:16:118:23 | level2(...) | semmle.label | level2(...) |
+| Recursion.java:118:16:118:23 | level2(...) : Boolean | semmle.label | level2(...) : Boolean |
+| Recursion.java:118:16:118:23 | level2(...) : Boolean | semmle.label | level2(...) : Boolean |
+| Recursion.java:118:16:118:23 | level2(...) : Boolean | semmle.label | level2(...) : Boolean |
+| Recursion.java:124:16:124:23 | level2(...) | semmle.label | level2(...) |
+| Recursion.java:124:16:124:23 | level2(...) | semmle.label | level2(...) |
+| Recursion.java:124:16:124:23 | level2(...) : Boolean | semmle.label | level2(...) : Boolean |
+| Recursion.java:124:16:124:23 | level2(...) : Boolean | semmle.label | level2(...) : Boolean |
+| Recursion.java:124:16:124:23 | level2(...) : Boolean | semmle.label | level2(...) : Boolean |
+| Recursion.java:128:20:128:27 | level1(...) | semmle.label | level1(...) |
+| Recursion.java:128:20:128:27 | level1(...) : Boolean | semmle.label | level1(...) : Boolean |
+| Recursion.java:128:20:128:27 | level1(...) : Boolean | semmle.label | level1(...) : Boolean |
+| Recursion.java:128:20:128:27 | level1(...) : Boolean | semmle.label | level1(...) : Boolean |
+| Recursion.java:130:16:130:23 | level0(...) | semmle.label | level0(...) |
+| Recursion.java:130:16:130:23 | level0(...) | semmle.label | level0(...) |
+| Recursion.java:130:16:130:23 | level0(...) : Boolean | semmle.label | level0(...) : Boolean |
+| Recursion.java:130:16:130:23 | level0(...) : Boolean | semmle.label | level0(...) : Boolean |
+| Recursion.java:130:16:130:23 | level0(...) : Boolean | semmle.label | level0(...) : Boolean |
+| Recursion.java:148:16:148:54 | directRecursiveNoDepth(...) | semmle.label | directRecursiveNoDepth(...) |
+| Recursion.java:148:16:148:54 | directRecursiveNoDepth(...) : Boolean | semmle.label | directRecursiveNoDepth(...) : Boolean |
+| Recursion.java:177:16:177:47 | directRecLocalFlow(...) | semmle.label | directRecLocalFlow(...) |
+| Recursion.java:177:16:177:47 | directRecLocalFlow(...) : Boolean | semmle.label | directRecLocalFlow(...) : Boolean |
 subpaths
 #select
-| Recursion.java:57:24:57:34 | readToken calls readToken | Recursion.java:57:24:57:34 | readToken calls readToken | Recursion.java:57:24:57:34 | readToken calls readToken | Found a recursion:  |
-| Recursion.java:57:24:57:34 | readToken calls readToken | Recursion.java:57:24:57:34 | readToken calls readToken : Token | Recursion.java:57:24:57:34 | readToken calls readToken | Found a recursion:  |
-| Recursion.java:71:29:71:33 | bar calls foo | Recursion.java:71:29:71:33 | bar calls foo | Recursion.java:71:29:71:33 | bar calls foo | Found a recursion:  |
-| Recursion.java:76:16:76:20 | foo calls bar | Recursion.java:76:16:76:20 | foo calls bar | Recursion.java:76:16:76:20 | foo calls bar | Found a recursion:  |
-| Recursion.java:81:16:81:32 | directRecursive calls directRecursive | Recursion.java:81:16:81:32 | directRecursive calls directRecursive | Recursion.java:81:16:81:32 | directRecursive calls directRecursive | Found a recursion:  |
-| Recursion.java:81:16:81:32 | directRecursive calls directRecursive | Recursion.java:81:16:81:32 | directRecursive calls directRecursive : Boolean | Recursion.java:81:16:81:32 | directRecursive calls directRecursive | Found a recursion:  |
-| Recursion.java:89:16:89:23 | level0 calls level1 | Recursion.java:101:16:101:23 | level2 calls level0 : Boolean | Recursion.java:89:16:89:23 | level0 calls level1 | Found a recursion:  |
-| Recursion.java:116:20:116:27 | level0 calls level1 | Recursion.java:128:20:128:27 | level2 calls level1 : Boolean | Recursion.java:116:20:116:27 | level0 calls level1 | Found a recursion:  |
-| Recursion.java:116:20:116:27 | level0 calls level1 | Recursion.java:130:16:130:23 | level2 calls level0 : Boolean | Recursion.java:116:20:116:27 | level0 calls level1 | Found a recursion:  |
-| Recursion.java:118:16:118:23 | level0 calls level2 | Recursion.java:118:16:118:23 | level0 calls level2 | Recursion.java:118:16:118:23 | level0 calls level2 | Found a recursion:  |
-| Recursion.java:124:16:124:23 | level1 calls level2 | Recursion.java:124:16:124:23 | level1 calls level2 | Recursion.java:124:16:124:23 | level1 calls level2 | Found a recursion:  |
-| Recursion.java:128:20:128:27 | level2 calls level1 | Recursion.java:128:20:128:27 | level2 calls level1 | Recursion.java:128:20:128:27 | level2 calls level1 | Found a recursion:  |
-| Recursion.java:128:20:128:27 | level2 calls level1 | Recursion.java:128:20:128:27 | level2 calls level1 : Boolean | Recursion.java:128:20:128:27 | level2 calls level1 | Found a recursion:  |
-| Recursion.java:128:20:128:27 | level2 calls level1 | Recursion.java:130:16:130:23 | level2 calls level0 : Boolean | Recursion.java:128:20:128:27 | level2 calls level1 | Found a recursion:  |
-| Recursion.java:130:16:130:23 | level2 calls level0 | Recursion.java:128:20:128:27 | level2 calls level1 : Boolean | Recursion.java:130:16:130:23 | level2 calls level0 | Found a recursion:  |
-| Recursion.java:130:16:130:23 | level2 calls level0 | Recursion.java:130:16:130:23 | level2 calls level0 | Recursion.java:130:16:130:23 | level2 calls level0 | Found a recursion:  |
-| Recursion.java:130:16:130:23 | level2 calls level0 | Recursion.java:130:16:130:23 | level2 calls level0 : Boolean | Recursion.java:130:16:130:23 | level2 calls level0 | Found a recursion:  |
-| Recursion.java:148:16:148:54 | directRecursiveNoDepth calls directRecursiveNoDepth | Recursion.java:148:16:148:54 | directRecursiveNoDepth calls directRecursiveNoDepth | Recursion.java:148:16:148:54 | directRecursiveNoDepth calls directRecursiveNoDepth | Found a recursion:  |
-| Recursion.java:148:16:148:54 | directRecursiveNoDepth calls directRecursiveNoDepth | Recursion.java:148:16:148:54 | directRecursiveNoDepth calls directRecursiveNoDepth : Boolean | Recursion.java:148:16:148:54 | directRecursiveNoDepth calls directRecursiveNoDepth | Found a recursion:  |
-| Recursion.java:177:16:177:47 | directRecLocalFlow calls directRecLocalFlow | Recursion.java:177:16:177:47 | directRecLocalFlow calls directRecLocalFlow | Recursion.java:177:16:177:47 | directRecLocalFlow calls directRecLocalFlow | Found a recursion:  |
-| Recursion.java:177:16:177:47 | directRecLocalFlow calls directRecLocalFlow | Recursion.java:177:16:177:47 | directRecLocalFlow calls directRecLocalFlow : Boolean | Recursion.java:177:16:177:47 | directRecLocalFlow calls directRecLocalFlow | Found a recursion:  |
+| Recursion.java:57:24:57:34 | readToken(...) | Recursion.java:57:24:57:34 | readToken(...) | Recursion.java:57:24:57:34 | readToken(...) | Found a recursion:  |
+| Recursion.java:57:24:57:34 | readToken(...) | Recursion.java:57:24:57:34 | readToken(...) : Token | Recursion.java:57:24:57:34 | readToken(...) | Found a recursion:  |
+| Recursion.java:71:29:71:33 | foo(...) | Recursion.java:76:16:76:20 | bar(...) : Boolean | Recursion.java:71:29:71:33 | foo(...) | Found a recursion:  |
+| Recursion.java:76:16:76:20 | bar(...) | Recursion.java:71:29:71:33 | foo(...) : Boolean | Recursion.java:76:16:76:20 | bar(...) | Found a recursion:  |
+| Recursion.java:81:16:81:32 | directRecursive(...) | Recursion.java:81:16:81:32 | directRecursive(...) | Recursion.java:81:16:81:32 | directRecursive(...) | Found a recursion:  |
+| Recursion.java:81:16:81:32 | directRecursive(...) | Recursion.java:81:16:81:32 | directRecursive(...) : Boolean | Recursion.java:81:16:81:32 | directRecursive(...) | Found a recursion:  |
+| Recursion.java:89:16:89:23 | level1(...) | Recursion.java:95:16:95:23 | level2(...) : Boolean | Recursion.java:89:16:89:23 | level1(...) | Found a recursion:  |
+| Recursion.java:95:16:95:23 | level2(...) | Recursion.java:101:16:101:23 | level0(...) : Boolean | Recursion.java:95:16:95:23 | level2(...) | Found a recursion:  |
+| Recursion.java:101:16:101:23 | level0(...) | Recursion.java:89:16:89:23 | level1(...) : Boolean | Recursion.java:101:16:101:23 | level0(...) | Found a recursion:  |
+| Recursion.java:116:20:116:27 | level1(...) | Recursion.java:118:16:118:23 | level2(...) : Boolean | Recursion.java:116:20:116:27 | level1(...) | Found a recursion:  |
+| Recursion.java:116:20:116:27 | level1(...) | Recursion.java:124:16:124:23 | level2(...) : Boolean | Recursion.java:116:20:116:27 | level1(...) | Found a recursion:  |
+| Recursion.java:118:16:118:23 | level2(...) | Recursion.java:116:20:116:27 | level1(...) : Boolean | Recursion.java:118:16:118:23 | level2(...) | Found a recursion:  |
+| Recursion.java:118:16:118:23 | level2(...) | Recursion.java:128:20:128:27 | level1(...) : Boolean | Recursion.java:118:16:118:23 | level2(...) | Found a recursion:  |
+| Recursion.java:118:16:118:23 | level2(...) | Recursion.java:130:16:130:23 | level0(...) : Boolean | Recursion.java:118:16:118:23 | level2(...) | Found a recursion:  |
+| Recursion.java:124:16:124:23 | level2(...) | Recursion.java:116:20:116:27 | level1(...) : Boolean | Recursion.java:124:16:124:23 | level2(...) | Found a recursion:  |
+| Recursion.java:124:16:124:23 | level2(...) | Recursion.java:128:20:128:27 | level1(...) : Boolean | Recursion.java:124:16:124:23 | level2(...) | Found a recursion:  |
+| Recursion.java:124:16:124:23 | level2(...) | Recursion.java:130:16:130:23 | level0(...) : Boolean | Recursion.java:124:16:124:23 | level2(...) | Found a recursion:  |
+| Recursion.java:128:20:128:27 | level1(...) | Recursion.java:118:16:118:23 | level2(...) : Boolean | Recursion.java:128:20:128:27 | level1(...) | Found a recursion:  |
+| Recursion.java:128:20:128:27 | level1(...) | Recursion.java:124:16:124:23 | level2(...) : Boolean | Recursion.java:128:20:128:27 | level1(...) | Found a recursion:  |
+| Recursion.java:130:16:130:23 | level0(...) | Recursion.java:116:20:116:27 | level1(...) : Boolean | Recursion.java:130:16:130:23 | level0(...) | Found a recursion:  |
+| Recursion.java:130:16:130:23 | level0(...) | Recursion.java:118:16:118:23 | level2(...) : Boolean | Recursion.java:130:16:130:23 | level0(...) | Found a recursion:  |
+| Recursion.java:130:16:130:23 | level0(...) | Recursion.java:124:16:124:23 | level2(...) : Boolean | Recursion.java:130:16:130:23 | level0(...) | Found a recursion:  |
+| Recursion.java:130:16:130:23 | level0(...) | Recursion.java:128:20:128:27 | level1(...) : Boolean | Recursion.java:130:16:130:23 | level0(...) | Found a recursion:  |
+| Recursion.java:148:16:148:54 | directRecursiveNoDepth(...) | Recursion.java:148:16:148:54 | directRecursiveNoDepth(...) | Recursion.java:148:16:148:54 | directRecursiveNoDepth(...) | Found a recursion:  |
+| Recursion.java:148:16:148:54 | directRecursiveNoDepth(...) | Recursion.java:148:16:148:54 | directRecursiveNoDepth(...) : Boolean | Recursion.java:148:16:148:54 | directRecursiveNoDepth(...) | Found a recursion:  |
+| Recursion.java:177:16:177:47 | directRecLocalFlow(...) | Recursion.java:177:16:177:47 | directRecLocalFlow(...) | Recursion.java:177:16:177:47 | directRecLocalFlow(...) | Found a recursion:  |
+| Recursion.java:177:16:177:47 | directRecLocalFlow(...) | Recursion.java:177:16:177:47 | directRecLocalFlow(...) : Boolean | Recursion.java:177:16:177:47 | directRecLocalFlow(...) | Found a recursion:  |

@@ -19,11 +19,10 @@ predicate isTestPackage(RefType referenceType) {
   referenceType.getName().toLowerCase().matches("%test%")
 }
 
-class RecursionSource extends MethodCall {
-  RecursionSource() { not isTestPackage(this.getCaller().getDeclaringType()) }
-
-  override string toString() {
-    result = this.getCaller().toString() + " calls " + this.getCallee().toString()
+class RecursionSource extends Method {
+  RecursionSource() {
+    not isTestPackage(this.getDeclaringType()) and
+    this.calls+(this)
   }
 }
 
@@ -43,36 +42,27 @@ module RecursiveConfig implements DataFlow::StateConfigSig {
   class FlowState = Method;
 
   predicate isSource(DataFlow::Node node, FlowState firstMethod) {
-    node.asExpr() instanceof RecursionSource and
-    firstMethod = node.asExpr().(MethodCall).getCaller()
+    node.asExpr().(MethodCall).getCallee() instanceof RecursionSource and
+    firstMethod = node.asExpr().(MethodCall).getCallee()
   }
 
   predicate isSink(DataFlow::Node node, FlowState firstMethod) {
-    node.asExpr() instanceof RecursionSource and
-    firstMethod.calls+(node.asExpr().(MethodCall).getCaller()) and
-    node.asExpr().(MethodCall).getCallee().calls(firstMethod)
+    node.asExpr().(MethodCall).getCallee().calls(firstMethod) and
+    firstMethod.calls+(node.asExpr().(MethodCall).getCaller())
   }
 
   predicate isBarrier(DataFlow::Node node) {
     exists(MethodCall ma |
       ma = node.asExpr() and
       exists(Expr e | e = ma.getAnArgument() and e instanceof ParameterOperation)
-      // or exists(
-      //   VarAccess e|
-      //   e = ma.getAnArgument() |
-      //   e.getVariable().getAnAssignedValue().getAChildExpr() instanceof ParameterOperation
-      // )
     )
   }
-
-  /**
-   * Weird but useful deduplication logic
-   */
-  predicate isBarrierIn(DataFlow::Node node, FlowState state) {
-    not node.asExpr() instanceof MethodCall or
-    node.asExpr().(MethodCall).getCaller().getLocation().getStartLine() >
-      state.getLocation().getStartLine()
-  }
+  // /**
+  //  * Weird but useful deduplication logic
+  //  */
+  // predicate isBarrierOut(DataFlow::Node node, FlowState state) {
+  //   node.asExpr().(MethodCall).getCallee().getName() > state.getName()
+  // }
 }
 
 module RecursiveFlow = DataFlow::GlobalWithState<RecursiveConfig>;
