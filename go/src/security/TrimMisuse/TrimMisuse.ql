@@ -11,7 +11,7 @@
  */
 
 import go
-import DataFlow2
+import semmle.go.dataflow.DataFlow
 
 /*
  * Flows from a string to TrimFamilyCall cutSet argument
@@ -32,7 +32,7 @@ module Trim2ndArgFlow = DataFlow::Global<Trim2ndArgConfig>;
 /*
  * Calls to Trim methods that we are interested in
  */
-class TrimFamilyCall extends CallNode {
+class TrimFamilyCall extends DataFlow::CallNode {
   TrimFamilyCall() {
     this.getTarget().hasQualifiedName("strings", ["TrimRight", "TrimLeft", "Trim"])
     or
