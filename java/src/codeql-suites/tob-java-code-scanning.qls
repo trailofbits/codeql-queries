@@ -1,0 +1,5 @@
+- description: Security queries for Java
+- queries: 'security'
+  from: trailofbits/java-queries
+- exclude:
+    tags contain: experimental

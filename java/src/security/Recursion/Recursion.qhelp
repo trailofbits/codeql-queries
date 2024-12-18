@@ -1,0 +1,39 @@
+<!DOCTYPE qhelp SYSTEM "qhelp.dtd">
+<qhelp>
+    <overview>
+        <p>
+        Recursive functions are methods that call themselves either directly or indirectly through other functions.
+        While recursion can be a powerful programming technique, unbounded recursion on user inputs can lead
+        to stack overflow errors and program crashes, potentially enabling denial of service attacks.
+
+        This query detects recursive patterns up to order 4.
+        </p>
+
+    </overview>
+    <recommendation>
+        <p>
+        Review recursive functions and ensure that they are either:
+            - Not processing user-controlled data
+            - The data has been properly sanitized before recursing
+            - The recursion has an explicit depth limit
+        </p>
+        <p>
+        Consider replacing recursion with iterative alternatives where possible.
+        </p>
+    </recommendation>
+    <example>
+        <sample src="RecursiveCall.java" />
+        <p>In this example, a binary stream reader processes tokens recursively.</p>
+        <p>For each new token `0x2`, the parser will create a new recursive call.
+        If this stream is user-controlled, an attacker can generate too many stackframes
+        and crash the application with a <code>StackOverflow</code> error.</p>
+    </example>
+    <references>
+        <li>
+            Trail Of Bits white paper: <a href="https://resources.trailofbits.com/input-driven-recursion-white-paper">Input-Driven Recursion</a>
+        </li>
+        <li>
+            CWE-674: <a href="https://cwe.mitre.org/data/definitions/674.html">Uncontrolled Recursion</a>
+        </li>
+    </references>
+</qhelp>
