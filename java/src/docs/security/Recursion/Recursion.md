@@ -35,5 +35,5 @@ For each new token \`0x2\`, the parser will create a new recursive call. If this
 
 
 ## References
-* Trail Of Bits Blog: [Low-effort denial of service with recursion](https://blog.trailofbits.com/2024/05/16/TODO/)
+* Trail Of Bits white paper: [Input-Driven Recursion](https://resources.trailofbits.com/input-driven-recursion-white-paper)
 * CWE-674: [Uncontrolled Recursion](https://cwe.mitre.org/data/definitions/674.html)
