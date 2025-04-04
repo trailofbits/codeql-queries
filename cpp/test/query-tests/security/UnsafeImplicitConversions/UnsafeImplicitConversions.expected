@@ -1,23 +1,26 @@
-| test.cpp:72:17:72:21 | (int)... | Implicit cast from unsigned long to int; bounds are [4294967297; 4294967297] |
-| test.cpp:73:20:73:24 | (int)... | Implicit cast from unsigned long to int; bounds are [4294967297; 4294967297] |
-| test.cpp:74:23:74:27 | (int)... | Implicit cast from unsigned long to int; bounds are [4294967297; 4294967297] |
-| test.cpp:75:28:75:32 | (int)... | Implicit cast from unsigned long to int; bounds are [4294967297; 4294967297] |
-| test.cpp:80:36:80:40 | (int)... | Implicit cast from unsigned long to int; bounds are [0; 18446744073709551616] |
-| test.cpp:88:17:88:21 | (int)... | Implicit cast from unsigned long to int; bounds are [4294967297; 4294967297] |
-| test.cpp:94:17:94:21 | (unsigned int)... | Implicit cast from unsigned long to unsigned int; bounds are [4294967297; 4294967297] |
-| test.cpp:100:17:100:21 | (unsigned int)... | Implicit cast from unsigned long to unsigned int; bounds are [4294967297; 4294967297] |
-| test.cpp:106:17:106:21 | (int)... | Implicit cast from long to int; bounds are [4294967297; 4294967297] |
-| test.cpp:114:17:114:17 | (int)... | Implicit cast from unsigned long to int; bounds are [0; 18446744073709551616] |
-| test.cpp:121:17:121:21 | (int)... | Implicit cast from unsigned int to int; bounds are [0; 4294967295] |
-| test.cpp:121:28:121:28 | (int)... | Implicit cast from unsigned int to int; bounds are [0; 4294967295] |
-| test.cpp:127:17:127:21 | (unsigned short)... | Implicit cast from unsigned long to unsigned short; bounds are [4294967297; 4294967297] |
-| test.cpp:133:17:133:21 | (int)... | Implicit cast from unsigned long to int; bounds are [4294967297; 4294967297] |
-| test.cpp:140:17:140:18 | (unsigned short)... | Implicit cast from unsigned long to unsigned short; bounds are [0; 18446744073709551616] |
-| test.cpp:146:17:146:21 | (int)... | Implicit cast from unsigned int to int; bounds are [4294967295; 4294967295] |
-| test.cpp:151:17:151:26 | (int)... | Implicit cast from unsigned int to int; bounds are [2147484985; 2147484985] |
-| test.cpp:157:17:157:21 | (unsigned int)... | Implicit cast from long to unsigned int; bounds are [-1; -1] |
-| test.cpp:163:17:163:50 | (uint16_t)... | Implicit cast from int to unsigned short; bounds are [-51956; -51956] |
-| test.cpp:264:12:264:65 | (unsigned int)... | Implicit cast from int to unsigned int; bounds are [-2147483648; 2147483647] |
-| test.cpp:270:16:270:31 | (size_t)... | Implicit cast from int to unsigned long; bounds are [-2147483648; 2147483647] |
-| test.cpp:271:14:271:14 | (int)... | Implicit cast from unsigned long to int; bounds are [0; 18446744073709551616] |
-| test.cpp:289:18:289:18 | (int)... | Implicit cast from unsigned long to int; bounds are [0; 18446744073709551616] |
+| test.cpp:72:17:72:21 | (int)... | Implicit cast from unsigned long to int (truncation), bounds are [4294967297; 4294967297] |
+| test.cpp:73:20:73:24 | (int)... | Implicit cast from unsigned long to int (truncation), bounds are [4294967297; 4294967297] |
+| test.cpp:74:23:74:27 | (int)... | Implicit cast from unsigned long to int (truncation), bounds are [4294967297; 4294967297] |
+| test.cpp:75:28:75:32 | (int)... | Implicit cast from unsigned long to int (truncation), bounds are [4294967297; 4294967297] |
+| test.cpp:80:36:80:40 | (int)... | Implicit cast from unsigned long to int (truncation), bounds are [0; 18446744073709551616] |
+| test.cpp:88:17:88:21 | (int)... | Implicit cast from unsigned long to int (truncation), bounds are [4294967297; 4294967297] |
+| test.cpp:94:17:94:21 | (unsigned int)... | Implicit cast from unsigned long to unsigned int (truncation), bounds are [4294967297; 4294967297] |
+| test.cpp:100:17:100:21 | (unsigned int)... | Implicit cast from unsigned long to unsigned int (truncation), bounds are [4294967297; 4294967297] |
+| test.cpp:106:17:106:21 | (int)... | Implicit cast from long to int (truncation), bounds are [4294967297; 4294967297] |
+| test.cpp:114:17:114:17 | (int)... | Implicit cast from unsigned long to int (truncation), bounds are [0; 18446744073709551616] |
+| test.cpp:121:17:121:21 | (int)... | Implicit cast from unsigned int to int (reinterpretation), bounds are [0; 4294967295] |
+| test.cpp:121:28:121:28 | (int)... | Implicit cast from unsigned int to int (reinterpretation), bounds are [0; 4294967295] |
+| test.cpp:127:17:127:21 | (unsigned short)... | Implicit cast from unsigned long to unsigned short (truncation), bounds are [4294967297; 4294967297] |
+| test.cpp:133:17:133:21 | (int)... | Implicit cast from unsigned long to int (truncation), bounds are [4294967297; 4294967297] |
+| test.cpp:140:17:140:18 | (unsigned short)... | Implicit cast from unsigned long to unsigned short (truncation), bounds are [0; 18446744073709551616] |
+| test.cpp:146:17:146:21 | (int)... | Implicit cast from unsigned int to int (reinterpretation), bounds are [4294967295; 4294967295] |
+| test.cpp:151:17:151:26 | (int)... | Implicit cast from unsigned int to int (reinterpretation), bounds are [2147484985; 2147484985] |
+| test.cpp:157:17:157:21 | (unsigned int)... | Implicit cast from long to unsigned int (truncation), bounds are [-1; -1] |
+| test.cpp:163:17:163:50 | (uint16_t)... | Implicit cast from int to unsigned short (truncation), bounds are [-51956; -51956] |
+| test.cpp:170:24:170:24 | (unsigned int)... | Implicit cast from short to unsigned int (widening), bounds are [-2; -2] |
+| test.cpp:176:18:176:20 | (int)... | Implicit cast from unsigned short to int (promotion with bitwise complement), bounds are [19; 19] |
+| test.cpp:277:12:277:65 | (unsigned int)... | Implicit cast from int to unsigned int (reinterpretation), bounds are [-2147483648; 2147483647] |
+| test.cpp:283:16:283:31 | (size_t)... | Implicit cast from int to unsigned long (widening), bounds are [-2147483648; 2147483647] |
+| test.cpp:284:14:284:14 | (int)... | Implicit cast from unsigned long to int (truncation), bounds are [0; 18446744073709551616] |
+| test.cpp:302:18:302:18 | (int)... | Implicit cast from unsigned long to int (truncation), bounds are [0; 18446744073709551616] |
+| test.cpp:308:35:308:37 | (int)... | Implicit cast from unsigned short to int (promotion with bitwise complement), bounds are [19; 19] |

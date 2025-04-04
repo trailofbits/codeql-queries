@@ -163,6 +163,19 @@ void test15() {
     test_func_9((uint16_t)large - (uint16_t)0xcafe);
 }
 
+// Implicit widening in usual arithmetic conversions
+void test16() {
+    short a = -2;
+    unsigned int b = 0x13;
+    unsigned short c = a & b;
+}
+
+// Implicit type promotion with binary complement
+void test17() {
+    unsigned short val = 0x13;
+    int val2 = (~val) >> 3;
+}
+
 
 /*
  * Tests for False Positives
@@ -267,8 +280,8 @@ unsigned int complex_const(void) {
 
 int test_fp11(int argc, size_t c) {
     int a = argc * 2;
-    size_t b = max_int(1500, a);
-    int h2 = c;
+    size_t b = max_int(1500, a);  // ok but reported (Value Range Analysis limitation)
+    int h2 = c;    // ok but reported (Value Range Analysis limitation)
     if (h2 > 0) {
         c = 44;
         int w = c;
@@ -286,9 +299,34 @@ int test_fp11(int argc, size_t c) {
     c = (c + 3) & ~3 | 0xf;
     b += c;
 
-    int result = b; // ok, b's upper bound is known
+    int result = b;  // ok but reported (Value Range Analysis limitation)
     return result;
 }
+
+void test_fp12() {
+    unsigned short val = 0x13;
+    int val2 = (unsigned short) (~val) >> 3; // TODO: exclude explicit conversions
+}
+
+void test_fp13() {
+    unsigned short val = 0x13;
+    int val2 = -val;
+}
+
+void test_fp14() {
+    uint64_t large = (uint64_t)0x100000001;
+    test_func_1((int)large);
+    test_func_1(static_cast<int>(large));
+    test_func_1(int{large});
+}
+
+void test_fp15() {
+    short a = -2;
+    unsigned int b = 0x13;
+    unsigned short c = (unsigned int)a & b;
+}
+
+
 
 int main(int argc, char **argv) {
     uint64_t large;
@@ -309,6 +347,8 @@ int main(int argc, char **argv) {
     test13();
     test14();
     test15();
+    test16();
+    test17();
 
     test_fp1(large);
     test_fp2();
@@ -324,6 +364,11 @@ int main(int argc, char **argv) {
     // reported, because Value Range Analysis limitations
     test_fp11(argc, 22);
     test_fp11(argc, argc);
+
+    test_fp12();
+    test_fp13();
+    test_fp14();
+    test_fp15();
     
     return 0;
 }

@@ -34,7 +34,7 @@ predicate safeBounds(Expr cast, IntegralType toType) {
 }
 
 
-from IntegralConversion cast, IntegralType fromType, IntegralType toType
+from IntegralConversion cast, IntegralType fromType, IntegralType toType, boolean checkBounds, string problemType
 where
     cast.isImplicit()
     and fromType = cast.getExpr().getExplicitlyConverted().getUnspecifiedType()
@@ -43,27 +43,53 @@ where
 
     and (
         // truncation
-        fromType.getSize() > toType.getSize()
+        (
+            problemType = "truncation"
+            and fromType.getSize() > toType.getSize()
+            and checkBounds = true
+        )
         or
         // reinterpretation
         (
-            fromType.getSize() = toType.getSize()
+            problemType = "reinterpretation"
+            and fromType.getSize() = toType.getSize()
             and
             (
                 (fromType.isUnsigned() and toType.isSigned())
                 or
                 (fromType.isSigned() and toType.isUnsigned())
             )
+            and checkBounds = true
         )
         or
         // widening
         (
-            fromType.getSize() < toType.getSize() and fromType.isSigned() and toType.isUnsigned()
+            fromType.getSize() < toType.getSize()
+            and
+            (
+                (
+                    problemType = "widening"
+                    and fromType.isSigned() and toType.isUnsigned()
+                    and checkBounds = true
+                )
+                or
+                // unsafe promotion
+                (
+                    problemType = "promotion with bitwise complement"
+                    and exists(ComplementExpr complement |
+                        complement.getOperand().getConversion*() = cast
+                    )
+                    and checkBounds = false
+                )
+            )
         )
     )
     
-    // skip if value is in safe range
-    and not safeBounds(cast.getExpr(), toType)
+    // skip if value is in safe range, except for ~ (complement)
+    and (
+        checkBounds = true implies
+        not safeBounds(cast.getExpr(), toType)
+    )
 
     and not (
         // skip conversions in arithmetic operations
@@ -93,4 +119,4 @@ where
         or
         exists(FunctionAccess fc | fc.getTarget() = cast.getEnclosingFunction())
     )
-select cast, "Implicit cast from " + fromType + " to " + toType + "; bounds are [" + lowerBound(cast.getExpr())+ "; " + upperBound(cast.getExpr()) + "]"
+select cast, "Implicit cast from " + fromType + " to " + toType + " (" + problemType + "), bounds are [" + lowerBound(cast.getExpr())+ "; " + upperBound(cast.getExpr()) + "]"
