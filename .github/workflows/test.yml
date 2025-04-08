@@ -15,8 +15,8 @@ jobs:
       - name: Run tests
         run: |
           ${{ steps.init.outputs.codeql-path }} pack ci ./cpp/test/
-          ${{ steps.init.outputs.codeql-path }} test run -v ./cpp/test/
+          ${{ steps.init.outputs.codeql-path }} test run -vv ./cpp/test/
           ${{ steps.init.outputs.codeql-path }} pack ci ./go/test/
-          ${{ steps.init.outputs.codeql-path }} test run -v ./go/test/
+          ${{ steps.init.outputs.codeql-path }} test run -vv ./go/test/
           ${{ steps.init.outputs.codeql-path }} pack ci ./java/test/
-          ${{ steps.init.outputs.codeql-path }} test run -v ./java/test/
+          ${{ steps.init.outputs.codeql-path }} test run -vv ./java/test/
