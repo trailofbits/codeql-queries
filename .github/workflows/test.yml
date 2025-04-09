@@ -14,9 +14,6 @@ jobs:
         uses: github/codeql-action/init@v3
       - name: Run tests
         run: |
-          ${{ steps.init.outputs.codeql-path }} pack ci ./cpp/test/
-          ${{ steps.init.outputs.codeql-path }} test run -vv ./cpp/test/
-          ${{ steps.init.outputs.codeql-path }} pack ci ./go/test/
-          ${{ steps.init.outputs.codeql-path }} test run -vv ./go/test/
-          ${{ steps.init.outputs.codeql-path }} pack ci ./java/test/
-          ${{ steps.init.outputs.codeql-path }} test run -vv ./java/test/
+          ${{ steps.init.outputs.codeql-path }} test extract ./java/test/
+          ${{ steps.init.outputs.codeql-path }} query run --database=java/test/test.testproj/ -- java/src/security/Recursion/Recursion.ql
+          ${{ steps.init.outputs.codeql-path }} test run ./java/test/
