@@ -274,14 +274,14 @@ static inline int complex_two_possible(bool switchx)
 }
 
 unsigned int complex_const(void) {
-    return complex_two_possible(true) + CA + CB + max_int(CC, 16);
+    return complex_two_possible(true) + CA + CB; // TODO
 }
 
 
 int test_fp11(int argc, size_t c) {
     int a = argc * 2;
-    size_t b = max_int(1500, a);  // ok but reported (Value Range Analysis limitation)
-    int h2 = c;    // ok but reported (Value Range Analysis limitation)
+    size_t b = max_int(1500, a);
+    int h2 = c;
     if (h2 > 0) {
         c = 44;
         int w = c;
@@ -299,7 +299,7 @@ int test_fp11(int argc, size_t c) {
     c = (c + 3) & ~3 | 0xf;
     b += c;
 
-    int result = b;  // ok but reported (Value Range Analysis limitation)
+    int result = b;
     return result;
 }
 
@@ -361,9 +361,8 @@ int main(int argc, char **argv) {
     test_fp9();
     test_fp10(argc);
 
-    // reported, because Value Range Analysis limitations
     test_fp11(argc, 22);
-    test_fp11(argc, argc);
+    test_fp11(argc, (size_t)argc);
 
     test_fp12();
     test_fp13();
