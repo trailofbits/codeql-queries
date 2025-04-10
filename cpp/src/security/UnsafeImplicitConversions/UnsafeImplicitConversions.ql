@@ -323,11 +323,12 @@ where
     or
     addressIsTaken(cast.getEnclosingFunction())
   )
-  // Uncomment to report conversions with untrusted inputs only
-  /*
-  and exists(DataFlow::Node source, DataFlow::Node sink |
-    cast.getExpr() = sink.asExpr() and
-    UnsafeUserInputConversionFlow::flow(source, sink)
-  )
-  */
+// Uncomment to report conversions with untrusted inputs only
+/*
+ *  and exists(DataFlow::Node source, DataFlow::Node sink |
+ *    cast.getExpr() = sink.asExpr() and
+ *    UnsafeUserInputConversionFlow::flow(source, sink)
+ *  )
+ */
+
 select cast, "Implicit cast from " + fromType + " to " + toType + " (" + problemType + ")"
