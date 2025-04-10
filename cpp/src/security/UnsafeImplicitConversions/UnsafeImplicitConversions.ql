@@ -1,6 +1,6 @@
 /**
  * @name Find all problematic implicit casts
- * @description Find all implicit casts that may be problematic. That is, may result in unexpected truncation, reinterpretation or widening of values.
+ * @description Find all implicit casts that may be problematic. That is, casts that may result in unexpected truncation, reinterpretation or widening of values.
  * @kind problem
  * @id tob/cpp/unsafe-implicit-conversions
  * @tags security
@@ -17,22 +17,10 @@ private import experimental.semmle.code.cpp.rangeanalysis.RangeAnalysis
 private import semmle.code.cpp.ir.IR
 private import semmle.code.cpp.ir.ValueNumbering
 
-private class BufLenFunc extends SimpleRangeAnalysisExpr, FunctionCall {
-  BufLenFunc() {
-    this.getTarget()
-        .getName()
-        .matches([
-            "buf_len", "buf_reverse_capacity", "buf_forward_capacity", "buf_forward_capacity_total"
-          ])
-  }
-
-  override float getLowerBounds() { result = 0 }
-
-  override float getUpperBounds() { result = typeUpperBound(this.getExpectedReturnType()) }
-
-  override predicate dependsOnChild(Expr child) { none() }
-}
-
+/**
+ * Models standard I/O functions that return a length value bounded by their size argument
+ * with possible -1 error return value
+ */
 private class LenApproxFunc extends SimpleRangeAnalysisExpr, FunctionCall {
   LenApproxFunc() {
     this.getTarget().hasName(["recvfrom", "recv", "sendto", "send", "read", "write"])
@@ -45,6 +33,11 @@ private class LenApproxFunc extends SimpleRangeAnalysisExpr, FunctionCall {
   override predicate dependsOnChild(Expr child) { child = this.getArgument(2) }
 }
 
+/*
+ * Uncomment the class below to silent findings that require large strings
+ * to be passed to strlen to be exploitable.
+ */
+/*
 private class StrlenFunAssumption extends SimpleRangeAnalysisExpr, FunctionCall {
   StrlenFunAssumption() { this.getTarget().hasName("strlen") }
 
@@ -54,28 +47,13 @@ private class StrlenFunAssumption extends SimpleRangeAnalysisExpr, FunctionCall 
 
   override predicate dependsOnChild(Expr child) { none() }
 }
+*/
 
-private class OpenSSLFunc extends SimpleRangeAnalysisExpr, FunctionCall {
-  OpenSSLFunc() {
-    this.getTarget()
-        .getName()
-        .matches([
-            "EVP_CIPHER_get_block_size", "cipher_ctx_block_size", "EVP_CIPHER_CTX_get_block_size",
-            "EVP_CIPHER_block_size", "HMAC_size", "hmac_ctx_size", "EVP_MAC_CTX_get_mac_size",
-            "EVP_CIPHER_CTX_mode", "EVP_CIPHER_CTX_get_mode", "EVP_CIPHER_iv_length",
-            "cipher_ctx_iv_length", "EVP_CIPHER_key_length", "EVP_MD_size", "EVP_MD_get_size",
-            "cipher_kt_iv_size", "cipher_kt_block_size", "EVP_PKEY_get_size", "EVP_PKEY_get_bits",
-            "EVP_PKEY_get_security_bits"
-          ])
-  }
-
-  override float getLowerBounds() { result = 0 }
-
-  override float getUpperBounds() { result = 32768 }
-
-  override predicate dependsOnChild(Expr child) { none() }
-}
-
+/**
+ * Determines if a function's address is taken in the codebase.
+ * This indicates that the function may be called while
+ * the call is not in the FunctionCall class.
+ */
 predicate addressIsTaken(Function f) {
   exists(FunctionCall call | call.getAnArgument().getFullyConverted() = f.getAnAccess())
   or
@@ -96,6 +74,9 @@ predicate addressIsTaken(Function f) {
   exists(ReturnStmt ret | ret.getExpr().getFullyConverted() = f.getAnAccess())
 }
 
+/**
+ * Propagates argument range information from function calls to function parameters
+ */
 class ConstrainArgs extends SimpleRangeAnalysisDefinition {
   private Function func;
   private Parameter param;
@@ -128,6 +109,9 @@ class ConstrainArgs extends SimpleRangeAnalysisDefinition {
   }
 }
 
+/**
+ * Helper to extract left and right operands from bitwise OR operations
+ */
 predicate getLeftRightOrOperands(Expr orExpr, Expr l, Expr r) {
   l = orExpr.(BitwiseOrExpr).getLeftOperand() and
   r = orExpr.(BitwiseOrExpr).getRightOperand()
@@ -136,6 +120,9 @@ predicate getLeftRightOrOperands(Expr orExpr, Expr l, Expr r) {
   r = orExpr.(AssignOrExpr).getRValue()
 }
 
+/**
+ * Provides range analysis for bitwise OR operations with non-negative constants
+ */
 private class ConstantBitwiseOrExprRange extends SimpleRangeAnalysisExpr {
   ConstantBitwiseOrExprRange() {
     exists(Expr l, Expr r | getLeftRightOrOperands(this, l, r) |
@@ -185,6 +172,10 @@ private class ConstantBitwiseOrExprRange extends SimpleRangeAnalysisExpr {
   }
 }
 
+/**
+ * Checks if an expression has a safe lower bound for conversion to the given type
+ * using both SimpleRangeAnalysis and IR-based RangeAnalysis
+ */
 predicate safeLowerBound(Expr cast, IntegralType toType) {
   exists(float lowerB |
     lowerB = lowerBound(cast) and
@@ -200,6 +191,10 @@ predicate safeLowerBound(Expr cast, IntegralType toType) {
   )
 }
 
+/**
+ * Checks if an expression has a safe upper bound for conversion to the given type
+ * using both SimpleRangeAnalysis and IR-based RangeAnalysis
+ */
 predicate safeUpperBound(Expr cast, IntegralType toType) {
   exists(float upperB |
     upperB = upperBound(cast) and
@@ -215,6 +210,9 @@ predicate safeUpperBound(Expr cast, IntegralType toType) {
   )
 }
 
+/**
+ * Checks if an expression has both safe lower and upper bounds for conversion to the given type
+ */
 predicate safeBounds(Expr cast, IntegralType toType) {
   safeLowerBound(cast, toType) and safeUpperBound(cast, toType)
 }
@@ -223,12 +221,16 @@ from
   IntegralConversion cast, IntegralType fromType, IntegralType toType, Expr castExpr,
   string problemType
 where
+  cast.getExpr() = castExpr and
+  // only implicit conversions
   cast.isImplicit() and
-  fromType = cast.getExpr().getExplicitlyConverted().getUnspecifiedType() and
+  // the cast expression has attached all explicit and implicit casts; we skip all conversions up to the last explicit casts
+  fromType = castExpr.getExplicitlyConverted().getUnspecifiedType() and
   toType = cast.getUnspecifiedType() and
+  // skip same type casts and casts to bools
   fromType != toType and
   not toType instanceof BoolType and
-  cast.getExpr() = castExpr and
+  // limit findings to only possibly problematic cases
   (
     // truncation
     problemType = "truncation" and
@@ -257,9 +259,9 @@ where
       exists(ComplementExpr complement | complement.getOperand().getConversion*() = cast)
     )
   ) and
+  // skip conversions in some arithmetic operations
   not (
-    // skip conversions in arithmetic operations
-    fromType.getSize() <= toType.getSize() and // should always hold
+    fromType.getSize() <= toType.getSize() and
     exists(BinaryArithmeticOperation arithmetic |
       (
         arithmetic instanceof AddExpr or
@@ -269,8 +271,8 @@ where
       arithmetic.getAnOperand().getConversion*() = cast
     )
   ) and
+  // skip some conversions in some equality operations
   not (
-    // skip some conversions in equality operations
     fromType.getSize() <= toType.getSize() and
     fromType.isSigned() and // should always hold
     exists(EqualityOperation eq, Expr castHandSide, Expr otherHandSide |
@@ -290,12 +292,5 @@ where
     cast.getEnclosingFunction().getName() = "main"
     or
     addressIsTaken(cast.getEnclosingFunction())
-  ) and
-  // skip casts in call to msg
-  not exists(MacroInvocation msgCall |
-    msgCall.getMacro().hasName("msg") and
-    msgCall.getStmt().getAChild*() = cast.getEnclosingStmt()
-  ) and
-  // not interesting file
-  not cast.getLocation().getFile().getBaseName().matches("options.c")
+  )
 select cast, "Implicit cast from " + fromType + " to " + toType + " (" + problemType + ")"
