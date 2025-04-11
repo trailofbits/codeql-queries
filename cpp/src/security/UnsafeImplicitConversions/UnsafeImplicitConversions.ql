@@ -40,18 +40,14 @@ private class LenApproxFunc extends SimpleRangeAnalysisExpr, FunctionCall {
  * to be passed to strlen to be exploitable.
  */
 
-/*
- * private class StrlenFunAssumption extends SimpleRangeAnalysisExpr, FunctionCall {
- *  StrlenFunAssumption() { this.getTarget().hasName("strlen") }
- *
- *  override float getLowerBounds() { result = 0 }
- *
- *  override float getUpperBounds() { result = 536870911 }
- *
- *  override predicate dependsOnChild(Expr child) { none() }
- * }
- */
-
+// private class StrlenFunAssumption extends SimpleRangeAnalysisExpr, FunctionCall {
+//   StrlenFunAssumption() {
+//     this.getTarget().hasName("strlen")
+//   }
+//   override float getLowerBounds() { result = 0 }
+//   override float getUpperBounds() { result = 536870912 }
+//   override predicate dependsOnChild(Expr child) { none() }
+// }
 /**
  * Determines if a function's address is taken in the codebase.
  * This indicates that the function may be called while
@@ -184,8 +180,8 @@ predicate safeLowerBound(Expr cast, IntegralType toType) {
     lowerB = lowerBound(cast) and
     lowerB >= typeLowerBound(toType)
   )
-  // comment the exists formula below to speed up the query
   or
+  // comment the exists formula below to speed up the query
   exists(Instruction instr, Bound b, int delta |
     not exists(float knownValue | knownValue = cast.getValue().toFloat()) and
     instr.getUnconvertedResultExpression() = cast and
@@ -204,8 +200,8 @@ predicate safeUpperBound(Expr cast, IntegralType toType) {
     upperB = upperBound(cast) and
     upperB <= typeUpperBound(toType)
   )
-  // comment the exists formula below to speed up the query
   or
+  // comment the exists formula below to speed up the query
   exists(Instruction instr, Bound b, int delta |
     not exists(float knownValue | knownValue = cast.getValue().toFloat()) and
     instr.getUnconvertedResultExpression() = cast and
@@ -224,7 +220,7 @@ predicate safeBounds(Expr cast, IntegralType toType) {
 
 /**
  * Taint tracking from user-controlled inputs to implicit conversions
- * UNUSED: uncomment the code below (near "select") to use
+ * UNUSED: uncomment the code near "select" statement at the bottom to use
  */
 module UnsafeUserInputConversionConfig implements DataFlow::ConfigSig {
   predicate isSource(DataFlow::Node source) {
@@ -306,13 +302,12 @@ where
   // skip some conversions in some equality operations
   not (
     fromType.getSize() <= toType.getSize() and
-    fromType.isSigned() and // should always hold
-    exists(EqualityOperation eq, Expr castHandSide, Expr otherHandSide |
-      castHandSide = eq.getAnOperand() and
-      otherHandSide = eq.getAnOperand() and
-      castHandSide != otherHandSide and
-      castHandSide.getConversion*() = cast and
-      otherHandSide.getValue().toFloat() < typeUpperBound(toType) + typeLowerBound(fromType)
+    exists(EqualityOperation eq, Expr firstHandSide, Expr secondHandSide |
+      firstHandSide = eq.getAnOperand() and
+      secondHandSide = eq.getAnOperand() and
+      firstHandSide != secondHandSide and
+      firstHandSide.getConversion*() = cast and
+      upperBound(secondHandSide) < (typeUpperBound(toType) + typeLowerBound(fromType))
     )
   ) and
   // skip unused function
@@ -326,11 +321,8 @@ where
     addressIsTaken(cast.getEnclosingFunction())
   )
 // Uncomment to report conversions with untrusted inputs only
-/*
- *  and exists(DataFlow::Node source, DataFlow::Node sink |
- *    cast.getExpr() = sink.asExpr() and
- *    UnsafeUserInputConversionFlow::flow(source, sink)
- *  )
- */
-
+// and exists(DataFlow::Node source, DataFlow::Node sink |
+//   cast.getExpr() = sink.asExpr() and
+//   UnsafeUserInputConversionFlow::flow(source, sink)
+// )
 select cast, "Implicit cast from " + fromType + " to " + toType + " (" + problemType + ")"
