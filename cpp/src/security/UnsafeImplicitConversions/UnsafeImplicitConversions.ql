@@ -184,6 +184,7 @@ predicate safeLowerBound(Expr cast, IntegralType toType) {
     lowerB = lowerBound(cast) and
     lowerB >= typeLowerBound(toType)
   )
+  // comment the exists formula below to speed up the query
   or
   exists(Instruction instr, Bound b, int delta |
     not exists(float knownValue | knownValue = cast.getValue().toFloat()) and
@@ -203,6 +204,7 @@ predicate safeUpperBound(Expr cast, IntegralType toType) {
     upperB = upperBound(cast) and
     upperB <= typeUpperBound(toType)
   )
+  // comment the exists formula below to speed up the query
   or
   exists(Instruction instr, Bound b, int delta |
     not exists(float knownValue | knownValue = cast.getValue().toFloat()) and
