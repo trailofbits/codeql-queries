@@ -10,6 +10,7 @@
     void *malloc(size_t);
     void *memset(void*, int, size_t);
     void free(void*);
+    void puts(char*);
 #else
     #include <stdio.h>
     #include <stdlib.h>
@@ -176,6 +177,44 @@ void test17() {
     int val2 = (~val) >> 3;
 }
 
+// Implicit casts in comparisons - widening
+void test18() {
+    int x = -7;
+    if (x > sizeof(int)) { puts("That's why."); }
+}
+
+// Implicit casts in comparisons - reinterpretation
+void test19() {
+    long long x = -7;
+    if (x > sizeof(int)) { puts("That's why."); }
+}
+
+// Implicit cast in comparison, int -> unsigned int
+void test20(int a) {
+    const unsigned int b = 0xffff3502;
+    if (a != b) {  // negative a may wrap to b
+        puts("here");
+        return;
+    }
+}
+
+// Implicit cast in comparison, int -> unsigned int
+void test21(unsigned int a) {
+    int b = -2;
+    if (a != b) {  // b may wrap to a
+        puts("here");
+        return;
+    }
+}
+
+// Implicit cast in comparison, int -> unsigned long long
+void test22(int a) {
+    unsigned long long b = 0xfffffffff0000000;
+    if (a != b) {  // negative a may wrap to b
+        puts("here");
+        return;
+    }
+}
 
 /*
  * Tests for False Positives
@@ -326,6 +365,43 @@ void test_fp15() {
     unsigned short c = (unsigned int)a & b;
 }
 
+void test_fp16(unsigned short a, unsigned short b) {
+    if ( (a-5) < 0) { // promotion to int, possibly unexpected but we are not reporting such issues
+        puts("called");
+    }
+
+    b = b - 5;
+    if (b < 0) {  // no unexpected promotion
+        puts("not called");
+    }
+}
+
+// Safe implicit cast in comparison, int -> unsigned int
+void test_fp17(int a) {
+    unsigned int b = 0xcafe;
+    if (a != b) {  // negative a cannot wrap to c
+        puts("here");
+        return;
+    }
+}
+
+// Safe implicit cast in comparison, unsigned int -> long long
+void test_fp18(unsigned int a) {
+    long long b = -13;
+    if (a != b) {  // large a cannot wrap to b
+        puts("here");
+        return;
+    }
+}
+
+// Safe implicit cast in comparison, int -> unsigned long long
+void test_fp19(int a) {
+    unsigned long long b = 0xffffff1f80000000;
+    if (a != b) {  // large a cannot wrap to b
+        puts("here");
+        return;
+    }
+}
 
 
 int main(int argc, char **argv) {
@@ -349,6 +425,11 @@ int main(int argc, char **argv) {
     test15();
     test16();
     test17();
+    test18();
+    test19();
+    test20((int)argc);
+    test21((unsigned int)argc);
+    test22((int)argc);
 
     test_fp1(large);
     test_fp2();
@@ -368,6 +449,10 @@ int main(int argc, char **argv) {
     test_fp13();
     test_fp14();
     test_fp15();
+    test_fp16((unsigned short)argc, (unsigned short)argv[0]);
+    test_fp17((int)argc);
+    test_fp18((unsigned int)argc);
+    test_fp19((int)argc);
     
     return 0;
 }
