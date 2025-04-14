@@ -218,33 +218,31 @@ predicate safeBounds(Expr cast, IntegralType toType) {
   safeLowerBound(cast, toType) and safeUpperBound(cast, toType)
 }
 
-/**
+/*
  * Taint tracking from user-controlled inputs to implicit conversions
- * UNUSED: uncomment the code near "select" statement at the bottom to use
+ * UNUSED: uncomment code below and the code near "select" statement at the bottom of the file
  */
-module UnsafeUserInputConversionConfig implements DataFlow::ConfigSig {
-  predicate isSource(DataFlow::Node source) {
-    exists(RemoteFlowSourceFunction remoteFlow |
-      remoteFlow = source.asExpr().(Call).getTarget() and
-      remoteFlow.hasRemoteFlowSource(_, _)
-    )
-    or
-    exists(LocalFlowSourceFunction localFlow |
-      localFlow = source.asExpr().(Call).getTarget() and
-      localFlow.hasLocalFlowSource(_, _)
-    )
-  }
 
-  predicate isSink(DataFlow::Node sink) {
-    exists(IntegralConversion cast |
-      cast.isImplicit() and
-      cast.getExpr() = sink.asExpr()
-    )
-  }
-}
-
-module UnsafeUserInputConversionFlow = TaintTracking::Global<UnsafeUserInputConversionConfig>;
-
+// module UnsafeUserInputConversionConfig implements DataFlow::ConfigSig {
+//   predicate isSource(DataFlow::Node source) {
+//     exists(RemoteFlowSourceFunction remoteFlow |
+//       remoteFlow = source.asExpr().(Call).getTarget() and
+//       remoteFlow.hasRemoteFlowSource(_, _)
+//     )
+//     or
+//     exists(LocalFlowSourceFunction localFlow |
+//       localFlow = source.asExpr().(Call).getTarget() and
+//       localFlow.hasLocalFlowSource(_, _)
+//     )
+//   }
+//   predicate isSink(DataFlow::Node sink) {
+//     exists(IntegralConversion cast |
+//       cast.isImplicit() and
+//       cast.getExpr() = sink.asExpr()
+//     )
+//   }
+// }
+// module UnsafeUserInputConversionFlow = TaintTracking::Global<UnsafeUserInputConversionConfig>;
 from
   IntegralConversion cast, IntegralType fromType, IntegralType toType, Expr castExpr,
   string problemType
@@ -320,9 +318,9 @@ where
     or
     addressIsTaken(cast.getEnclosingFunction())
   )
-// Uncomment to report conversions with untrusted inputs only
+// UNUSED: Uncomment to report conversions with untrusted inputs only
 // and exists(DataFlow::Node source, DataFlow::Node sink |
-//   cast.getExpr() = sink.asExpr() and
+//   castExpr = sink.asExpr() and
 //   UnsafeUserInputConversionFlow::flow(source, sink)
 // )
 select cast, "Implicit cast from " + fromType + " to " + toType + " (" + problemType + ")"

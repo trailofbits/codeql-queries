@@ -356,7 +356,7 @@ void test_fp14() {
     uint64_t large = (uint64_t)0x100000001;
     test_func_1((int)large);
     test_func_1(static_cast<int>(large));
-    test_func_1(int{large});
+    test_func_1(int(large));
 }
 
 void test_fp15() {
@@ -449,7 +449,7 @@ int main(int argc, char **argv) {
     test_fp13();
     test_fp14();
     test_fp15();
-    test_fp16((unsigned short)argc, (unsigned short)argv[0]);
+    test_fp16((unsigned short)argc, (unsigned short)argc);
     test_fp17((int)argc);
     test_fp18((unsigned int)argc);
     test_fp19((int)argc);
