@@ -38,6 +38,7 @@ private class LenApproxFunc extends SimpleRangeAnalysisExpr, FunctionCall {
  * Silent findings that require passing large strings to strlen to be exploitable.
  * Remove this class to report unsafe implicit conversions from large strlen results
  */
+
 private class StrlenFunAssumption extends SimpleRangeAnalysisExpr, FunctionCall {
   StrlenFunAssumption() { this.getTarget().hasName("strlen") }
 
@@ -221,6 +222,7 @@ predicate safeBounds(Expr cast, IntegralType toType) {
 /*
  * Taint tracking from user-controlled inputs to implicit conversions
  */
+
 module UserInputToImplicitConversionConfig implements DataFlow::ConfigSig {
   predicate isSource(DataFlow::Node source) {
     exists(RemoteFlowSourceFunction remoteFlow | remoteFlow = source.asExpr().(Call).getTarget())
@@ -240,7 +242,9 @@ module UserInputToImplicitConversionConfig implements DataFlow::ConfigSig {
   }
 }
 
-module UserInputToImplicitConversionConfigFlow = TaintTracking::Global<UserInputToImplicitConversionConfig>;
+module UserInputToImplicitConversionConfigFlow =
+  TaintTracking::Global<UserInputToImplicitConversionConfig>;
+
 import UserInputToImplicitConversionConfigFlow::PathGraph
 
 from
