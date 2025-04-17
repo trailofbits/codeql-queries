@@ -1,11 +1,11 @@
 /**
  * @name Find all problematic implicit casts
  * @description Find all implicit casts that may be problematic. That is, casts that may result in unexpected truncation, reinterpretation or widening of values.
- * @kind problem
+ * @kind path-problem
  * @id tob/cpp/unsafe-implicit-conversions
  * @tags security
- * @problem.severity warning
- * @precision medium
+ * @problem.severity error
+ * @precision high
  */
 
 import cpp
@@ -15,9 +15,8 @@ private import experimental.semmle.code.cpp.rangeanalysis.ExtendedRangeAnalysis
 private import experimental.semmle.code.cpp.models.interfaces.SimpleRangeAnalysisDefinition
 private import experimental.semmle.code.cpp.rangeanalysis.RangeAnalysis
 private import semmle.code.cpp.ir.IR
-private import semmle.code.cpp.ir.ValueNumbering
-import semmle.code.cpp.dataflow.new.TaintTracking
-import semmle.code.cpp.models.interfaces.FlowSource
+private import semmle.code.cpp.ir.dataflow.TaintTracking
+private import semmle.code.cpp.security.FlowSources
 
 /**
  * Models standard I/O functions that return a length value bounded by their size argument
@@ -25,7 +24,7 @@ import semmle.code.cpp.models.interfaces.FlowSource
  */
 private class LenApproxFunc extends SimpleRangeAnalysisExpr, FunctionCall {
   LenApproxFunc() {
-    this.getTarget().hasName(["recvfrom", "recv", "sendto", "send", "read", "write"])
+    this.getTarget().hasName(["recvfrom", "recv", "sendto", "send", "read", "write", "readv"])
   }
 
   override float getLowerBounds() { result = -1 }
@@ -36,18 +35,19 @@ private class LenApproxFunc extends SimpleRangeAnalysisExpr, FunctionCall {
 }
 
 /*
- * Uncomment the class below to silent findings that require large strings
- * to be passed to strlen to be exploitable.
+ * Silent findings that require passing large strings to strlen to be exploitable.
+ * Remove this class to report unsafe implicit conversions from large strlen results
  */
+private class StrlenFunAssumption extends SimpleRangeAnalysisExpr, FunctionCall {
+  StrlenFunAssumption() { this.getTarget().hasName("strlen") }
 
-// private class StrlenFunAssumption extends SimpleRangeAnalysisExpr, FunctionCall {
-//   StrlenFunAssumption() {
-//     this.getTarget().hasName("strlen")
-//   }
-//   override float getLowerBounds() { result = 0 }
-//   override float getUpperBounds() { result = 536870912 }
-//   override predicate dependsOnChild(Expr child) { none() }
-// }
+  override float getLowerBounds() { result = 0 }
+
+  override float getUpperBounds() { result = 536870912 }
+
+  override predicate dependsOnChild(Expr child) { none() }
+}
+
 /**
  * Determines if a function's address is taken in the codebase.
  * This indicates that the function may be called while
@@ -220,32 +220,33 @@ predicate safeBounds(Expr cast, IntegralType toType) {
 
 /*
  * Taint tracking from user-controlled inputs to implicit conversions
- * UNUSED: uncomment code below and the code near "select" statement at the bottom of the file
  */
+module UserInputToImplicitConversionConfig implements DataFlow::ConfigSig {
+  predicate isSource(DataFlow::Node source) {
+    exists(RemoteFlowSourceFunction remoteFlow | remoteFlow = source.asExpr().(Call).getTarget())
+    or
+    exists(LocalFlowSourceFunction localFlow | localFlow = source.asExpr().(Call).getTarget())
+    or
+    source instanceof RemoteFlowSource
+    or
+    source instanceof LocalFlowSource
+  }
 
-// module UnsafeUserInputConversionConfig implements DataFlow::ConfigSig {
-//   predicate isSource(DataFlow::Node source) {
-//     exists(RemoteFlowSourceFunction remoteFlow |
-//       remoteFlow = source.asExpr().(Call).getTarget() and
-//       remoteFlow.hasRemoteFlowSource(_, _)
-//     )
-//     or
-//     exists(LocalFlowSourceFunction localFlow |
-//       localFlow = source.asExpr().(Call).getTarget() and
-//       localFlow.hasLocalFlowSource(_, _)
-//     )
-//   }
-//   predicate isSink(DataFlow::Node sink) {
-//     exists(IntegralConversion cast |
-//       cast.isImplicit() and
-//       cast.getExpr() = sink.asExpr()
-//     )
-//   }
-// }
-// module UnsafeUserInputConversionFlow = TaintTracking::Global<UnsafeUserInputConversionConfig>;
+  predicate isSink(DataFlow::Node sink) {
+    exists(IntegralConversion cast |
+      cast.isImplicit() and
+      cast.getExpr() = sink.asExpr()
+    )
+  }
+}
+
+module UserInputToImplicitConversionConfigFlow = TaintTracking::Global<UserInputToImplicitConversionConfig>;
+import UserInputToImplicitConversionConfigFlow::PathGraph
+
 from
   IntegralConversion cast, IntegralType fromType, IntegralType toType, Expr castExpr,
-  string problemType
+  string problemType, UserInputToImplicitConversionConfigFlow::PathNode source,
+  UserInputToImplicitConversionConfigFlow::PathNode sink
 where
   cast.getExpr() = castExpr and
   // only implicit conversions
@@ -308,7 +309,7 @@ where
       upperBound(secondHandSide) < (typeUpperBound(toType) + typeLowerBound(fromType))
     )
   ) and
-  // skip unused function
+  // skip unused functions
   (
     exists(FunctionCall fc | fc.getTarget() = cast.getEnclosingFunction())
     or
@@ -317,10 +318,9 @@ where
     cast.getEnclosingFunction().getName() = "main"
     or
     addressIsTaken(cast.getEnclosingFunction())
-  )
-// UNUSED: Uncomment to report conversions with untrusted inputs only
-// and exists(DataFlow::Node source, DataFlow::Node sink |
-//   castExpr = sink.asExpr() and
-//   UnsafeUserInputConversionFlow::flow(source, sink)
-// )
-select cast, "Implicit cast from " + fromType + " to " + toType + " (" + problemType + ")"
+  ) and
+  // tainted by user-provided data
+  castExpr = sink.getNode().asExpr() and
+  UserInputToImplicitConversionConfigFlow::flowPath(source, sink)
+select sink.getNode(), source, sink,
+  "Implicit cast from " + fromType + " to " + toType + " (" + problemType + ")"
