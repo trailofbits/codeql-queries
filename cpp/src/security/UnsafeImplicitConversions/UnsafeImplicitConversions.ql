@@ -327,4 +327,5 @@ where
   castExpr = sink.getNode().asExpr() and
   UserInputToImplicitConversionConfigFlow::flowPath(source, sink)
 select sink.getNode(), source, sink,
-  "Implicit cast from " + fromType + " to " + toType + " (" + problemType + ")"
+  "Implicit cast from " + fromType + " to " + toType + " (" + problemType + ") in $@", castExpr,
+  castExpr.toString()
