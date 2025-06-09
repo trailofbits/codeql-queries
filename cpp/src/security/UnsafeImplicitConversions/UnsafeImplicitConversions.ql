@@ -187,7 +187,7 @@ predicate safeLowerBound(Expr cast, IntegralType toType) {
     not exists(float knownValue | knownValue = cast.getValue().toFloat()) and
     instr.getUnconvertedResultExpression() = cast and
     boundedInstruction(instr, b, delta, false, _) and // false = lower bound
-    lowerBound(b.getInstruction().getUnconvertedResultExpression()) + delta >=
+    lowerBound(b.getInstruction().getUnconvertedResultExpression().getExplicitlyConverted()) + delta >=
       typeLowerBound(toType)
   )
 }
@@ -207,7 +207,7 @@ predicate safeUpperBound(Expr cast, IntegralType toType) {
     not exists(float knownValue | knownValue = cast.getValue().toFloat()) and
     instr.getUnconvertedResultExpression() = cast and
     boundedInstruction(instr, b, delta, true, _) and // true = upper bound
-    upperBound(b.getInstruction().getUnconvertedResultExpression()) + delta <=
+    upperBound(b.getInstruction().getUnconvertedResultExpression().getExplicitlyConverted()) + delta <=
       typeUpperBound(toType)
   )
 }
