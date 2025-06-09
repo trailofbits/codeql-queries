@@ -119,14 +119,14 @@ void test7() {
     uint64_t large = get_number();
     uint64_t& x = large;
     uint64_t& y = x;
-    test_func_1(y);
+    test_func_1(y);  // TODO: our taint tracking does not work with references
 }
 
 // Test two args bug
 void test8() {
     unsigned int large = (unsigned int)get_number();
     unsigned int& x = large;
-    test_func_3(large, 22, x);
+    test_func_3(large, 22, x);  // TODO for x: our taint tracking does not work with references
 }
 
 // Test passing by reference
