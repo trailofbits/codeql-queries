@@ -22,7 +22,7 @@ where
 			cn in [
 				"MD2", "MD4", "MD5", "RIPEMD", "SHA1", "Whirlpool", "Streebog",
 				"PBKDF1",
-				"ArcFour", "Blowfish", "CAST", "DES", "IDEA", "Kasumi",
+				"ArcFour", "Blowfish", "CAST", "IDEA", "Kasumi",
 				"Magma", "RC2", "RC4", "TDEA"
 			]
 			and cipherName = cn
