@@ -11,20 +11,35 @@
 
 import cpp
 
-from FunctionCall call
+from FunctionCall call, string functionName, string cipherName
 where
-  call.getTarget()
-      .getQualifiedName()
-      .toLowerCase()
-      .matches([
-          // Hash functions
-          "%md2%", "%md4%", "%md5%", "%ripemd%", "%sha1%", "%whirlpool%", "%streebog%",
-          // KDFs
-          "%pbkdf1%",
-          // Symmetric ciphers
-          "%arcfour%", "%blowfish%", "%cast%", "%des%", "%idea%", "%kasumi%",
-          "%magma%", "%rc2%", "%rc4%", "%tdea%"
-      ])
+	functionName = call.getTarget()
+	  .getQualifiedName()
+	  .toLowerCase()
+	and
+	(
+		exists(string cn |
+			cn in [
+				"MD2", "MD4", "MD5", "RIPEMD", "SHA1", "Whirlpool", "Streebog",
+				"PBKDF1",
+				"ArcFour", "Blowfish", "CAST", "DES", "IDEA", "Kasumi",
+				"Magma", "RC2", "RC4", "TDEA"
+			]
+			and cipherName = cn
+			and functionName.matches("%" + cn.toLowerCase() + "%")
+		)
+		/* match DES, but avoid false positives by not matching common terms containing it:
+			nodes
+			modes
+			codes
+			describe
+			description
+			descriptor
+			design
+			descend
+			destroy
+		*/
+		or cipherName = "DES" and functionName.regexpMatch(".*(?<!no|mo|co)des(?!cri(be|ption|ptor)|ign|cend|troy).*")
+	)
 select call.getLocation(),
-  "Potential use of legacy cryptographic algorithm " + call.getTarget().getQualifiedName() +
-    " detected"
+	"Potential use of legacy cryptographic algorithm " + cipherName + " detected in function name " + call.getTarget().getQualifiedName()
