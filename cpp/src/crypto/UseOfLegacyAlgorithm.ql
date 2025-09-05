@@ -1,7 +1,7 @@
 /**
  * @name Use of legacy cryptographic algorithm
  * @id tob/cpp/use-of-legacy-algorithm
- * @description Detects potential instantiations of legacy cryptographic algorithms
+ * @description Detects potential calls to legacy cryptographic algorithms
  * @kind problem
  * @tags correctness crypto
  * @problem.severity warning
@@ -22,8 +22,7 @@ where
           // KDFs
           "%pbkdf1%",
           // Symmetric ciphers
-          "%arcfour%", "%blowfish%", "%cast%", "%des%", "%idea%", "%kasumi%",
-          "%magma%", "%rc2%", "%rc4%", "%tdea%"
+          "%arcfour%", "%blowfish%", "%kasumi%", "%magma%", "%rc2%", "%rc4%", "%tdea%"
       ])
 select call.getLocation(),
   "Potential use of legacy cryptographic algorithm " + call.getTarget().getQualifiedName() +
