@@ -1,96 +1,331 @@
 /**
- * @name Unsafe implicit integer conversion
+ * @name Find all problematic implicit casts
+ * @description Find all implicit casts that may be problematic. That is, casts that may result in unexpected truncation, reinterpretation or widening of values.
+ * @kind path-problem
  * @id tob/cpp/unsafe-implicit-conversions
- * @description Finds implicit integer casts that may overflow or be truncated, with false positive reduction via Value Range Analysis
- * @kind problem
- * @tags security experimental
- * @problem.severity warning
- * @precision low
- * @security-severity 4.0
- * @group security
- **/
+ * @tags security
+ * @problem.severity error
+ * @precision high
+ */
 
 import cpp
-private import experimental.semmle.code.cpp.rangeanalysis.ExtendedRangeAnalysis
 private import semmle.code.cpp.rangeanalysis.RangeAnalysisUtils
+private import semmle.code.cpp.rangeanalysis.SimpleRangeAnalysis
+private import experimental.semmle.code.cpp.rangeanalysis.ExtendedRangeAnalysis
+private import experimental.semmle.code.cpp.models.interfaces.SimpleRangeAnalysisDefinition
+private import experimental.semmle.code.cpp.rangeanalysis.RangeAnalysis
+private import semmle.code.cpp.ir.IR
+private import semmle.code.cpp.ir.dataflow.TaintTracking
+private import semmle.code.cpp.security.FlowSources
 
+/**
+ * Models standard I/O functions that return a length value bounded by their size argument
+ * with possible -1 error return value
+ */
+private class LenApproxFunc extends SimpleRangeAnalysisExpr, FunctionCall {
+  LenApproxFunc() {
+    this.getTarget().hasName(["recvfrom", "recv", "sendto", "send", "read", "write", "readv"])
+  }
 
+  override float getLowerBounds() { result = -1 }
+
+  override float getUpperBounds() { result = getFullyConvertedUpperBounds(this.getArgument(2)) }
+
+  override predicate dependsOnChild(Expr child) { child = this.getArgument(2) }
+}
+
+/*
+ * Silent findings that require passing large strings to strlen to be exploitable.
+ * Remove this class to report unsafe implicit conversions from large strlen results
+ */
+
+private class StrlenFunAssumption extends SimpleRangeAnalysisExpr, FunctionCall {
+  StrlenFunAssumption() { this.getTarget().hasName("strlen") }
+
+  override float getLowerBounds() { result = 0 }
+
+  override float getUpperBounds() { result = 536870912 }
+
+  override predicate dependsOnChild(Expr child) { none() }
+}
+
+/**
+ * Determines if a function's address is taken in the codebase.
+ * This indicates that the function may be called while
+ * the call is not in the FunctionCall class.
+ */
+predicate addressIsTaken(Function f) {
+  exists(FunctionCall call | call.getAnArgument().getFullyConverted() = f.getAnAccess())
+  or
+  exists(Expr e |
+    e.getFullyConverted() = f.getAnAccess() and
+    e.getType() instanceof FunctionPointerType
+  )
+  or
+  exists(Variable v |
+    v.getInitializer().getExpr().getFullyConverted() = f.getAnAccess() and
+    v.getType() instanceof FunctionPointerType
+  )
+  or
+  exists(ArrayAggregateLiteral arrayInit |
+    arrayInit.getAnElementExpr(_).getFullyConverted() = f.getAnAccess()
+  )
+  or
+  exists(ReturnStmt ret | ret.getExpr().getFullyConverted() = f.getAnAccess())
+}
+
+/**
+ * Propagates argument range information from function calls to function parameters
+ */
+class ConstrainArgs extends SimpleRangeAnalysisDefinition {
+  private Function func;
+  private Parameter param;
+  private FunctionCall call;
+
+  ConstrainArgs() {
+    param.getFunction() = func and
+    call.getTarget() = func and
+    call.getEnclosingFunction() != func and
+    param.getType().getUnspecifiedType() instanceof IntegralType and
+    this = param.getFunction().getEntryPoint() and
+    not addressIsTaken(func)
+  }
+
+  override predicate hasRangeInformationFor(StackVariable v) { v = param }
+
+  override float getLowerBounds(StackVariable v) {
+    v = param and
+    result = getFullyConvertedLowerBounds(call.getArgument(param.getIndex()))
+  }
+
+  override float getUpperBounds(StackVariable v) {
+    v = param and
+    result = getFullyConvertedUpperBounds(call.getArgument(param.getIndex()))
+  }
+
+  override predicate dependsOnExpr(StackVariable v, Expr e) {
+    v = param and
+    e = call.getArgument(param.getIndex())
+  }
+}
+
+/**
+ * Helper to extract left and right operands from bitwise OR operations
+ */
+predicate getLeftRightOrOperands(Expr orExpr, Expr l, Expr r) {
+  l = orExpr.(BitwiseOrExpr).getLeftOperand() and
+  r = orExpr.(BitwiseOrExpr).getRightOperand()
+  or
+  l = orExpr.(AssignOrExpr).getLValue() and
+  r = orExpr.(AssignOrExpr).getRValue()
+}
+
+/**
+ * Provides range analysis for bitwise OR operations with non-negative constants
+ */
+private class ConstantBitwiseOrExprRange extends SimpleRangeAnalysisExpr {
+  ConstantBitwiseOrExprRange() {
+    exists(Expr l, Expr r | getLeftRightOrOperands(this, l, r) |
+      // No operand can be a negative constant
+      not (evaluateConstantExpr(l) < 0 or evaluateConstantExpr(r) < 0)
+    )
+  }
+
+  Expr getLeftOperand() { getLeftRightOrOperands(this, result, _) }
+
+  Expr getRightOperand() { getLeftRightOrOperands(this, _, result) }
+
+  override float getLowerBounds() {
+    // If an operand can have negative values, the lower bound is unconstrained.
+    // Otherwise, the upper bound is the sum of upper bounds.
+    exists(float lLower, float rLower |
+      lLower = getFullyConvertedLowerBounds(this.getLeftOperand()) and
+      rLower = getFullyConvertedLowerBounds(this.getRightOperand()) and
+      (
+        (lLower < 0 or rLower < 0) and
+        result = exprMinVal(this)
+        or
+        result = lLower.maximum(rLower)
+      )
+    )
+  }
+
+  override float getUpperBounds() {
+    // If an operand can have negative values, the upper bound is unconstrained.
+    // Otherwise, the upper bound is the greatest upper bound.
+    exists(float lLower, float lUpper, float rLower, float rUpper |
+      lLower = getFullyConvertedLowerBounds(this.getLeftOperand()) and
+      lUpper = getFullyConvertedUpperBounds(this.getLeftOperand()) and
+      rLower = getFullyConvertedLowerBounds(this.getRightOperand()) and
+      rUpper = getFullyConvertedUpperBounds(this.getRightOperand()) and
+      (
+        (lLower < 0 or rLower < 0) and
+        result = exprMaxVal(this)
+        or
+        result = rUpper + lUpper
+      )
+    )
+  }
+
+  override predicate dependsOnChild(Expr child) {
+    child = this.getLeftOperand() or child = this.getRightOperand()
+  }
+}
+
+/**
+ * Checks if an expression has a safe lower bound for conversion to the given type
+ * using both SimpleRangeAnalysis and IR-based RangeAnalysis
+ */
 predicate safeLowerBound(Expr cast, IntegralType toType) {
-    exists(float lowerB |
-        lowerB = lowerBound(cast)
-        and lowerB >= typeLowerBound(toType)
-    )
+  exists(float lowerB |
+    lowerB = lowerBound(cast) and
+    lowerB >= typeLowerBound(toType)
+  )
+  or
+  // comment the exists formula below to speed up the query
+  exists(Instruction instr, Bound b, int delta |
+    not exists(float knownValue | knownValue = cast.getValue().toFloat()) and
+    instr.getUnconvertedResultExpression() = cast and
+    boundedInstruction(instr, b, delta, false, _) and // false = lower bound
+    lowerBound(b.getInstruction().getUnconvertedResultExpression().getExplicitlyConverted()) + delta >=
+      typeLowerBound(toType)
+  )
 }
 
+/**
+ * Checks if an expression has a safe upper bound for conversion to the given type
+ * using both SimpleRangeAnalysis and IR-based RangeAnalysis
+ */
 predicate safeUpperBound(Expr cast, IntegralType toType) {
-    exists(float upperB |
-        upperB = upperBound(cast)
-        and upperB <= typeUpperBound(toType)
-    )
+  exists(float upperB |
+    upperB = upperBound(cast) and
+    upperB <= typeUpperBound(toType)
+  )
+  or
+  // comment the exists formula below to speed up the query
+  exists(Instruction instr, Bound b, int delta |
+    not exists(float knownValue | knownValue = cast.getValue().toFloat()) and
+    instr.getUnconvertedResultExpression() = cast and
+    boundedInstruction(instr, b, delta, true, _) and // true = upper bound
+    upperBound(b.getInstruction().getUnconvertedResultExpression().getExplicitlyConverted()) + delta <=
+      typeUpperBound(toType)
+  )
 }
 
+/**
+ * Checks if an expression has both safe lower and upper bounds for conversion to the given type
+ */
 predicate safeBounds(Expr cast, IntegralType toType) {
-    safeLowerBound(cast, toType) and safeUpperBound(cast, toType)
+  safeLowerBound(cast, toType) and safeUpperBound(cast, toType)
 }
 
+/*
+ * Taint tracking from user-controlled inputs to implicit conversions
+ */
 
-from IntegralConversion cast, IntegralType fromType, IntegralType toType
+module UserInputToImplicitConversionConfig implements DataFlow::ConfigSig {
+  predicate isSource(DataFlow::Node source) {
+    exists(RemoteFlowSourceFunction remoteFlow | remoteFlow = source.asExpr().(Call).getTarget())
+    or
+    exists(LocalFlowSourceFunction localFlow | localFlow = source.asExpr().(Call).getTarget())
+    or
+    source instanceof RemoteFlowSource
+    or
+    source instanceof LocalFlowSource
+  }
+
+  predicate isSink(DataFlow::Node sink) {
+    exists(IntegralConversion cast |
+      cast.isImplicit() and
+      cast.getExpr() = sink.asExpr()
+    )
+  }
+}
+
+module UserInputToImplicitConversionConfigFlow =
+  TaintTracking::Global<UserInputToImplicitConversionConfig>;
+
+import UserInputToImplicitConversionConfigFlow::PathGraph
+
+from
+  IntegralConversion cast, IntegralType fromType, IntegralType toType, Expr castExpr,
+  string problemType, UserInputToImplicitConversionConfigFlow::PathNode source,
+  UserInputToImplicitConversionConfigFlow::PathNode sink
 where
-    cast.isImplicit()
-    and fromType = cast.getExpr().getExplicitlyConverted().getUnspecifiedType()
-    and toType = cast.getUnspecifiedType()
-    and not toType instanceof BoolType
-
-    and (
-        // truncation
-        fromType.getSize() > toType.getSize()
-        or
-        // reinterpretation
-        (
-            fromType.getSize() = toType.getSize()
-            and
-            (
-                (fromType.isUnsigned() and toType.isSigned())
-                or
-                (fromType.isSigned() and toType.isUnsigned())
-            )
-        )
-        or
-        // widening
-        (
-            fromType.getSize() < toType.getSize() and fromType.isSigned() and toType.isUnsigned()
-        )
+  cast.getExpr() = castExpr and
+  // only implicit conversions
+  cast.isImplicit() and
+  // the cast expression has attached all explicit and implicit casts; we skip all conversions up to the last explicit casts
+  fromType = castExpr.getExplicitlyConverted().getUnspecifiedType() and
+  toType = cast.getUnspecifiedType() and
+  // skip same type casts and casts to bools
+  fromType != toType and
+  not toType instanceof BoolType and
+  // limit findings to only possibly problematic cases
+  (
+    // truncation
+    problemType = "truncation" and
+    fromType.getSize() > toType.getSize() and
+    not safeBounds(castExpr, toType)
+    or
+    // reinterpretation
+    problemType = "reinterpretation" and
+    fromType.getSize() = toType.getSize() and
+    (
+      fromType.isUnsigned() and toType.isSigned() and not safeUpperBound(castExpr, toType)
+      or
+      fromType.isSigned() and toType.isUnsigned() and not safeLowerBound(castExpr, toType)
     )
-    
-    // skip if value is in safe range
-    and not safeBounds(cast.getExpr(), toType)
-
-    and not (
-        // skip conversions in arithmetic operations
-        fromType.getSize() <= toType.getSize() // should always hold
-        and exists(BinaryArithmeticOperation arithmetic |
-            (arithmetic instanceof AddExpr or arithmetic instanceof SubExpr or arithmetic instanceof MulExpr)
-            and arithmetic.getAnOperand().getConversion*() = cast
-        )
+    or
+    // widening
+    fromType.getSize() < toType.getSize() and
+    (
+      problemType = "widening" and
+      fromType.isSigned() and
+      toType.isUnsigned() and
+      not safeLowerBound(castExpr, toType)
+      or
+      // unsafe promotion
+      problemType = "promotion with bitwise complement" and
+      exists(ComplementExpr complement | complement.getOperand().getConversion*() = cast)
     )
-
-    and not (
-        // skip some conversions in equality operations
-        fromType.getSize() <= toType.getSize()
-        and fromType.isSigned() // should always hold
-        and exists(EqualityOperation eq, Expr castHandSide, Expr otherHandSide |
-            castHandSide = eq.getAnOperand()
-            and otherHandSide = eq.getAnOperand()
-            and castHandSide != otherHandSide
-            and castHandSide.getConversion*() = cast
-            and otherHandSide.getValue().toFloat() < typeUpperBound(toType) + typeLowerBound(fromType)
-        )
+  ) and
+  // skip conversions in some arithmetic operations
+  not (
+    fromType.getSize() <= toType.getSize() and
+    exists(BinaryArithmeticOperation arithmetic |
+      (
+        arithmetic instanceof AddExpr or
+        arithmetic instanceof SubExpr or
+        arithmetic instanceof MulExpr
+      ) and
+      arithmetic.getAnOperand().getConversion*() = cast
     )
-    
-    // skip unused function
-    and (
-        exists(FunctionCall fc | fc.getTarget() = cast.getEnclosingFunction())
-        or
-        exists(FunctionAccess fc | fc.getTarget() = cast.getEnclosingFunction())
+  ) and
+  // skip some conversions in some equality operations
+  not (
+    fromType.getSize() <= toType.getSize() and
+    exists(EqualityOperation eq, Expr firstHandSide, Expr secondHandSide |
+      firstHandSide = eq.getAnOperand() and
+      secondHandSide = eq.getAnOperand() and
+      firstHandSide != secondHandSide and
+      firstHandSide.getConversion*() = cast and
+      upperBound(secondHandSide) < (typeUpperBound(toType) + typeLowerBound(fromType))
     )
-select cast, "Implicit cast from " + fromType + " to " + toType + "; bounds are [" + lowerBound(cast.getExpr())+ "; " + upperBound(cast.getExpr()) + "]"
+  ) and
+  // skip unused functions
+  (
+    exists(FunctionCall fc | fc.getTarget() = cast.getEnclosingFunction())
+    or
+    exists(FunctionAccess fc | fc.getTarget() = cast.getEnclosingFunction())
+    or
+    cast.getEnclosingFunction().getName() = "main"
+    or
+    addressIsTaken(cast.getEnclosingFunction())
+  ) and
+  // tainted by user-provided data
+  castExpr = sink.getNode().asExpr() and
+  UserInputToImplicitConversionConfigFlow::flowPath(source, sink)
+select sink.getNode(), source, sink,
+  "Implicit cast from " + fromType + " to " + toType + " (" + problemType + ") in $@", castExpr,
+  castExpr.toString()
