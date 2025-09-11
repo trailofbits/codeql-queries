@@ -94,12 +94,12 @@ predicate configOrConfigPointer(Type t) {
     ) or 
     exists(Type tp | 
         tp.hasQualifiedName("crypto/tls", "Config") and
-        t.(NamedType).getUnderlyingType().(StructType).hasField(_, tp)
+        t.(DefinedType).getUnderlyingType().(StructType).hasField(_, tp)
     ) or 
     exists(Type tp, Type tp2 | 
         tp.hasQualifiedName("crypto/tls", "Config") and
         tp2 = tp.getPointerType+() and
-        t.(NamedType).getUnderlyingType().(StructType).hasField(_, tp2)
+        t.(DefinedType).getUnderlyingType().(StructType).hasField(_, tp2)
     )
 }
 
