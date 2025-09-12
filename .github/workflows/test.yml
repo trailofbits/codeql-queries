@@ -10,8 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - id: init
-        uses: github/codeql-action/init@v3
       - name: Run tests
         run: |
-          ${{ steps.init.outputs.codeql-path }} test run -vvv ./java/test/
+          wget https://github.com/github/codeql-cli-binaries/releases/download/v2.23.0/codeql-linux64.zip
+          unzip codeql-linux64.zip
+          ./codeql/codeql --version
+          ./codeql/codeql pack install ./java/src/
+          ./codeql/codeql pack install ./java/test/
+          ./codeql/codeql test run -vvv ./java/test/
