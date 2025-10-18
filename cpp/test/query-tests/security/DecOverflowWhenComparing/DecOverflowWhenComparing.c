@@ -1,12 +1,13 @@
-#ifndef USE_HEADERS
 #include "../../../include/libc/string_stubs.h"
+#include "../../../include/libc/stdlib.h"
+#include "../../../include/libc/unistd.h"
+#include "../../../include/libc/stdint.h"
 
-#else
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-#endif
+// #include <stdio.h>
+// #include <stdint.h>
+// #include <stdlib.h>
+// #include <string.h>
+
 
 // from https://github.com/apple-oss-distributions/Libinfo/blob/9fce29e5c5edc15d3ecea55116ca17d3f6350603/lookup.subproj/mdns_module.c#L1033C1-L1079C2
 char* _mdns_parse_domain_name(const uint8_t *data, uint32_t datalen)

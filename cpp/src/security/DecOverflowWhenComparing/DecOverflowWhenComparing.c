@@ -3,11 +3,88 @@
 #include <stdlib.h>
 #include <string.h>
 
+size_t min(size_t a, size_t b) {
+	return a < b ? a : b;
+}
+
+void MlasReorderInputNhwc(
+    const float* S,
+    float* D,
+    size_t InputChannels,
+    size_t RowCount,
+    size_t FullRowCount
+    )
+{
+    const size_t BlockSize = FullRowCount % 123;
+
+    //
+    // Iterate over batches of the input size to improve locality.
+    //
+
+    for (size_t OuterRowCountRemaining = RowCount; OuterRowCountRemaining > 0; ) {
+
+        size_t OuterRowCountBatch = 32;
+
+        const size_t OuterRowCountThisIteration = min(OuterRowCountRemaining, OuterRowCountBatch);
+        OuterRowCountRemaining -= OuterRowCountThisIteration;
+
+        //
+        // Iterate over BlockSize batches of the input channels.
+        //
+
+        const float* s = S;
+        float* d = D;
+
+        for (size_t i = InputChannels; i > 0;) {
+
+            const size_t InputChannelsThisIteration = min(i, BlockSize);
+            i -= InputChannelsThisIteration;
+
+            const float* ss = s;
+            float* dd = d;
+            size_t InnerRowCountRemaining = OuterRowCountThisIteration;
+
+            if (InputChannelsThisIteration == BlockSize) {
+
+                if (BlockSize == 8) {
+
+                    while (InnerRowCountRemaining-- > 0) {
+                        ss += InputChannels;
+                        dd += 8;
+                    }
+
+                } else {
+
+                    while (InnerRowCountRemaining-- > 0) {
+                        ss += InputChannels;
+                        dd += 16;
+                    }
+                }
+
+            } else {
+
+                size_t BlockPadding = BlockSize - InputChannelsThisIteration;
+
+                while (InnerRowCountRemaining-- > 0) {
+                    ss += InputChannels;
+                    dd += BlockSize;
+                }
+            }
+
+            s += InputChannelsThisIteration;
+            d += BlockSize * FullRowCount;
+        }
+
+        S += InputChannels * OuterRowCountThisIteration;
+        D += BlockSize * OuterRowCountThisIteration;
+    }
+}
+
 // from https://github.com/apple-oss-distributions/Libinfo/blob/9fce29e5c5edc15d3ecea55116ca17d3f6350603/lookup.subproj/mdns_module.c#L1033C1-L1079C2
 char* _mdns_parse_domain_name(const uint8_t *data, uint32_t datalen)
 {
 	int i = 0, j = 0;
-	uint32_t len;
+	// uint32_t len;
 	uint32_t domainlen = 0;
 	char *domain = NULL;
 
@@ -19,8 +96,8 @@ char* _mdns_parse_domain_name(const uint8_t *data, uint32_t datalen)
 	 */
 	while (datalen-- > 0)
 	{
-		printf("%d\n", len);
-		len = data[i++];
+		// printf("%d\n", len);
+		uint32_t len = data[i++];
 		domainlen += (len + 1);
 		domain = reallocf(domain, domainlen);
 

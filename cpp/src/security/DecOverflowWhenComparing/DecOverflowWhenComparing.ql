@@ -12,8 +12,33 @@
 
 import cpp
 import semmle.code.cpp.ir.IR
+import semmle.code.cpp.rangeanalysis.SimpleRangeAnalysis
 
-from Variable var, VariableAccess varAcc, DecrementOperation dec,
+/**
+ * Find CFG paths from start to end that do not cross over node that is var's lvalue access
+ * TODO: there must be an API for that...
+ */
+predicate successorGuarded(ControlFlowNode start, ControlFlowNode end, Variable var) {
+  start = end
+  or
+  exists(ControlFlowNode interm |
+    start.getASuccessor() = interm and
+
+    // break the path if variable is overwritten
+    not (
+      interm = var.getAnAccess() and
+      interm.(VariableAccess).isLValue()
+    ) and
+
+    (
+      interm.getASuccessor() = end
+      or
+      successorGuarded(interm, end, var)
+    )
+  )
+}
+
+from Variable var, VariableAccess varAcc, PostfixDecrExpr dec,
   VariableAccess varAccAfterOverflow, ComparisonOperation cmp
 where
   // get unsigned variable that is decremented
@@ -28,18 +53,8 @@ where
   cmp.getAnOperand() instanceof Zero and
 
   // only if the variable is used after the comparison
-  cmp.getASuccessor+() = varAccAfterOverflow and
+  successorGuarded(cmp, varAccAfterOverflow, var) and
   cmp.getAnOperand().getAChild*() != varAccAfterOverflow and
-
-  // skip if the variable is overwritten
-  // TODO: handle loops correctly
-  // not exists(VariableAccess varAccLV | varAccLV.isUsedAsLValue() |
-  //   varAccLV = var.getAnAccess() and
-  //   varAccLV != varAcc and
-  //   varAccLV != varAccAfterOverflow and
-  //   cmp.getASuccessor+() = varAccLV and
-  //   varAccAfterOverflow.getAPredecessor+() = varAccLV
-  // ) and
 
   // var-- > 0 (0 < var--) then accesses only in false branch
   // var-- >= 0 then accesses in all branches
@@ -54,4 +69,13 @@ where
     cmp.getAFalseSuccessor().getASuccessor*() = varAccAfterOverflow
   else
     any()
-select cmp, varAccAfterOverflow
+
+  and
+
+  // only if var may possibly be zero during comparison
+  lowerBound(varAcc) = 0
+
+  // skip tests etc
+  and not dec.getFile().getAbsolutePath().toLowerCase().matches(["%test%", "%vendor%", "%third_party%"])
+
+select dec, "Unsigned decrementation in comparison ($@) - $@", cmp, cmp.toString(), varAccAfterOverflow, varAccAfterOverflow.toString()
