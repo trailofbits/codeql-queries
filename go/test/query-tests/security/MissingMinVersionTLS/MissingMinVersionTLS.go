@@ -151,7 +151,8 @@ func main() {
 			c.Init3()
 		}
 	}
-	// OK: config used only for a client
+	// BAD for Go < 1.18: config used for a client (clients default to TLS 1.0)
+	// OK for Go >= 1.18: clients default to TLS 1.2
 	{
 		client := &http.Client{
 			Transport: &http.Transport{

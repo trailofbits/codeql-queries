@@ -10,6 +10,7 @@
 | MissingMinVersionTLS.go:135:10:135:49 | struct literal | TLS.Config.MinVersion is never set for variable $@  | MissingMinVersionTLS.go:136:3:136:3 | c | c |
 | MissingMinVersionTLS.go:142:23:142:62 | struct literal | TLS.Config.MinVersion is never set for variable $@  | MissingMinVersionTLS.go:142:3:142:3 | c | c |
 | MissingMinVersionTLS.go:149:23:149:62 | struct literal | TLS.Config.MinVersion is never set for variable $@  | MissingMinVersionTLS.go:149:3:149:3 | c | c |
+| MissingMinVersionTLS.go:159:21:161:5 | struct literal | TLS.Config.MinVersion is never set for variable $@  | MissingMinVersionTLS.go:157:3:157:8 | client | client |
 | MissingMinVersionTLS.go:168:16:168:55 | struct literal | TLS.Config.MinVersion is never set for variable $@  | MissingMinVersionTLS.go:167:3:167:5 | srv | srv |
 | MissingMinVersionTLS.go:171:16:171:55 | struct literal | TLS.Config.MinVersion is never set for variable $@  | MissingMinVersionTLS.go:170:3:170:6 | srv2 | srv2 |
 | MissingMinVersionTLS.go:176:9:176:48 | struct literal | TLS.Config.MinVersion is never set for variable $@  | MissingMinVersionTLS.go:182:3:182:6 | srv3 | srv3 |
