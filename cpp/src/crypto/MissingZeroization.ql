@@ -13,14 +13,15 @@ import cpp
 import trailofbits.crypto.libraries
 import semmle.code.cpp.dataflow.new.DataFlow
 
-// TODO: Handle `BN_clear_free` as well.
 predicate isCleared(Expr bignum) {
   exists(BN_clear clear |
     DataFlow::localFlow(DataFlow::exprNode(bignum), DataFlow::exprNode(clear.getArgument(0)))
+  ) or
+  exists(BN_clear_free clear_free |
+    DataFlow::localFlow(DataFlow::exprNode(bignum), DataFlow::exprNode(clear_free.getArgument(0)))
   )
 }
 
-// TODO: Add support for remaining OpenSSL PRNG functions.
 predicate isRandom(Expr bignum) {
   exists(BN_rand rand |
     DataFlow::localFlow(DataFlow::exprNode(bignum), DataFlow::exprNode(rand.getArgument(0)))
@@ -29,4 +30,5 @@ predicate isRandom(Expr bignum) {
 
 from BIGNUM bignum
 where isRandom(bignum) and not isCleared(bignum)
-select bignum.getLocation(), "Bignum is initialized with random data but is not zeroized before it goes out of scope"
+select bignum.getLocation(),
+  "Bignum is initialized with random data but is not zeroized before it goes out of scope"
