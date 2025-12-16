@@ -66,70 +66,41 @@ class BIGNUM extends FunctionCall {
 // BN_CTX *BN_CTX_new(void);
 class BN_CTX_new extends CustomAllocator {
   BN_CTX_new() {
-    this.getName() = "BN_CTX_new" and
-    dealloc instanceof BN_CTX_free
-  }
-}
-
-// BN_CTX *BN_CTX_secure_new(void);
-class BN_CTX_secure_new extends CustomAllocator {
-  BN_CTX_secure_new() {
-    this.getName() = "BN_CTX_secure_new" and
+    this.getQualifiedName().matches("BN\\_CTX_new%")
+    or
+    this.getQualifiedName().matches("BN\\_CTX\\_secure\\_new%") and
     dealloc instanceof BN_CTX_free
   }
 }
 
 // void BN_CTX_free(BN_CTX *c);
 class BN_CTX_free extends CustomDeallocator {
-  BN_CTX_free() { this.getName() = "BN_CTX_free" }
+  BN_CTX_free() { this.getQualifiedName() = "BN_CTX_free" }
 
   override int getPointer() { result = 0 }
 }
 
 // void BN_CTX_start(BN_CTX *ctx);
-class BN_CTX_start extends Expr {
-  BN_CTX_start() {
-    exists(FunctionCall fc |
-      fc = this and
-      fc.getTarget().getName() = "BN_CTX_start"
-    )
-  }
+class BN_CTX_start extends FunctionCall {
+  BN_CTX_start() { this.getTarget().getName() = "BN_CTX_start" }
 
-  Expr getContext() { result = this.(FunctionCall).getArgument(0) }
+  Expr getContext() { result = this.getArgument(0) }
 }
 
 // void BN_CTX_end(BN_CTX *ctx);
-class BN_CTX_end extends Expr {
-  BN_CTX_end() {
-    exists(FunctionCall fc |
-      fc = this and
-      fc.getTarget().getName() = "BN_CTX_end"
-    )
-  }
+class BN_CTX_end extends FunctionCall {
+  BN_CTX_end() { this.getTarget().getName() = "BN_CTX_end" }
 
-  Expr getContext() { result = this.(FunctionCall).getArgument(0) }
+  Expr getContext() { result = this.getArgument(0) }
 }
 
 // BIGNUM *BN_CTX_get(BN_CTX *ctx);
-class BN_CTX_get extends Expr {
-  BN_CTX_get() {
-    exists(FunctionCall fc |
-      fc = this and
-      fc.getTarget().getName() = "BN_CTX_get"
-    )
-  }
+class BN_CTX_get extends FunctionCall {
+  BN_CTX_get() { this.getTarget().getName() = "BN_CTX_get" }
 
-  Expr getContext() { result = this.(FunctionCall).getArgument(0) }
+  Expr getContext() { result = this.getArgument(0) }
 }
 
-class BN_CTX extends Expr {
-  BN_CTX() {
-    exists(FunctionCall fc |
-      fc = this and
-      (
-        fc.getTarget() instanceof BN_CTX_new or
-        fc.getTarget() instanceof BN_CTX_secure_new
-      )
-    )
-  }
+class BN_CTX extends FunctionCall {
+  BN_CTX() { this.getTarget() instanceof BN_CTX_new }
 }

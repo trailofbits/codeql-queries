@@ -32,6 +32,32 @@ int BN_rand(BIGNUM *rnd, int bits, int top, int bottom) {
   return 1;
 }
 
+// BN_CTX functions
+#define BN_CTX int
+
+BN_CTX *BN_CTX_new(void) {
+  static BN_CTX ctx = 1;
+  return &ctx;
+}
+
+BN_CTX *BN_CTX_secure_new(void) {
+  static BN_CTX ctx = 1;
+  return &ctx;
+}
+
+void BN_CTX_free(BN_CTX *c) {
+}
+
+void BN_CTX_start(BN_CTX *ctx) {
+}
+
+void BN_CTX_end(BN_CTX *ctx) {
+}
+
+BIGNUM *BN_CTX_get(BN_CTX *ctx) {
+  return &BN;
+}
+
 # ifdef  __cplusplus
 }
 #endif

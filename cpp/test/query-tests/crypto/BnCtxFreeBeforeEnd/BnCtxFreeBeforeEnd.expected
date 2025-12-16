@@ -1,0 +1,12 @@
+edges
+| test.c:13:16:13:18 | ctx | test.c:15:15:15:17 | ctx | provenance |  |
+| test.c:34:16:34:18 | ctx | test.c:40:15:40:17 | ctx | provenance |  |
+nodes
+| test.c:13:16:13:18 | ctx | semmle.label | ctx |
+| test.c:15:15:15:17 | ctx | semmle.label | ctx |
+| test.c:34:16:34:18 | ctx | semmle.label | ctx |
+| test.c:40:15:40:17 | ctx | semmle.label | ctx |
+subpaths
+#select
+| test.c:15:3:15:13 | call to BN_CTX_free | test.c:13:16:13:18 | ctx | test.c:15:15:15:17 | ctx | BN_CTX_free called at line 15 before BN_CTX_end after BN_CTX_start at line 13 |
+| test.c:40:3:40:13 | call to BN_CTX_free | test.c:34:16:34:18 | ctx | test.c:40:15:40:17 | ctx | BN_CTX_free called at line 40 before BN_CTX_end after BN_CTX_start at line 34 |

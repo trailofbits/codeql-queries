@@ -15,16 +15,18 @@ import semmle.code.cpp.dataflow.new.DataFlow
 
 predicate isCleared(Expr bignum) {
   exists(BN_clear clear |
-    DataFlow::localFlow(DataFlow::exprNode(bignum), DataFlow::exprNode(clear.getArgument(0)))
-  ) or
-  exists(BN_clear_free clear_free |
-    DataFlow::localFlow(DataFlow::exprNode(bignum), DataFlow::exprNode(clear_free.getArgument(0)))
+    DataFlow::localFlow(DataFlow::exprNode(bignum), DataFlow::exprNode(clear.getBignum()))
+  )
+  or
+  exists(CustomDeallocatorCall clear_free |
+    clear_free.getTarget() instanceof BN_clear_free and
+    DataFlow::localFlow(DataFlow::exprNode(bignum), DataFlow::exprNode(clear_free.getPointer()))
   )
 }
 
 predicate isRandom(Expr bignum) {
   exists(BN_rand rand |
-    DataFlow::localFlow(DataFlow::exprNode(bignum), DataFlow::exprNode(rand.getArgument(0)))
+    DataFlow::localFlow(DataFlow::exprNode(bignum), DataFlow::exprNode(rand.getBignum()))
   )
 }
 
