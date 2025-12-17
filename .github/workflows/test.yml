@@ -1,19 +1,22 @@
 name: CodeQL queries test
+
 on:
   pull_request:
   push:
     branches:
       - main
+
 jobs:
-  test:
-    name: Run CodeQL query tests
+  main:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - id: init
-        uses: github/codeql-action/init@v3
-      - name: Run tests
-        run: |
-          ${{ steps.init.outputs.codeql-path }} test run ./cpp/test/
-          ${{ steps.init.outputs.codeql-path }} test run ./go/test/
-          ${{ steps.init.outputs.codeql-path }} test run ./java/test/
+      - uses: actions/checkout@v6
+      - uses: trailofbits/setup-codeql@main
+        with:
+          version: '2.23.8'
+          platform: 'linux64'
+          checksum: 'e61bc8aa8d86d45acd9d1c36629a12bbfb3365cd07a31666a2ebc91c6a1940b2'
+      - run: |
+          codeql test run --threads=0 ./cpp/test/
+          codeql test run --threads=0 ./go/test/
+          codeql test run --threads=0 ./java/test/
