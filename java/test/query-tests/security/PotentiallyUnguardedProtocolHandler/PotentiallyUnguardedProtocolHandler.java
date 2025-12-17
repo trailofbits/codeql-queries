@@ -50,7 +50,45 @@ public class PotentiallyUnguardedProtocolHandler {
     }
 
     public void safe4() throws IOException, URISyntaxException {
-        // hardcoded, no untrusted input
         Desktop.getDesktop().browse(new URI("https://example.com"));
+    }
+
+    // rundll32 test cases
+    public void bad4_rundll32(HttpServletRequest request) throws IOException {
+        String url = request.getParameter("url");
+        // Single string command with concatenation
+        Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
+    }
+
+    public void bad5_rundll32(String userInput) throws IOException {
+        // Array-based command
+        String[] cmd = { "rundll32", "url.dll,FileProtocolHandler", userInput };
+        Runtime.getRuntime().exec(cmd);
+    }
+
+    public void bad6_rundll32(HttpServletRequest request) throws IOException {
+        String url = request.getParameter("url");
+        // ProcessBuilder with list
+        ProcessBuilder pb = new ProcessBuilder("rundll32", "url.dll,FileProtocolHandler", url);
+        pb.start();
+    }
+
+    public void safe5_rundll32(HttpServletRequest request) throws IOException, URISyntaxException {
+        String url = request.getParameter("url");
+        URI uri = new URI(url);
+        if (uri.getScheme().equals("https") || uri.getScheme().equals("http")) {
+            Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
+        }
+    }
+
+    public void safe6_rundll32(String userInput) throws IOException {
+        if (userInput.startsWith("https://") || userInput.startsWith("http://")) {
+            String[] cmd = { "rundll32", "url.dll,FileProtocolHandler", userInput };
+            Runtime.getRuntime().exec(cmd);
+        }
+    }
+
+    public void safe7_rundll32() throws IOException {
+        Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler https://example.com");
     }
 }
