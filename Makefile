@@ -12,10 +12,10 @@ format-check:
 
 pack-install:
 	find . -iname "qlpack.yml" -exec \
-		sh -c 'codeql pack install $$(dirname "$$1")' sh {} \;
+	  sh -c 'codeql pack install $$(dirname "$$1")' sh {} \;
 
 pack-upgrade:
 	find . -iname "qlpack.yml" -exec \
-		sh -c 'codeql pack upgrade $$(dirname "$$1")' sh {} \;
+	  sh -c 'codeql pack upgrade $$(dirname "$$1")' sh {} \;
 
 .PHONY: test format format-check pack-install pack-upgrade
