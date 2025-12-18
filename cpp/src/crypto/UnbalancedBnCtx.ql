@@ -32,14 +32,11 @@ predicate hasMatchingStart(BN_CTX_end end) {
 
 from FunctionCall call, string message
 where
-  (
-    call instanceof BN_CTX_start and
-    not hasMatchingEnd(call) and
-    message = "BN_CTX_start called without corresponding BN_CTX_end"
-  ) or
-  (
-    call instanceof BN_CTX_end and
-    not hasMatchingStart(call) and
-    message = "BN_CTX_end called without corresponding BN_CTX_start"
-  )
+  call instanceof BN_CTX_start and
+  not hasMatchingEnd(call) and
+  message = "BN_CTX_start called without corresponding BN_CTX_end"
+  or
+  call instanceof BN_CTX_end and
+  not hasMatchingStart(call) and
+  message = "BN_CTX_end called without corresponding BN_CTX_start"
 select call.getLocation(), message
