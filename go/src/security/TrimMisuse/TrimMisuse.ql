@@ -16,22 +16,21 @@ import semmle.go.dataflow.DataFlow
 /*
  * Flows from a string to TrimFamilyCall cutSet argument
  */
+
 module Trim2ndArgConfig implements DataFlow::ConfigSig {
-  predicate isSource(DataFlow::Node source) {
-    source.asExpr() instanceof StringLit
-  }
+  predicate isSource(DataFlow::Node source) { source.asExpr() instanceof StringLit }
 
   predicate isSink(DataFlow::Node sink) {
-    exists(TrimFamilyCall trimCall | 
-      sink.asExpr() = trimCall.getCutSetArg()
-    )
+    exists(TrimFamilyCall trimCall | sink.asExpr() = trimCall.getCutSetArg())
   }
 }
+
 module Trim2ndArgFlow = DataFlow::Global<Trim2ndArgConfig>;
 
 /*
  * Calls to Trim methods that we are interested in
  */
+
 class TrimFamilyCall extends DataFlow::CallNode {
   TrimFamilyCall() {
     this.getTarget().hasQualifiedName("strings", ["TrimRight", "TrimLeft", "Trim"])
@@ -39,37 +38,30 @@ class TrimFamilyCall extends DataFlow::CallNode {
     this.getTarget().hasQualifiedName("bytes", ["TrimRight", "TrimLeft", "Trim"])
   }
 
-  Expr getCutSetArg() {
-    result = this.getArgument(1).asExpr()
-  }
-
+  Expr getCutSetArg() { result = this.getArgument(1).asExpr() }
 }
 
 from TrimFamilyCall trimCall, StringLit cutset
 where
   // get 2nd argument value, if possible
   exists(DataFlow::Node source, DataFlow::Node sink |
-    Trim2ndArgFlow::flow(source, sink)
-    and source.asExpr() = cutset
-    and sink.asExpr() = trimCall.getCutSetArg()
-  )
-  
-  and (
+    Trim2ndArgFlow::flow(source, sink) and
+    source.asExpr() = cutset and
+    sink.asExpr() = trimCall.getCutSetArg()
+  ) and
+  (
     // repeated characters imply the bug
     cutset.getValue().length() != unique(string c | c = cutset.getValue().charAt(_) | c).length()
-
     or
-    (
     // long strings are considered suspicious
-    cutset.getValue().length() > 2
-
+    cutset.getValue().length() > 2 and
     // at least one alphanumeric
-    and exists(cutset.getValue().regexpFind("[a-zA-Z0-9]{2}", _, _))
-
+    exists(cutset.getValue().regexpFind("[a-zA-Z0-9]{2}", _, _)) and
     // exclude probable false-positives
-    and not cutset.getValue().matches("%1234567%")
-    and not cutset.getValue().matches("%abcdefghijklmnopqrstuvwxyz%")
-    )
+    not cutset.getValue().matches("%1234567%") and
+    not cutset.getValue().matches("%abcdefghijklmnopqrstuvwxyz%")
   )
-  
-select trimCall, trimCall.getTarget().getName() + " will consider the second argument ($@) as a list of elements, and not as indivisible string.", cutset, cutset.getValue()
+select trimCall,
+  trimCall.getTarget().getName() +
+    " will consider the second argument ($@) as a list of elements, and not as indivisible string.",
+  cutset, cutset.getValue()

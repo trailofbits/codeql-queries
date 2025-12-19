@@ -103,16 +103,21 @@ codeql resolve packs | grep trailofbits
 #### Before committing
 
 Run tests:
+
 ```sh
-cd codeql-queries
-codeql test run ./cpp/test
-codeql test run ./go/test
-codeql test run ./java/test
+make test
 ```
 
-Update dependencies:
+Format queries:
+
 ```sh
-bash ./scripts/install_all.sh
+make format
+```
+
+Install dependencies:
+
+```sh
+make install
 ```
 
 Generate query tables and copy-paste it to README.md file

@@ -13,7 +13,6 @@
 import cpp
 import semmle.code.cpp.dataflow.new.DataFlow
 
-
 /* List from https://man7.org/linux/man-pages/man3/stdio.3.html */
 class StdioFunction extends Function {
   StdioFunction() {
@@ -53,24 +52,23 @@ predicate isAsyncUnsafe(Function signalHandler) {
  */
 module HandlerToSignalConfiguration implements DataFlow::ConfigSig {
   predicate isSource(DataFlow::Node source) {
-    source.asExpr() = any(Function f || f.getAnAccess())
+    source.asExpr() = any(Function f | | f.getAnAccess())
   }
 
-  predicate isSink(DataFlow::Node sink) {
-    sink = sink
-  }
+  predicate isSink(DataFlow::Node sink) { sink = sink }
 }
+
 module HandlerToSignal = DataFlow::Global<HandlerToSignalConfiguration>;
 
 /**
  * signal(SIGX, signalHandler)
- */ 
+ */
 predicate isSignal(FunctionCall signalCall, Function signalHandler) {
-  signalCall.getTarget().getName() = "signal"
-  and exists(DataFlow::Node source, DataFlow::Node sink |
-    HandlerToSignal::flow(source, sink)
-    and source.asExpr() = signalHandler.getAnAccess()
-    and sink.asExpr() = signalCall.getArgument(1)
+  signalCall.getTarget().getName() = "signal" and
+  exists(DataFlow::Node source, DataFlow::Node sink |
+    HandlerToSignal::flow(source, sink) and
+    source.asExpr() = signalHandler.getAnAccess() and
+    sink.asExpr() = signalCall.getArgument(1)
   )
 }
 
@@ -80,36 +78,34 @@ predicate isSignal(FunctionCall signalCall, Function signalHandler) {
  */
 predicate isSigaction(FunctionCall sigactionCall, Function signalHandler, Variable sigactVar) {
   exists(Struct sigactStruct, Field handlerField, DataFlow::Node source, DataFlow::Node sink |
-    sigactionCall.getTarget().getName() = "sigaction"
-    and sigactionCall.getArgument(1).getAChild*() = sigactVar.getAnAccess()
-
+    sigactionCall.getTarget().getName() = "sigaction" and
+    sigactionCall.getArgument(1).getAChild*() = sigactVar.getAnAccess() and
     // struct sigaction with the handler func
-    and sigactStruct.getName() = "sigaction"
-    and handlerField.getName() = ["sa_handler", "sa_sigaction", "__sa_handler", "__sa_sigaction", "__sigaction_u"]
-    and (
+    sigactStruct.getName() = "sigaction" and
+    handlerField.getName() =
+      ["sa_handler", "sa_sigaction", "__sa_handler", "__sa_sigaction", "__sigaction_u"] and
+    (
       handlerField = sigactStruct.getAField()
       or
       exists(Union u | u.getAField() = handlerField and u = sigactStruct.getAField().getType())
-    )
-    
-    and (
+    ) and
+    (
       // sigactVar.sa_handler = &signalHandler
       exists(Assignment a, ValueFieldAccess vfa |
-        vfa.getTarget() = handlerField
-        and vfa.getQualifier+() = sigactVar.getAnAccess()
-        and a.getLValue() = vfa.getAChild*()
-
-        and source.asExpr() = signalHandler.getAnAccess()
-        and sink.asExpr() = a.getRValue()
-        and HandlerToSignal::flow(source, sink)
+        vfa.getTarget() = handlerField and
+        vfa.getQualifier+() = sigactVar.getAnAccess() and
+        a.getLValue() = vfa.getAChild*() and
+        source.asExpr() = signalHandler.getAnAccess() and
+        sink.asExpr() = a.getRValue() and
+        HandlerToSignal::flow(source, sink)
       )
       or
       // struct sigaction sigactVar = {.sa_sigaction = signalHandler};
       exists(ClassAggregateLiteral initLit |
-        sigactVar.getInitializer().getExpr() = initLit
-        and source.asExpr() = signalHandler.getAnAccess()
-        and sink.asExpr() = initLit.getAFieldExpr(handlerField).getAChild*()
-        and HandlerToSignal::flow(source, sink)
+        sigactVar.getInitializer().getExpr() = initLit and
+        source.asExpr() = signalHandler.getAnAccess() and
+        sink.asExpr() = initLit.getAFieldExpr(handlerField).getAChild*() and
+        HandlerToSignal::flow(source, sink)
       )
     )
   )
@@ -126,28 +122,24 @@ predicate isSignalDeliveryBlocked(Variable sigactVar) {
   )
   or
   exists(Field mask |
-    mask.getName() = "sa_mask"
-    and exists(sigactVar.getInitializer().getExpr().(ClassAggregateLiteral).getAFieldExpr(mask))
+    mask.getName() = "sa_mask" and
+    exists(sigactVar.getInitializer().getExpr().(ClassAggregateLiteral).getAFieldExpr(mask))
   )
 }
 
-string deliveryNotBlockedMsg() {
-  result = "Moreover, delivery of new signals may be not blocked. "
-}
+string deliveryNotBlockedMsg() { result = "Moreover, delivery of new signals may be not blocked. " }
 
 from FunctionCall fc, Function signalHandler, string msg
 where
-  isAsyncUnsafe(signalHandler)
-  and (
-    (isSignal(fc, signalHandler) and msg = deliveryNotBlockedMsg())
+  isAsyncUnsafe(signalHandler) and
+  (
+    isSignal(fc, signalHandler) and msg = deliveryNotBlockedMsg()
     or
     exists(Variable sigactVar |
-      isSigaction(fc, signalHandler, sigactVar)
-      and if isSignalDeliveryBlocked(sigactVar) then
-      msg = ""
-      else
-      msg = deliveryNotBlockedMsg()
+      isSigaction(fc, signalHandler, sigactVar) and
+      if isSignalDeliveryBlocked(sigactVar) then msg = "" else msg = deliveryNotBlockedMsg()
     )
   )
-select signalHandler, "$@ is a non-trivial signal handler that uses not async-safe functions. " + msg +
-  "Handler is registered by $@.", signalHandler, signalHandler.toString(), fc, fc.toString()
+select signalHandler,
+  "$@ is a non-trivial signal handler that uses not async-safe functions. " + msg +
+    "Handler is registered by $@.", signalHandler, signalHandler.toString(), fc, fc.toString()

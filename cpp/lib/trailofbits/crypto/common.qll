@@ -1,6 +1,5 @@
 import common.InitUpdateFinalPattern
 import common.SymmetricCipherContext
-
 import common.Csprng
 import common.ErrorCode
 import common.HashFunction

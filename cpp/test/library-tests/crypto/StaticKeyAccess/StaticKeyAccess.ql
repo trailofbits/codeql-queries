@@ -1,5 +1,5 @@
 import cpp
 import trailofbits.crypto.libraries
 
-
-from StaticKeyAccess key select key
+from StaticKeyAccess key
+select key

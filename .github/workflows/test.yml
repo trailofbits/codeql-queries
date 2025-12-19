@@ -16,7 +16,5 @@ jobs:
           version: '2.23.8'
           platform: 'linux64'
           checksum: 'e61bc8aa8d86d45acd9d1c36629a12bbfb3365cd07a31666a2ebc91c6a1940b2'
-      - run: |
-          codeql test run --threads=0 ./cpp/test/
-          codeql test run --threads=0 ./go/test/
-          codeql test run --threads=0 ./java/test/
+      - run: make format-check
+      - run: make test

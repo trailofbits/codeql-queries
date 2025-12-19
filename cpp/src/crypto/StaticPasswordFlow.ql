@@ -13,9 +13,7 @@ import cpp
 import trailofbits.crypto.libraries
 import semmle.code.cpp.dataflow.new.DataFlow
 
-from
-  DataFlow::Node source, DataFlow::Node sink,
-  StrongPasswordSink random
+from DataFlow::Node source, DataFlow::Node sink, StrongPasswordSink random
 where
   StaticPasswordFlow::flow(source, sink) and
   random = sink.asExpr()
