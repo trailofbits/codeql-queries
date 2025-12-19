@@ -1,0 +1,52 @@
+edges
+| PotentiallyUnguardedProtocolHandler.java:10:22:10:48 | getParameter(...) : String | PotentiallyUnguardedProtocolHandler.java:11:45:11:47 | url : String | provenance | Src:MaD:46190  |
+| PotentiallyUnguardedProtocolHandler.java:11:45:11:47 | url : String | PotentiallyUnguardedProtocolHandler.java:11:37:11:48 | new URI(...) | provenance | MaD:44428 Sink:MaD:43969 |
+| PotentiallyUnguardedProtocolHandler.java:20:22:20:48 | getParameter(...) : String | PotentiallyUnguardedProtocolHandler.java:21:27:21:29 | url : String | provenance | Src:MaD:46190  |
+| PotentiallyUnguardedProtocolHandler.java:21:19:21:30 | new URI(...) : URI | PotentiallyUnguardedProtocolHandler.java:23:41:23:43 | uri | provenance | Sink:MaD:43969 |
+| PotentiallyUnguardedProtocolHandler.java:21:27:21:29 | url : String | PotentiallyUnguardedProtocolHandler.java:21:19:21:30 | new URI(...) : URI | provenance | MaD:44428 |
+| PotentiallyUnguardedProtocolHandler.java:34:22:34:48 | getParameter(...) : String | PotentiallyUnguardedProtocolHandler.java:35:27:35:29 | url : String | provenance | Src:MaD:46190  |
+| PotentiallyUnguardedProtocolHandler.java:35:19:35:30 | new URI(...) : URI | PotentiallyUnguardedProtocolHandler.java:39:41:39:43 | uri | provenance | Sink:MaD:43969 |
+| PotentiallyUnguardedProtocolHandler.java:35:27:35:29 | url : String | PotentiallyUnguardedProtocolHandler.java:35:19:35:30 | new URI(...) : URI | provenance | MaD:44428 |
+| PotentiallyUnguardedProtocolHandler.java:58:22:58:48 | getParameter(...) : String | PotentiallyUnguardedProtocolHandler.java:60:35:60:79 | ... + ... | provenance | Src:MaD:46190 Sink:MaD:44131 |
+| PotentiallyUnguardedProtocolHandler.java:77:22:77:48 | getParameter(...) : String | PotentiallyUnguardedProtocolHandler.java:80:39:80:83 | ... + ... | provenance | Src:MaD:46190 Sink:MaD:44131 |
+| PotentiallyUnguardedProtocolHandler.java:97:22:97:48 | getParameter(...) : String | PotentiallyUnguardedProtocolHandler.java:98:35:98:51 | ... + ... | provenance | Src:MaD:46190 Sink:MaD:44131 |
+| PotentiallyUnguardedProtocolHandler.java:107:22:107:48 | getParameter(...) : String | PotentiallyUnguardedProtocolHandler.java:110:39:110:55 | ... + ... | provenance | Src:MaD:46190 Sink:MaD:44131 |
+| PotentiallyUnguardedProtocolHandler.java:120:22:120:48 | getParameter(...) : String | PotentiallyUnguardedProtocolHandler.java:121:35:121:47 | ... + ... | provenance | Src:MaD:46190 Sink:MaD:44131 |
+| PotentiallyUnguardedProtocolHandler.java:130:22:130:48 | getParameter(...) : String | PotentiallyUnguardedProtocolHandler.java:132:39:132:60 | ... + ... | provenance | Src:MaD:46190 Sink:MaD:44131 |
+nodes
+| PotentiallyUnguardedProtocolHandler.java:10:22:10:48 | getParameter(...) : String | semmle.label | getParameter(...) : String |
+| PotentiallyUnguardedProtocolHandler.java:11:37:11:48 | new URI(...) | semmle.label | new URI(...) |
+| PotentiallyUnguardedProtocolHandler.java:11:45:11:47 | url : String | semmle.label | url : String |
+| PotentiallyUnguardedProtocolHandler.java:20:22:20:48 | getParameter(...) : String | semmle.label | getParameter(...) : String |
+| PotentiallyUnguardedProtocolHandler.java:21:19:21:30 | new URI(...) : URI | semmle.label | new URI(...) : URI |
+| PotentiallyUnguardedProtocolHandler.java:21:27:21:29 | url : String | semmle.label | url : String |
+| PotentiallyUnguardedProtocolHandler.java:23:41:23:43 | uri | semmle.label | uri |
+| PotentiallyUnguardedProtocolHandler.java:34:22:34:48 | getParameter(...) : String | semmle.label | getParameter(...) : String |
+| PotentiallyUnguardedProtocolHandler.java:35:19:35:30 | new URI(...) : URI | semmle.label | new URI(...) : URI |
+| PotentiallyUnguardedProtocolHandler.java:35:27:35:29 | url : String | semmle.label | url : String |
+| PotentiallyUnguardedProtocolHandler.java:39:41:39:43 | uri | semmle.label | uri |
+| PotentiallyUnguardedProtocolHandler.java:58:22:58:48 | getParameter(...) : String | semmle.label | getParameter(...) : String |
+| PotentiallyUnguardedProtocolHandler.java:60:35:60:79 | ... + ... | semmle.label | ... + ... |
+| PotentiallyUnguardedProtocolHandler.java:77:22:77:48 | getParameter(...) : String | semmle.label | getParameter(...) : String |
+| PotentiallyUnguardedProtocolHandler.java:80:39:80:83 | ... + ... | semmle.label | ... + ... |
+| PotentiallyUnguardedProtocolHandler.java:97:22:97:48 | getParameter(...) : String | semmle.label | getParameter(...) : String |
+| PotentiallyUnguardedProtocolHandler.java:98:35:98:51 | ... + ... | semmle.label | ... + ... |
+| PotentiallyUnguardedProtocolHandler.java:107:22:107:48 | getParameter(...) : String | semmle.label | getParameter(...) : String |
+| PotentiallyUnguardedProtocolHandler.java:110:39:110:55 | ... + ... | semmle.label | ... + ... |
+| PotentiallyUnguardedProtocolHandler.java:120:22:120:48 | getParameter(...) : String | semmle.label | getParameter(...) : String |
+| PotentiallyUnguardedProtocolHandler.java:121:35:121:47 | ... + ... | semmle.label | ... + ... |
+| PotentiallyUnguardedProtocolHandler.java:130:22:130:48 | getParameter(...) : String | semmle.label | getParameter(...) : String |
+| PotentiallyUnguardedProtocolHandler.java:132:39:132:60 | ... + ... | semmle.label | ... + ... |
+subpaths
+#select
+| PotentiallyUnguardedProtocolHandler.java:11:9:11:49 | browse(...) | PotentiallyUnguardedProtocolHandler.java:10:22:10:48 | getParameter(...) : String | PotentiallyUnguardedProtocolHandler.java:11:37:11:48 | new URI(...) | Desktop.browse() is called with untrusted input from $@ without proper URL scheme validation. | PotentiallyUnguardedProtocolHandler.java:10:22:10:48 | getParameter(...) | this source |
+| PotentiallyUnguardedProtocolHandler.java:23:13:23:44 | browse(...) | PotentiallyUnguardedProtocolHandler.java:20:22:20:48 | getParameter(...) : String | PotentiallyUnguardedProtocolHandler.java:23:41:23:43 | uri | Desktop.browse() is called with untrusted input from $@ without proper URL scheme validation. | PotentiallyUnguardedProtocolHandler.java:20:22:20:48 | getParameter(...) | this source |
+| PotentiallyUnguardedProtocolHandler.java:39:13:39:44 | browse(...) | PotentiallyUnguardedProtocolHandler.java:34:22:34:48 | getParameter(...) : String | PotentiallyUnguardedProtocolHandler.java:39:41:39:43 | uri | Desktop.browse() is called with untrusted input from $@ without proper URL scheme validation. | PotentiallyUnguardedProtocolHandler.java:34:22:34:48 | getParameter(...) | this source |
+| PotentiallyUnguardedProtocolHandler.java:60:35:60:79 | ... + ... | PotentiallyUnguardedProtocolHandler.java:58:22:58:48 | getParameter(...) : String | PotentiallyUnguardedProtocolHandler.java:60:35:60:79 | ... + ... | rundll32 url.dll,FileProtocolHandler is called with untrusted input from $@ without proper URL scheme validation. | PotentiallyUnguardedProtocolHandler.java:58:22:58:48 | getParameter(...) | this source |
+| PotentiallyUnguardedProtocolHandler.java:80:39:80:83 | ... + ... | PotentiallyUnguardedProtocolHandler.java:77:22:77:48 | getParameter(...) : String | PotentiallyUnguardedProtocolHandler.java:80:39:80:83 | ... + ... | rundll32 url.dll,FileProtocolHandler is called with untrusted input from $@ without proper URL scheme validation. | PotentiallyUnguardedProtocolHandler.java:77:22:77:48 | getParameter(...) | this source |
+| PotentiallyUnguardedProtocolHandler.java:98:35:98:51 | ... + ... | PotentiallyUnguardedProtocolHandler.java:97:22:97:48 | getParameter(...) : String | PotentiallyUnguardedProtocolHandler.java:98:35:98:51 | ... + ... | open is called with untrusted input from $@ without proper URL scheme validation. | PotentiallyUnguardedProtocolHandler.java:97:22:97:48 | getParameter(...) | this source |
+| PotentiallyUnguardedProtocolHandler.java:98:35:98:51 | ... + ... | PotentiallyUnguardedProtocolHandler.java:97:22:97:48 | getParameter(...) : String | PotentiallyUnguardedProtocolHandler.java:98:35:98:51 | ... + ... | xdg-open is called with untrusted input from $@ without proper URL scheme validation. | PotentiallyUnguardedProtocolHandler.java:97:22:97:48 | getParameter(...) | this source |
+| PotentiallyUnguardedProtocolHandler.java:110:39:110:55 | ... + ... | PotentiallyUnguardedProtocolHandler.java:107:22:107:48 | getParameter(...) : String | PotentiallyUnguardedProtocolHandler.java:110:39:110:55 | ... + ... | open is called with untrusted input from $@ without proper URL scheme validation. | PotentiallyUnguardedProtocolHandler.java:107:22:107:48 | getParameter(...) | this source |
+| PotentiallyUnguardedProtocolHandler.java:110:39:110:55 | ... + ... | PotentiallyUnguardedProtocolHandler.java:107:22:107:48 | getParameter(...) : String | PotentiallyUnguardedProtocolHandler.java:110:39:110:55 | ... + ... | xdg-open is called with untrusted input from $@ without proper URL scheme validation. | PotentiallyUnguardedProtocolHandler.java:107:22:107:48 | getParameter(...) | this source |
+| PotentiallyUnguardedProtocolHandler.java:121:35:121:47 | ... + ... | PotentiallyUnguardedProtocolHandler.java:120:22:120:48 | getParameter(...) : String | PotentiallyUnguardedProtocolHandler.java:121:35:121:47 | ... + ... | open is called with untrusted input from $@ without proper URL scheme validation. | PotentiallyUnguardedProtocolHandler.java:120:22:120:48 | getParameter(...) | this source |
+| PotentiallyUnguardedProtocolHandler.java:132:39:132:60 | ... + ... | PotentiallyUnguardedProtocolHandler.java:130:22:130:48 | getParameter(...) : String | PotentiallyUnguardedProtocolHandler.java:132:39:132:60 | ... + ... | open is called with untrusted input from $@ without proper URL scheme validation. | PotentiallyUnguardedProtocolHandler.java:130:22:130:48 | getParameter(...) | this source |

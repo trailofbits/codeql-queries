@@ -1,0 +1,26 @@
+<!DOCTYPE qhelp SYSTEM "qhelp.dtd">
+<qhelp>
+    <overview>
+        <p>
+            URL protocol handlers are used to handle any URL scheme supported by the native desktop.
+            If URL inputs to these handlers are untrusted and not properly sanitized, they can be
+            used to perform unintended actions by another application registered to handle the same
+            protocol.
+        </p>
+    </overview>
+    <recommendation>
+        <p>
+            Review protocol handler sinks and ensure that any URL inputs are properly sanitized if
+            they come from untrusted sources.
+        </p>
+    </recommendation>
+    <references>
+        <li> Positive Security: <a
+                href="https://positive.security/blog/url-open-rce">Allow
+                arbitrary URLs, expect arbitrary code execution</a>
+        </li>
+        <li> CVE-2022-43550: <a href="https://hackerone.com/reports/1692603">Jitsi Desktop Client
+                RCE By Interacting with Malicious URL Schemes on Windows</a>
+        </li>
+    </references>
+</qhelp>
