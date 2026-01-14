@@ -29,6 +29,7 @@ codeql database analyze database.db --format=sarif-latest --output=./tob.sarif -
 
 | Name | Description | Severity | Precision  |
 | ---  | ----------- | :----:   | :--------: |
+|[BN_CTX_free called before BN_CTX_end](./cpp/src/docs/crypto/BnCtxFreeBeforeEnd.md)|Detects BN_CTX_free called before BN_CTX_end, which violates the required lifecycle|error|medium|
 |[Crypto variable initialized using static key](./cpp/src/docs/crypto/StaticKeyFlow.md)|Finds crypto variables initialized using static keys|error|high|
 |[Crypto variable initialized using static password](./cpp/src/docs/crypto/StaticPasswordFlow.md)|Finds crypto variables initialized using static passwords|error|high|
 |[Crypto variable initialized using weak randomness](./cpp/src/docs/crypto/WeakRandomnessTaint.md)|Finds crypto variables initialized using weak randomness|error|high|
@@ -39,6 +40,7 @@ codeql database analyze database.db --format=sarif-latest --output=./tob.sarif -
 |[Missing error handling](./cpp/src/docs/crypto/MissingErrorHandling.md)|Checks if returned error codes are properly checked|warning|high|
 |[Missing zeroization of potentially sensitive random BIGNUM](./cpp/src/docs/crypto/MissingZeroization.md)|Determines if random bignums are properly zeroized|warning|medium|
 |[Random buffer too small](./cpp/src/docs/crypto/RandomBufferTooSmall.md)|Finds buffer overflows in calls to CSPRNGs|warning|high|
+|[Unbalanced BN_CTX_start and BN_CTX_end pair](./cpp/src/docs/crypto/UnbalancedBnCtx.md)|Detects if one call in the BN_CTX_start/BN_CTX_end pair is missing|warning|medium|
 |[Use of legacy cryptographic algorithm](./cpp/src/docs/crypto/UseOfLegacyAlgorithm.md)|Detects potential instantiations of legacy cryptographic algorithms|warning|medium|
 
 #### Security
