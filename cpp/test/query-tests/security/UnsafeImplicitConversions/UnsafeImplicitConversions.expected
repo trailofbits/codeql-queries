@@ -1,23 +1,245 @@
-| test.cpp:72:17:72:21 | (int)... | Implicit cast from unsigned long to int; bounds are [4294967297; 4294967297] |
-| test.cpp:73:20:73:24 | (int)... | Implicit cast from unsigned long to int; bounds are [4294967297; 4294967297] |
-| test.cpp:74:23:74:27 | (int)... | Implicit cast from unsigned long to int; bounds are [4294967297; 4294967297] |
-| test.cpp:75:28:75:32 | (int)... | Implicit cast from unsigned long to int; bounds are [4294967297; 4294967297] |
-| test.cpp:80:36:80:40 | (int)... | Implicit cast from unsigned long to int; bounds are [0; 18446744073709551616] |
-| test.cpp:88:17:88:21 | (int)... | Implicit cast from unsigned long to int; bounds are [4294967297; 4294967297] |
-| test.cpp:94:17:94:21 | (unsigned int)... | Implicit cast from unsigned long to unsigned int; bounds are [4294967297; 4294967297] |
-| test.cpp:100:17:100:21 | (unsigned int)... | Implicit cast from unsigned long to unsigned int; bounds are [4294967297; 4294967297] |
-| test.cpp:106:17:106:21 | (int)... | Implicit cast from long to int; bounds are [4294967297; 4294967297] |
-| test.cpp:114:17:114:17 | (int)... | Implicit cast from unsigned long to int; bounds are [0; 18446744073709551616] |
-| test.cpp:121:17:121:21 | (int)... | Implicit cast from unsigned int to int; bounds are [0; 4294967295] |
-| test.cpp:121:28:121:28 | (int)... | Implicit cast from unsigned int to int; bounds are [0; 4294967295] |
-| test.cpp:127:17:127:21 | (unsigned short)... | Implicit cast from unsigned long to unsigned short; bounds are [4294967297; 4294967297] |
-| test.cpp:133:17:133:21 | (int)... | Implicit cast from unsigned long to int; bounds are [4294967297; 4294967297] |
-| test.cpp:140:17:140:18 | (unsigned short)... | Implicit cast from unsigned long to unsigned short; bounds are [0; 18446744073709551616] |
-| test.cpp:146:17:146:21 | (int)... | Implicit cast from unsigned int to int; bounds are [4294967295; 4294967295] |
-| test.cpp:151:17:151:26 | (int)... | Implicit cast from unsigned int to int; bounds are [2147484985; 2147484985] |
-| test.cpp:157:17:157:21 | (unsigned int)... | Implicit cast from long to unsigned int; bounds are [-1; -1] |
-| test.cpp:163:17:163:50 | (uint16_t)... | Implicit cast from int to unsigned short; bounds are [-51956; -51956] |
-| test.cpp:264:12:264:65 | (unsigned int)... | Implicit cast from int to unsigned int; bounds are [-2147483648; 2147483647] |
-| test.cpp:270:16:270:31 | (size_t)... | Implicit cast from int to unsigned long; bounds are [-2147483648; 2147483647] |
-| test.cpp:271:14:271:14 | (int)... | Implicit cast from unsigned long to int; bounds are [0; 18446744073709551616] |
-| test.cpp:289:18:289:18 | (int)... | Implicit cast from unsigned long to int; bounds are [0; 18446744073709551616] |
+edges
+| test.cpp:24:8:24:17 | *get_number | test.cpp:78:22:78:31 | call to get_number | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:79:5:79:35 | ... += ... | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:95:22:95:31 | call to get_number | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:101:22:101:31 | call to get_number | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:107:20:107:29 | call to get_number | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:113:21:113:41 | call to get_number | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:127:26:127:51 | call to get_number | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:134:22:134:31 | call to get_number | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:140:22:140:31 | call to get_number | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:146:22:146:31 | call to get_number | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:153:26:153:51 | call to get_number | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:159:17:159:28 | call to get_number | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:164:21:164:41 | call to get_number | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:170:17:170:33 | call to get_number | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:171:17:171:56 | ... - ... | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:171:17:171:56 | ... - ... | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:176:15:176:33 | call to get_number | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:177:22:177:47 | call to get_number | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:183:26:183:53 | call to get_number | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:189:13:189:29 | call to get_number | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:195:19:195:41 | call to get_number | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:210:13:210:29 | call to get_number | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:285:17:285:33 | call to get_number | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:287:17:287:53 | ... - ... | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:353:26:353:53 | call to get_number | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:380:5:380:40 | ... = ... | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:380:9:380:40 | ... - ... | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:416:13:416:22 | call to get_number | provenance |  |
+| test.cpp:24:8:24:17 | *get_number | test.cpp:418:25:418:34 | call to get_number | provenance |  |
+| test.cpp:26:13:26:16 | read output argument | test.cpp:27:12:27:14 | ret | provenance |  |
+| test.cpp:27:12:27:14 | ret | test.cpp:24:8:24:17 | *get_number | provenance |  |
+| test.cpp:71:26:71:29 | size | test.cpp:72:12:72:15 | size | provenance |  |
+| test.cpp:78:22:78:31 | call to get_number | test.cpp:78:22:78:31 | call to get_number | provenance |  |
+| test.cpp:78:22:78:31 | call to get_number | test.cpp:79:5:79:35 | ... += ... | provenance |  |
+| test.cpp:79:5:79:35 | ... += ... | test.cpp:80:17:80:21 | large | provenance |  |
+| test.cpp:79:5:79:35 | ... += ... | test.cpp:81:20:81:24 | large | provenance |  |
+| test.cpp:79:5:79:35 | ... += ... | test.cpp:82:23:82:27 | large | provenance |  |
+| test.cpp:79:5:79:35 | ... += ... | test.cpp:83:28:83:32 | large | provenance |  |
+| test.cpp:87:21:87:25 | large | test.cpp:88:36:88:40 | large | provenance |  |
+| test.cpp:95:22:95:31 | call to get_number | test.cpp:95:22:95:31 | call to get_number | provenance |  |
+| test.cpp:95:22:95:31 | call to get_number | test.cpp:96:17:96:21 | large | provenance |  |
+| test.cpp:101:22:101:31 | call to get_number | test.cpp:101:22:101:31 | call to get_number | provenance |  |
+| test.cpp:101:22:101:31 | call to get_number | test.cpp:102:17:102:21 | large | provenance |  |
+| test.cpp:107:20:107:29 | call to get_number | test.cpp:107:20:107:29 | call to get_number | provenance |  |
+| test.cpp:107:20:107:29 | call to get_number | test.cpp:108:17:108:21 | large | provenance |  |
+| test.cpp:113:21:113:41 | call to get_number | test.cpp:113:21:113:41 | call to get_number | provenance |  |
+| test.cpp:113:21:113:41 | call to get_number | test.cpp:114:17:114:21 | large | provenance |  |
+| test.cpp:127:26:127:51 | call to get_number | test.cpp:127:26:127:51 | call to get_number | provenance |  |
+| test.cpp:127:26:127:51 | call to get_number | test.cpp:129:17:129:21 | large | provenance |  |
+| test.cpp:134:22:134:31 | call to get_number | test.cpp:134:22:134:31 | call to get_number | provenance |  |
+| test.cpp:134:22:134:31 | call to get_number | test.cpp:135:17:135:21 | large | provenance |  |
+| test.cpp:134:22:134:31 | call to get_number | test.cpp:135:17:135:21 | large | provenance |  |
+| test.cpp:135:17:135:21 | large | test.cpp:135:17:135:21 | large | provenance |  |
+| test.cpp:140:22:140:31 | call to get_number | test.cpp:140:22:140:31 | call to get_number | provenance |  |
+| test.cpp:140:22:140:31 | call to get_number | test.cpp:141:17:141:21 | large | provenance |  |
+| test.cpp:140:22:140:31 | call to get_number | test.cpp:141:17:141:21 | large | provenance |  |
+| test.cpp:141:17:141:21 | large | test.cpp:141:17:141:21 | large | provenance |  |
+| test.cpp:146:22:146:31 | call to get_number | test.cpp:146:22:146:31 | call to get_number | provenance |  |
+| test.cpp:146:22:146:31 | call to get_number | test.cpp:147:19:147:24 | *& ... | provenance |  |
+| test.cpp:147:19:147:24 | *& ... | test.cpp:148:17:148:18 | * ... | provenance |  |
+| test.cpp:147:19:147:24 | *& ... | test.cpp:148:17:148:18 | * ... | provenance |  |
+| test.cpp:148:17:148:18 | * ... | test.cpp:148:17:148:18 | * ... | provenance |  |
+| test.cpp:153:26:153:51 | call to get_number | test.cpp:153:26:153:51 | call to get_number | provenance |  |
+| test.cpp:153:26:153:51 | call to get_number | test.cpp:154:17:154:21 | large | provenance |  |
+| test.cpp:164:21:164:41 | call to get_number | test.cpp:164:21:164:41 | call to get_number | provenance |  |
+| test.cpp:164:21:164:41 | call to get_number | test.cpp:165:17:165:21 | large | provenance |  |
+| test.cpp:170:17:170:33 | call to get_number | test.cpp:170:17:170:33 | call to get_number | provenance |  |
+| test.cpp:170:17:170:33 | call to get_number | test.cpp:171:17:171:56 | ... - ... | provenance |  |
+| test.cpp:170:17:170:33 | call to get_number | test.cpp:171:17:171:56 | ... - ... | provenance |  |
+| test.cpp:171:17:171:56 | ... - ... | test.cpp:71:26:71:29 | size | provenance |  |
+| test.cpp:176:15:176:33 | call to get_number | test.cpp:176:15:176:33 | call to get_number | provenance |  |
+| test.cpp:176:15:176:33 | call to get_number | test.cpp:178:24:178:24 | a | provenance |  |
+| test.cpp:176:15:176:33 | call to get_number | test.cpp:178:24:178:28 | ... & ... | provenance |  |
+| test.cpp:177:22:177:47 | call to get_number | test.cpp:177:22:177:47 | call to get_number | provenance |  |
+| test.cpp:177:22:177:47 | call to get_number | test.cpp:178:24:178:28 | ... & ... | provenance |  |
+| test.cpp:183:26:183:53 | call to get_number | test.cpp:183:26:183:53 | call to get_number | provenance |  |
+| test.cpp:183:26:183:53 | call to get_number | test.cpp:184:18:184:20 | val | provenance |  |
+| test.cpp:189:13:189:29 | call to get_number | test.cpp:189:13:189:29 | call to get_number | provenance |  |
+| test.cpp:189:13:189:29 | call to get_number | test.cpp:190:9:190:9 | x | provenance |  |
+| test.cpp:195:19:195:41 | call to get_number | test.cpp:195:19:195:41 | call to get_number | provenance |  |
+| test.cpp:195:19:195:41 | call to get_number | test.cpp:196:9:196:9 | x | provenance |  |
+| test.cpp:200:17:200:17 | a | test.cpp:202:9:202:9 | a | provenance |  |
+| test.cpp:210:13:210:29 | call to get_number | test.cpp:210:13:210:29 | call to get_number | provenance |  |
+| test.cpp:210:13:210:29 | call to get_number | test.cpp:211:14:211:14 | b | provenance |  |
+| test.cpp:218:17:218:17 | a | test.cpp:220:9:220:9 | a | provenance |  |
+| test.cpp:285:17:285:33 | call to get_number | test.cpp:285:17:285:33 | call to get_number | provenance |  |
+| test.cpp:285:17:285:33 | call to get_number | test.cpp:286:17:286:31 | large | provenance |  |
+| test.cpp:285:17:285:33 | call to get_number | test.cpp:287:17:287:53 | ... - ... | provenance |  |
+| test.cpp:286:17:286:31 | large | test.cpp:71:26:71:29 | size | provenance |  |
+| test.cpp:287:17:287:53 | ... - ... | test.cpp:71:26:71:29 | size | provenance |  |
+| test.cpp:353:26:353:53 | call to get_number | test.cpp:353:26:353:53 | call to get_number | provenance |  |
+| test.cpp:353:26:353:53 | call to get_number | test.cpp:354:35:354:37 | val | provenance |  |
+| test.cpp:375:31:375:31 | a | test.cpp:376:11:376:11 | a | provenance |  |
+| test.cpp:375:49:375:49 | b | test.cpp:380:5:380:40 | ... = ... | provenance |  |
+| test.cpp:375:49:375:49 | b | test.cpp:380:9:380:9 | b | provenance |  |
+| test.cpp:375:49:375:49 | b | test.cpp:380:9:380:40 | ... - ... | provenance |  |
+| test.cpp:380:5:380:40 | ... = ... | test.cpp:381:9:381:9 | b | provenance |  |
+| test.cpp:380:5:380:40 | ... = ... | test.cpp:381:9:381:9 | b | provenance |  |
+| test.cpp:416:5:416:24 | ... = ... | test.cpp:421:11:421:15 | large | provenance |  |
+| test.cpp:416:13:416:22 | call to get_number | test.cpp:416:5:416:24 | ... = ... | provenance |  |
+| test.cpp:418:25:418:34 | call to get_number | test.cpp:418:25:418:34 | call to get_number | provenance |  |
+| test.cpp:418:25:418:34 | call to get_number | test.cpp:439:12:439:26 | somenumber | provenance |  |
+| test.cpp:418:25:418:34 | call to get_number | test.cpp:441:12:441:26 | somenumber | provenance |  |
+| test.cpp:418:25:418:34 | call to get_number | test.cpp:461:15:461:40 | somenumber | provenance |  |
+| test.cpp:418:25:418:34 | call to get_number | test.cpp:461:43:461:68 | somenumber | provenance |  |
+| test.cpp:421:11:421:15 | large | test.cpp:87:21:87:25 | large | provenance |  |
+| test.cpp:439:12:439:26 | somenumber | test.cpp:200:17:200:17 | a | provenance |  |
+| test.cpp:441:12:441:26 | somenumber | test.cpp:218:17:218:17 | a | provenance |  |
+| test.cpp:461:15:461:40 | somenumber | test.cpp:375:31:375:31 | a | provenance |  |
+| test.cpp:461:43:461:68 | somenumber | test.cpp:375:49:375:49 | b | provenance |  |
+nodes
+| test.cpp:24:8:24:17 | *get_number | semmle.label | *get_number |
+| test.cpp:26:13:26:16 | read output argument | semmle.label | read output argument |
+| test.cpp:27:12:27:14 | ret | semmle.label | ret |
+| test.cpp:71:26:71:29 | size | semmle.label | size |
+| test.cpp:72:12:72:15 | size | semmle.label | size |
+| test.cpp:78:22:78:31 | call to get_number | semmle.label | call to get_number |
+| test.cpp:78:22:78:31 | call to get_number | semmle.label | call to get_number |
+| test.cpp:79:5:79:35 | ... += ... | semmle.label | ... += ... |
+| test.cpp:80:17:80:21 | large | semmle.label | large |
+| test.cpp:81:20:81:24 | large | semmle.label | large |
+| test.cpp:82:23:82:27 | large | semmle.label | large |
+| test.cpp:83:28:83:32 | large | semmle.label | large |
+| test.cpp:87:21:87:25 | large | semmle.label | large |
+| test.cpp:88:36:88:40 | large | semmle.label | large |
+| test.cpp:95:22:95:31 | call to get_number | semmle.label | call to get_number |
+| test.cpp:95:22:95:31 | call to get_number | semmle.label | call to get_number |
+| test.cpp:96:17:96:21 | large | semmle.label | large |
+| test.cpp:101:22:101:31 | call to get_number | semmle.label | call to get_number |
+| test.cpp:101:22:101:31 | call to get_number | semmle.label | call to get_number |
+| test.cpp:102:17:102:21 | large | semmle.label | large |
+| test.cpp:107:20:107:29 | call to get_number | semmle.label | call to get_number |
+| test.cpp:107:20:107:29 | call to get_number | semmle.label | call to get_number |
+| test.cpp:108:17:108:21 | large | semmle.label | large |
+| test.cpp:113:21:113:41 | call to get_number | semmle.label | call to get_number |
+| test.cpp:113:21:113:41 | call to get_number | semmle.label | call to get_number |
+| test.cpp:114:17:114:21 | large | semmle.label | large |
+| test.cpp:127:26:127:51 | call to get_number | semmle.label | call to get_number |
+| test.cpp:127:26:127:51 | call to get_number | semmle.label | call to get_number |
+| test.cpp:129:17:129:21 | large | semmle.label | large |
+| test.cpp:134:22:134:31 | call to get_number | semmle.label | call to get_number |
+| test.cpp:134:22:134:31 | call to get_number | semmle.label | call to get_number |
+| test.cpp:135:17:135:21 | large | semmle.label | large |
+| test.cpp:135:17:135:21 | large | semmle.label | large |
+| test.cpp:135:17:135:21 | large | semmle.label | large |
+| test.cpp:140:22:140:31 | call to get_number | semmle.label | call to get_number |
+| test.cpp:140:22:140:31 | call to get_number | semmle.label | call to get_number |
+| test.cpp:141:17:141:21 | large | semmle.label | large |
+| test.cpp:141:17:141:21 | large | semmle.label | large |
+| test.cpp:141:17:141:21 | large | semmle.label | large |
+| test.cpp:146:22:146:31 | call to get_number | semmle.label | call to get_number |
+| test.cpp:146:22:146:31 | call to get_number | semmle.label | call to get_number |
+| test.cpp:147:19:147:24 | *& ... | semmle.label | *& ... |
+| test.cpp:148:17:148:18 | * ... | semmle.label | * ... |
+| test.cpp:148:17:148:18 | * ... | semmle.label | * ... |
+| test.cpp:148:17:148:18 | * ... | semmle.label | * ... |
+| test.cpp:153:26:153:51 | call to get_number | semmle.label | call to get_number |
+| test.cpp:153:26:153:51 | call to get_number | semmle.label | call to get_number |
+| test.cpp:154:17:154:21 | large | semmle.label | large |
+| test.cpp:159:17:159:28 | call to get_number | semmle.label | call to get_number |
+| test.cpp:164:21:164:41 | call to get_number | semmle.label | call to get_number |
+| test.cpp:164:21:164:41 | call to get_number | semmle.label | call to get_number |
+| test.cpp:165:17:165:21 | large | semmle.label | large |
+| test.cpp:170:17:170:33 | call to get_number | semmle.label | call to get_number |
+| test.cpp:170:17:170:33 | call to get_number | semmle.label | call to get_number |
+| test.cpp:171:17:171:56 | ... - ... | semmle.label | ... - ... |
+| test.cpp:171:17:171:56 | ... - ... | semmle.label | ... - ... |
+| test.cpp:176:15:176:33 | call to get_number | semmle.label | call to get_number |
+| test.cpp:176:15:176:33 | call to get_number | semmle.label | call to get_number |
+| test.cpp:177:22:177:47 | call to get_number | semmle.label | call to get_number |
+| test.cpp:177:22:177:47 | call to get_number | semmle.label | call to get_number |
+| test.cpp:178:24:178:24 | a | semmle.label | a |
+| test.cpp:178:24:178:28 | ... & ... | semmle.label | ... & ... |
+| test.cpp:183:26:183:53 | call to get_number | semmle.label | call to get_number |
+| test.cpp:183:26:183:53 | call to get_number | semmle.label | call to get_number |
+| test.cpp:184:18:184:20 | val | semmle.label | val |
+| test.cpp:189:13:189:29 | call to get_number | semmle.label | call to get_number |
+| test.cpp:189:13:189:29 | call to get_number | semmle.label | call to get_number |
+| test.cpp:190:9:190:9 | x | semmle.label | x |
+| test.cpp:195:19:195:41 | call to get_number | semmle.label | call to get_number |
+| test.cpp:195:19:195:41 | call to get_number | semmle.label | call to get_number |
+| test.cpp:196:9:196:9 | x | semmle.label | x |
+| test.cpp:200:17:200:17 | a | semmle.label | a |
+| test.cpp:202:9:202:9 | a | semmle.label | a |
+| test.cpp:210:13:210:29 | call to get_number | semmle.label | call to get_number |
+| test.cpp:210:13:210:29 | call to get_number | semmle.label | call to get_number |
+| test.cpp:211:14:211:14 | b | semmle.label | b |
+| test.cpp:218:17:218:17 | a | semmle.label | a |
+| test.cpp:220:9:220:9 | a | semmle.label | a |
+| test.cpp:285:17:285:33 | call to get_number | semmle.label | call to get_number |
+| test.cpp:285:17:285:33 | call to get_number | semmle.label | call to get_number |
+| test.cpp:286:17:286:31 | large | semmle.label | large |
+| test.cpp:287:17:287:53 | ... - ... | semmle.label | ... - ... |
+| test.cpp:353:26:353:53 | call to get_number | semmle.label | call to get_number |
+| test.cpp:353:26:353:53 | call to get_number | semmle.label | call to get_number |
+| test.cpp:354:35:354:37 | val | semmle.label | val |
+| test.cpp:375:31:375:31 | a | semmle.label | a |
+| test.cpp:375:49:375:49 | b | semmle.label | b |
+| test.cpp:376:11:376:11 | a | semmle.label | a |
+| test.cpp:380:5:380:40 | ... = ... | semmle.label | ... = ... |
+| test.cpp:380:5:380:40 | ... = ... | semmle.label | ... = ... |
+| test.cpp:380:9:380:9 | b | semmle.label | b |
+| test.cpp:380:9:380:40 | ... - ... | semmle.label | ... - ... |
+| test.cpp:381:9:381:9 | b | semmle.label | b |
+| test.cpp:416:5:416:24 | ... = ... | semmle.label | ... = ... |
+| test.cpp:416:13:416:22 | call to get_number | semmle.label | call to get_number |
+| test.cpp:418:25:418:34 | call to get_number | semmle.label | call to get_number |
+| test.cpp:418:25:418:34 | call to get_number | semmle.label | call to get_number |
+| test.cpp:421:11:421:15 | large | semmle.label | large |
+| test.cpp:439:12:439:26 | somenumber | semmle.label | somenumber |
+| test.cpp:441:12:441:26 | somenumber | semmle.label | somenumber |
+| test.cpp:461:15:461:40 | somenumber | semmle.label | somenumber |
+| test.cpp:461:43:461:68 | somenumber | semmle.label | somenumber |
+subpaths
+#select
+| test.cpp:80:17:80:21 | large | test.cpp:26:13:26:16 | read output argument | test.cpp:80:17:80:21 | large | Implicit cast from unsigned long to int (truncation) in $@ | test.cpp:80:17:80:21 | large | large |
+| test.cpp:81:20:81:24 | large | test.cpp:26:13:26:16 | read output argument | test.cpp:81:20:81:24 | large | Implicit cast from unsigned long to int (truncation) in $@ | test.cpp:81:20:81:24 | large | large |
+| test.cpp:82:23:82:27 | large | test.cpp:26:13:26:16 | read output argument | test.cpp:82:23:82:27 | large | Implicit cast from unsigned long to int (truncation) in $@ | test.cpp:82:23:82:27 | large | large |
+| test.cpp:83:28:83:32 | large | test.cpp:26:13:26:16 | read output argument | test.cpp:83:28:83:32 | large | Implicit cast from unsigned long to int (truncation) in $@ | test.cpp:83:28:83:32 | large | large |
+| test.cpp:88:36:88:40 | large | test.cpp:26:13:26:16 | read output argument | test.cpp:88:36:88:40 | large | Implicit cast from unsigned long to int (truncation) in $@ | test.cpp:88:36:88:40 | large | large |
+| test.cpp:96:17:96:21 | large | test.cpp:26:13:26:16 | read output argument | test.cpp:96:17:96:21 | large | Implicit cast from unsigned long to int (truncation) in $@ | test.cpp:96:17:96:21 | large | large |
+| test.cpp:102:17:102:21 | large | test.cpp:26:13:26:16 | read output argument | test.cpp:102:17:102:21 | large | Implicit cast from unsigned long to unsigned int (truncation) in $@ | test.cpp:102:17:102:21 | large | large |
+| test.cpp:108:17:108:21 | large | test.cpp:26:13:26:16 | read output argument | test.cpp:108:17:108:21 | large | Implicit cast from unsigned long to unsigned int (truncation) in $@ | test.cpp:108:17:108:21 | large | large |
+| test.cpp:114:17:114:21 | large | test.cpp:26:13:26:16 | read output argument | test.cpp:114:17:114:21 | large | Implicit cast from long to int (truncation) in $@ | test.cpp:114:17:114:21 | large | large |
+| test.cpp:129:17:129:21 | large | test.cpp:26:13:26:16 | read output argument | test.cpp:129:17:129:21 | large | Implicit cast from unsigned int to int (reinterpretation) in $@ | test.cpp:129:17:129:21 | large | large |
+| test.cpp:135:17:135:21 | large | test.cpp:26:13:26:16 | read output argument | test.cpp:135:17:135:21 | large | Implicit cast from unsigned long to unsigned short (truncation) in $@ | test.cpp:135:17:135:21 | large | large |
+| test.cpp:135:17:135:21 | large | test.cpp:26:13:26:16 | read output argument | test.cpp:135:17:135:21 | large | Implicit cast from unsigned long to unsigned short (truncation) in $@ | test.cpp:135:17:135:21 | large | large |
+| test.cpp:141:17:141:21 | large | test.cpp:26:13:26:16 | read output argument | test.cpp:141:17:141:21 | large | Implicit cast from unsigned long to int (truncation) in $@ | test.cpp:141:17:141:21 | large | large |
+| test.cpp:141:17:141:21 | large | test.cpp:26:13:26:16 | read output argument | test.cpp:141:17:141:21 | large | Implicit cast from unsigned long to int (truncation) in $@ | test.cpp:141:17:141:21 | large | large |
+| test.cpp:148:17:148:18 | * ... | test.cpp:26:13:26:16 | read output argument | test.cpp:148:17:148:18 | * ... | Implicit cast from unsigned long to unsigned short (truncation) in $@ | test.cpp:148:17:148:18 | * ... | * ... |
+| test.cpp:148:17:148:18 | * ... | test.cpp:26:13:26:16 | read output argument | test.cpp:148:17:148:18 | * ... | Implicit cast from unsigned long to unsigned short (truncation) in $@ | test.cpp:148:17:148:18 | * ... | * ... |
+| test.cpp:154:17:154:21 | large | test.cpp:26:13:26:16 | read output argument | test.cpp:154:17:154:21 | large | Implicit cast from unsigned int to int (reinterpretation) in $@ | test.cpp:154:17:154:21 | large | large |
+| test.cpp:159:17:159:28 | call to get_number | test.cpp:26:13:26:16 | read output argument | test.cpp:159:17:159:28 | call to get_number | Implicit cast from unsigned long to int (truncation) in $@ | test.cpp:159:17:159:26 | call to get_number | call to get_number |
+| test.cpp:165:17:165:21 | large | test.cpp:26:13:26:16 | read output argument | test.cpp:165:17:165:21 | large | Implicit cast from long to unsigned int (truncation) in $@ | test.cpp:165:17:165:21 | large | large |
+| test.cpp:171:17:171:56 | ... - ... | test.cpp:26:13:26:16 | read output argument | test.cpp:171:17:171:56 | ... - ... | Implicit cast from int to unsigned short (truncation) in $@ | test.cpp:171:17:171:56 | ... - ... | ... - ... |
+| test.cpp:178:24:178:24 | a | test.cpp:26:13:26:16 | read output argument | test.cpp:178:24:178:24 | a | Implicit cast from short to unsigned int (widening) in $@ | test.cpp:178:24:178:24 | a | a |
+| test.cpp:178:24:178:28 | ... & ... | test.cpp:26:13:26:16 | read output argument | test.cpp:178:24:178:28 | ... & ... | Implicit cast from unsigned int to unsigned short (truncation) in $@ | test.cpp:178:24:178:28 | ... & ... | ... & ... |
+| test.cpp:184:18:184:20 | val | test.cpp:26:13:26:16 | read output argument | test.cpp:184:18:184:20 | val | Implicit cast from unsigned short to int (promotion with bitwise complement) in $@ | test.cpp:184:18:184:20 | val | val |
+| test.cpp:190:9:190:9 | x | test.cpp:26:13:26:16 | read output argument | test.cpp:190:9:190:9 | x | Implicit cast from int to unsigned long (widening) in $@ | test.cpp:190:9:190:9 | x | x |
+| test.cpp:196:9:196:9 | x | test.cpp:26:13:26:16 | read output argument | test.cpp:196:9:196:9 | x | Implicit cast from long long to unsigned long long (reinterpretation) in $@ | test.cpp:196:9:196:9 | x | x |
+| test.cpp:202:9:202:9 | a | test.cpp:26:13:26:16 | read output argument | test.cpp:202:9:202:9 | a | Implicit cast from int to unsigned int (reinterpretation) in $@ | test.cpp:202:9:202:9 | a | a |
+| test.cpp:211:14:211:14 | b | test.cpp:26:13:26:16 | read output argument | test.cpp:211:14:211:14 | b | Implicit cast from int to unsigned int (reinterpretation) in $@ | test.cpp:211:14:211:14 | b | b |
+| test.cpp:220:9:220:9 | a | test.cpp:26:13:26:16 | read output argument | test.cpp:220:9:220:9 | a | Implicit cast from int to unsigned long long (widening) in $@ | test.cpp:220:9:220:9 | a | a |
+| test.cpp:354:35:354:37 | val | test.cpp:26:13:26:16 | read output argument | test.cpp:354:35:354:37 | val | Implicit cast from unsigned short to int (promotion with bitwise complement) in $@ | test.cpp:354:35:354:37 | val | val |

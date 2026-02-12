@@ -8,18 +8,12 @@ class Mbedtls_mpi_init extends CustomAllocator {
     dealloc instanceof Mbedtls_mpi_free
   }
 
-  override int getPointer() {
-    result = 0
-  }
+  override int getPointer() { result = 0 }
 }
 
 // void mbedtls_mpi_free( mbedtls_mpi *X );
 class Mbedtls_mpi_free extends CustomDeallocator {
-  Mbedtls_mpi_free() {
-    this.getQualifiedName() = "mbedtls_mpi_free"
-  }
+  Mbedtls_mpi_free() { this.getQualifiedName() = "mbedtls_mpi_free" }
 
-  override int getPointer() {
-    result = 0
-  }
+  override int getPointer() { result = 0 }
 }

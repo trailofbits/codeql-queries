@@ -1,6 +1,6 @@
 edges
-| MsgNotHashedBeforeSigVerfication.go:78:33:78:46 | "test message" | MsgNotHashedBeforeSigVerfication.go:78:26:78:47 | type conversion |
-| MsgNotHashedBeforeSigVerfication.go:86:31:86:44 | "test message" | MsgNotHashedBeforeSigVerfication.go:86:24:86:45 | type conversion |
+| MsgNotHashedBeforeSigVerfication.go:78:33:78:46 | "test message" | MsgNotHashedBeforeSigVerfication.go:78:26:78:47 | type conversion | provenance |  |
+| MsgNotHashedBeforeSigVerfication.go:86:31:86:44 | "test message" | MsgNotHashedBeforeSigVerfication.go:86:24:86:45 | type conversion | provenance |  |
 nodes
 | MsgNotHashedBeforeSigVerfication.go:78:26:78:47 | type conversion | semmle.label | type conversion |
 | MsgNotHashedBeforeSigVerfication.go:78:33:78:46 | "test message" | semmle.label | "test message" |

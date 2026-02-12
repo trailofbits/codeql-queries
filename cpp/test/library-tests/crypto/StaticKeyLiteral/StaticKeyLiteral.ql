@@ -1,8 +1,5 @@
 import cpp
 import trailofbits.crypto.libraries
 
-
-from
-  StaticKeyLiteral key
-select
-  key
+from StaticKeyLiteral key
+select key

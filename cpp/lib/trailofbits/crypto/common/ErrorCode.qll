@@ -5,7 +5,6 @@ import cpp
  */
 abstract class ReturnsErrorCode extends Function { }
 
-
 /**
  * A type modelling the return value from a function that returns an error or status code.
  */

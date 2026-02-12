@@ -4,29 +4,57 @@
 <qhelp>
 <overview>
 <p>
-Golang's <code>tls.Config</code> struct accepts <code>MinVersion</code> parameter that sets minimum accepted TLS version.
-If the parameter is not provided, default value is used: TLS1.2 for clients, and TLS1.0 for servers.
-TLS1.0 is considered deprecated and should not be used. 
+Golang's <code>tls.Config</code> struct accepts a <code>MinVersion</code> parameter that sets the minimum accepted TLS version.
+If the parameter is not provided, the default depends on the Go version in use. Since Go 1.18, <code>crypto/tls</code> clients default to TLS 1.2 (previously TLS 1.0).
+Since Go 1.22, <code>crypto/tls</code> servers also default to TLS 1.2 (previously TLS 1.0).
+</p>
+<p>
+This query flags <code>tls.Config</code> values where <code>MinVersion</code> is never set explicitly and the project's
+<code>go.mod</code> declares support for a Go version where the defaults are insecure:
+</p>
+<ul>
+<li>Go &lt; 1.18 for client-side configs (when client default is TLS 1.0)</li>
+<li>Go &lt; 1.22 for server-side configs (when server default is TLS 1.0)</li>
+</ul>
+<p>
+TLS 1.0 and 1.1 are deprecated and should not be used.
 </p>
 
 </overview>
 <recommendation>
-<p>Explicitly set tls version to an up-to-date one.</p>
+<p>Explicitly set the TLS version to TLS 1.2 or higher:</p>
+<ul>
+<li>For projects using Go &lt; 1.18: Set <code>MinVersion</code> for both clients and servers</li>
+<li>For projects using Go 1.18-1.21: Set <code>MinVersion</code> for servers</li>
+<li>For projects using Go &gt;= 1.22: Defaults are secure, but explicit setting is still recommended</li>
+</ul>
 
 </recommendation>
 <example>
 <sample src="MissingMinVersionTLS.go" />
 
 <p>In this example, the <code>http.Server</code> may be set with TLS configuration created by either <code>test1</code> or <code>test2</code> functions.
-The <code>test1</code> result will be highlighted by this query, as it fails to explicitly set minimum supported TLS version.
-The <code>test2</code> result will not be marked, even that it also uses the default value for minimum version.
-That is because the <code>test2</code> is explicit, and this query assumes that developers knew what they are doing. 
+For projects with a <code>go</code> directive &lt; 1.22, the <code>test1</code> result will be highlighted by this query, as it fails to explicitly set minimum supported TLS version.
+The <code>test2</code> result will not be marked, even though it also uses the default value for minimum version.
+That is because the <code>test2</code> is explicit, and this query assumes that developers knew what they are doing.
 </p>
+<p>Note: The query behavior depends on the <code>go</code> directive in <code>go.mod</code>:</p>
+<ul>
+<li>Go &lt; 1.18: Both client and server configs without MinVersion are flagged</li>
+<li>Go 1.18-1.21: Only server configs without MinVersion are flagged</li>
+<li>Go &gt;= 1.22: No configs are flagged (both defaults are secure)</li>
+</ul>
 
 </example>
 <references>
 <li>
     <a href="https://pkg.go.dev/crypto/tls#Config">tls.Config specification</a>
+</li>
+<li>
+    <a href="https://tip.golang.org/doc/go1.18#tls10">Go 1.18 Release Notes - TLS 1.0 and 1.1 disabled by default client-side</a>
+</li>
+<li>
+    <a href="https://tip.golang.org/doc/go1.22#minor_library_changes">Go 1.22 Release Notes - TLS 1.2 default for servers</a>
 </li>
 </references>
 </qhelp>

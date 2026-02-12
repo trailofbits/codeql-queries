@@ -8,22 +8,19 @@ abstract class InitFunction extends Function {
   abstract int getAContextArg();
 
   // Override and return true if the function returns the initialized context.
-  predicate returnsContext() {
-    1 = 0
-  }
+  predicate returnsContext() { 1 = 0 }
 }
 
 // This type represents a call to the corresponding init function.
 class InitCall extends FunctionCall {
   InitFunction init;
 
-  InitCall() {
-    init = this.getTarget()
-  }
+  InitCall() { init = this.getTarget() }
 
   Expr getAContext() {
-    result = this.getArgument(init.getAContextArg()) or
-    (init.returnsContext() and result = this)
+    result = this.getArgument(init.getAContextArg())
+    or
+    init.returnsContext() and result = this
   }
 }
 
@@ -35,22 +32,19 @@ abstract class UpdateFunction extends Function {
   abstract int getAContextArg();
 
   // Override and return true if the function returns the updated context.
-  predicate returnsContext() {
-    1 = 0
-  }
+  predicate returnsContext() { 1 = 0 }
 }
 
 // This type represents a call to the corresponding update function.
 class UpdateCall extends FunctionCall {
   UpdateFunction update;
 
-  UpdateCall() {
-    update = this.getTarget()
-  }
+  UpdateCall() { update = this.getTarget() }
 
   Expr getAContext() {
-    result = this.getArgument(update.getAContextArg()) or
-    (update.returnsContext() and result = this)
+    result = this.getArgument(update.getAContextArg())
+    or
+    update.returnsContext() and result = this
   }
 }
 
@@ -62,21 +56,18 @@ abstract class FinalFunction extends Function {
   abstract int getAContextArg();
 
   // Override and return true if the function returns the initialized context.
-  predicate returnsContext() {
-    1 = 0
-  }
+  predicate returnsContext() { 1 = 0 }
 }
 
 class FinalCall extends FunctionCall {
   FinalFunction final;
 
-  FinalCall() {
-    final = this.getTarget()
-  }
+  FinalCall() { final = this.getTarget() }
 
   Expr getAContext() {
-    result = this.getArgument(final.getAContextArg()) or
-    (final.returnsContext() and result = this)
+    result = this.getArgument(final.getAContextArg())
+    or
+    final.returnsContext() and result = this
   }
 }
 
@@ -88,7 +79,6 @@ class FinalCall extends FunctionCall {
 // be multi-valued. I.e. a priori there may be more than one valid update or
 // finalizer for a given initialier.)
 class InitUpdateFinalTuple extends string {
-
   bindingset[this]
   InitUpdateFinalTuple() { any() }
 
@@ -98,15 +88,9 @@ class InitUpdateFinalTuple extends string {
 
   abstract FinalFunction getFinal();
 
-  InitCall getAnInitCall() {
-    result = this.getInit().getACallToThisFunction()
-  }
+  InitCall getAnInitCall() { result = this.getInit().getACallToThisFunction() }
 
-  UpdateCall getAnUpdateCall() {
-    result = this.getUpdate().getACallToThisFunction()
-  }
+  UpdateCall getAnUpdateCall() { result = this.getUpdate().getACallToThisFunction() }
 
-  FinalCall getAFinalCall() {
-    result = this.getFinal().getACallToThisFunction()
-  }
+  FinalCall getAFinalCall() { result = this.getFinal().getACallToThisFunction() }
 }
