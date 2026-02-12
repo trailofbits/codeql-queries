@@ -3,12 +3,6 @@
 #include "../../../include/libc/unistd.h"
 #include "../../../include/libc/stdint.h"
 
-// #include <stdio.h>
-// #include <stdint.h>
-// #include <stdlib.h>
-// #include <string.h>
-
-
 // from https://github.com/apple-oss-distributions/Libinfo/blob/9fce29e5c5edc15d3ecea55116ca17d3f6350603/lookup.subproj/mdns_module.c#L1033C1-L1079C2
 char* _mdns_parse_domain_name(const uint8_t *data, uint32_t datalen)
 {
@@ -59,9 +53,7 @@ char* _mdns_parse_domain_name(const uint8_t *data, uint32_t datalen)
 }
 
 int main() {
-    const uint16_t datalen = 128;
-    uint8_t data[datalen] = {};
+    uint8_t data[128] = {0};
     memcpy(data, "\x04quildu\x03xyz\x00", 11);
-    _mdns_parse_domain_name(data, datalen);
+    _mdns_parse_domain_name(data, 128);
 }
-
