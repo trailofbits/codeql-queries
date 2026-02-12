@@ -2,7 +2,7 @@
  * @name Decrementation overflow when comparing
  * @id tob/cpp/dec-overflow-when-comparing
  * @description This query finds unsigned integer overflows resulting from unchecked decrementation during comparison.
- * @kind problem
+ * @kind graph
  * @tags security
  * @problem.severity error
  * @precision high
@@ -13,6 +13,33 @@
 import cpp
 import semmle.code.cpp.ir.IR
 import semmle.code.cpp.rangeanalysis.SimpleRangeAnalysis
+
+query predicate nodes(ControlFlowNode node, string key, string value) {
+  exists(Variable var, PostfixDecrExpr dec |
+    dec.getOperand() = var.getAnAccess().getExplicitlyConverted() and
+    var.getUnderlyingType().(IntegralType).isUnsigned() and
+    successorGuarded(node, _, var) and
+    key = node.toString() and
+    value = node.toString() + "-val"
+  )
+}
+
+query predicate edges(ControlFlowNode source, ControlFlowNode target, string key, string value) {
+  exists(Variable var, PostfixDecrExpr dec, VariableAccess acc |
+    var.getAnAccess() = acc and
+    dec.getOperand() = acc.getExplicitlyConverted() and
+    var.getUnderlyingType().(IntegralType).isUnsigned() and
+    
+    source.getASuccessor() = target and
+
+    key = source.toString()  + "-key" and
+    value = target.toString() + "-val"
+  )
+}
+
+query predicate graphProperties(string key, string value) {
+  key = "semmle.graphKind" and value = "graph"
+}
 
 /**
  * Find CFG paths from start to end that do not cross over node that is var's lvalue access
@@ -38,6 +65,7 @@ predicate successorGuarded(ControlFlowNode start, ControlFlowNode end, Variable 
   )
 }
 
+/*
 from Variable var, VariableAccess varAcc, PostfixDecrExpr dec,
   VariableAccess varAccAfterOverflow, ComparisonOperation cmp
 where
@@ -79,3 +107,5 @@ where
   and not dec.getFile().getAbsolutePath().toLowerCase().matches(["%test%", "%vendor%", "%third_party%"])
 
 select dec, "Unsigned decrementation in comparison ($@) - $@", cmp, cmp.toString(), varAccAfterOverflow, varAccAfterOverflow.toString()
+
+*/
