@@ -5,3 +5,6 @@
 | DecOverflowWhenComparing.c:100:9:100:11 | ... -- | Unsigned decrementation in comparison ($@) - $@ | DecOverflowWhenComparing.c:100:9:100:16 | ... == ... | ... == ... | DecOverflowWhenComparing.c:101:13:101:13 | n | n |
 | DecOverflowWhenComparing.c:109:14:109:16 | ... -- | Unsigned decrementation in comparison ($@) - $@ | DecOverflowWhenComparing.c:109:14:109:20 | ... > ... | ... > ... | DecOverflowWhenComparing.c:110:9:110:9 | n | n |
 | DecOverflowWhenComparing.c:115:9:115:11 | ... -- | Unsigned decrementation in comparison ($@) - $@ | DecOverflowWhenComparing.c:115:9:115:16 | ... != ... | ... != ... | DecOverflowWhenComparing.c:121:9:121:9 | n | n |
+| DecOverflowWhenComparing.c:157:12:157:20 | ... -- | Unsigned decrementation in comparison ($@) - $@ | DecOverflowWhenComparing.c:157:12:157:24 | ... > ... | ... > ... | DecOverflowWhenComparing.c:160:9:160:15 | g_count | g_count |
+| DecOverflowWhenComparing.c:165:9:165:17 | ... -- | Unsigned decrementation in comparison ($@) - $@ | DecOverflowWhenComparing.c:165:9:165:22 | ... != ... | ... != ... | DecOverflowWhenComparing.c:168:9:168:15 | g_count | g_count |
+| DecOverflowWhenComparing.c:183:12:183:20 | ... -- | Unsigned decrementation in comparison ($@) - $@ | DecOverflowWhenComparing.c:183:12:183:24 | ... > ... | ... > ... | DecOverflowWhenComparing.c:186:9:186:15 | s_count | s_count |
