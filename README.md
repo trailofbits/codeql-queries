@@ -29,6 +29,8 @@ codeql database analyze database.db --format=sarif-latest --output=./tob.sarif -
 
 | Name | Description | Severity | Precision  |
 | ---  | ----------- | :----:   | :--------: |
+|[BN_CTX_free called before BN_CTX_end](./cpp/src/docs/crypto/BnCtxFreeBeforeEnd.md)|Detects BN_CTX_free called before BN_CTX_end, which violates the required lifecycle|error|medium|
+|[Unbalanced BN_CTX_start and BN_CTX_end pair](./cpp/src/docs/crypto/UnbalancedBnCtx.md)|Detects if one call in the BN_CTX_start/BN_CTX_end pair is missing|warning|medium|
 |[Crypto variable initialized using static key](./cpp/src/docs/crypto/StaticKeyFlow.md)|Finds crypto variables initialized using static keys|error|high|
 |[Crypto variable initialized using static password](./cpp/src/docs/crypto/StaticPasswordFlow.md)|Finds crypto variables initialized using static passwords|error|high|
 |[Crypto variable initialized using weak randomness](./cpp/src/docs/crypto/WeakRandomnessTaint.md)|Finds crypto variables initialized using weak randomness|error|high|
@@ -46,9 +48,10 @@ codeql database analyze database.db --format=sarif-latest --output=./tob.sarif -
 | Name | Description | Severity | Precision  |
 | ---  | ----------- | :----:   | :--------: |
 |[Async unsafe signal handler](./cpp/src/docs/security/AsyncUnsafeSignalHandler/AsyncUnsafeSignalHandler.md)|Async unsafe signal handler (like the one used in CVE-2024-6387)|warning|high|
+|[Decrementation overflow when comparing](./cpp/src/docs/security/DecOverflowWhenComparing/DecOverflowWhenComparing.md)|This query finds unsigned integer overflows resulting from unchecked decrementation during comparison.|error|high|
+|[Find all problematic implicit casts](./cpp/src/docs/security/UnsafeImplicitConversions/UnsafeImplicitConversions.md)|Find all implicit casts that may be problematic. That is, casts that may result in unexpected truncation, reinterpretation or widening of values.|error|high|
 |[Invalid string size passed to string manipulation function](./cpp/src/docs/security/CStrnFinder/CStrnFinder.md)|Finds calls to functions that take as input a string and its size as separate arguments (e.g., `strncmp`, `strncat`, ...) and the size argument is wrong|error|low|
 |[Missing null terminator](./cpp/src/docs/security/NoNullTerminator/NoNullTerminator.md)|This query finds incorrectly initialized strings that are passed to functions expecting null-byte-terminated strings|error|high|
-|[Unsafe implicit integer conversion](./cpp/src/docs/security/UnsafeImplicitConversions/UnsafeImplicitConversions.md)|Finds implicit integer casts that may overflow or be truncated, with false positive reduction via Value Range Analysis|warning|low|
 
 ### Go
 
@@ -63,7 +66,7 @@ codeql database analyze database.db --format=sarif-latest --output=./tob.sarif -
 | Name | Description | Severity | Precision  |
 | ---  | ----------- | :----:   | :--------: |
 |[Invalid file permission parameter](./go/src/docs/security/FilePermsFlaws/FilePermsFlaws.md)|Finds non-octal (e.g., `755` vs `0o755`) and unsupported (e.g., `04666`) literals used as a filesystem permission parameter (`FileMode`)|error|medium|
-|[Missing MinVersion in tls.Config](./go/src/docs/security/MissingMinVersionTLS/MissingMinVersionTLS.md)|This rule finds cases when you do not set the `tls.Config.MinVersion` explicitly for servers. By default version 1.0 is used, which is considered insecure. This rule does not mark explicitly set insecure versions|error|medium|
+|[Missing MinVersion in tls.Config](./go/src/docs/security/MissingMinVersionTLS/MissingMinVersionTLS.md)|Finds uses of tls.Config where MinVersion is not set and the project's minimum Go version (from go.mod) indicates insecure defaults: Go < 1.18 for clients or Go < 1.22 for servers. Does not mark explicitly set versions (including explicitly insecure ones).|error|medium|
 |[Trim functions misuse](./go/src/docs/security/TrimMisuse/TrimMisuse.md)|Finds calls to `string.{Trim,TrimLeft,TrimRight}` with the 2nd argument not being a cutset but a continuous substring to be trimmed|error|low|
 
 ### Java-kotlin
@@ -72,7 +75,7 @@ codeql database analyze database.db --format=sarif-latest --output=./tob.sarif -
 
 | Name | Description | Severity | Precision  |
 | ---  | ----------- | :----:   | :--------: |
-|[Recursive functions](./java-kotlin/src/docs/security/Recursion/Recursion.md)|Detects recursive calls|warning|low|
+|[Recursive functions](./java-kotlin/src/docs/security/Recursion/Recursion.md)|Detects possibly unbounded recursive calls|warning|low|
 
 ## Query suites
 
