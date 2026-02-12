@@ -7,19 +7,14 @@
 char* _mdns_parse_domain_name(const uint8_t *data, uint32_t datalen)
 {
 	int i = 0, j = 0;
-	uint32_t len;
 	uint32_t domainlen = 0;
 	char *domain = NULL;
 
 	if ((data == NULL) || (datalen == 0)) return NULL;
 
-	/*
-	 * i: index into input data
-	 * j: index into output string
-	 */
 	while (datalen-- > 0)
 	{
-		len = data[i++];
+		uint32_t len = data[i++];
 		domainlen += (len + 1);
 		domain = reallocf(domain, domainlen);
 
@@ -53,7 +48,8 @@ char* _mdns_parse_domain_name(const uint8_t *data, uint32_t datalen)
 }
 
 int main() {
-    uint8_t data[128] = {0};
+    const uint16_t datalen = 128;
+    uint8_t data[datalen] = {};
     memcpy(data, "\x04quildu\x03xyz\x00", 11);
-    _mdns_parse_domain_name(data, 128);
+    _mdns_parse_domain_name(data, datalen);
 }
