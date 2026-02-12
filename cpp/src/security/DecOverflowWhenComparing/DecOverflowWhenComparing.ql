@@ -11,13 +11,13 @@
  */
 
 import cpp
-import semmle.code.cpp.ir.IR
 import semmle.code.cpp.rangeanalysis.SimpleRangeAnalysis
+import semmle.code.cpp.controlflow.StackVariableReachability
 
 /**
  * Holds if `node` overwrites `var` (assignment or declaration with initializer).
  */
-predicate isDefOf(ControlFlowNode node, Variable var) {
+predicate isDefOf(ControlFlowNode node, StackVariable var) {
   node = var.getAnAccess() and node.(VariableAccess).isLValue()
   or
   node.(DeclStmt).getADeclaration() = var and exists(var.getInitializer())
@@ -26,62 +26,74 @@ predicate isDefOf(ControlFlowNode node, Variable var) {
 }
 
 /**
- * Find CFG paths from start to end that do not cross over a definition of var.
+ * Identifies an unsigned postfix decrement inside a comparison against zero.
  */
-predicate successorGuarded(ControlFlowNode start, ControlFlowNode end, Variable var) {
-  start = end
-  or
-  exists(ControlFlowNode interm |
-    start.getASuccessor() = interm and
-    not isDefOf(interm, var) and
-    (
-      interm.getASuccessor() = end
-      or
-      successorGuarded(interm, end, var)
-    )
-  )
-}
-
-
-from Variable var, VariableAccess varAcc, PostfixDecrExpr dec,
-  VariableAccess varAccAfterOverflow, ComparisonOperation cmp
-where
-  // get unsigned variable that is decremented
+pragma[nomagic]
+predicate isDecInComparison(
+  PostfixDecrExpr dec, VariableAccess varAcc,
+  ComparisonOperation cmp, StackVariable var
+) {
   varAcc = var.getAnAccess() and
-  varAccAfterOverflow = var.getAnAccess() and
-  varAcc != varAccAfterOverflow and
   dec.getOperand() = varAcc.getExplicitlyConverted() and
   varAcc.getUnderlyingType().(IntegralType).isUnsigned() and
-
-  // only decrementations inside comparisons
   cmp.getAnOperand().getAChild*() = varAcc and
   cmp.getAnOperand() instanceof Zero and
-
-  // only if the variable is used (not just overwritten) after the comparison
-  successorGuarded(cmp, varAccAfterOverflow, var) and
-  cmp.getAnOperand().getAChild*() != varAccAfterOverflow and
-  not exists(AssignExpr ae | ae.getLValue() = varAccAfterOverflow) and
-
-  // var-- > 0 (0 < var--) then accesses only in false branch
-  // var-- >= 0 then accesses in all branches
-  // var-- == 0 then accesses in all branches
-  // var-- != 0 then accesses in all branches
-  if (
-    (cmp instanceof GTExpr and cmp.getRightOperand() instanceof Zero)
-    or
-    (cmp instanceof LTExpr and cmp.getLeftOperand() instanceof Zero)
-  )
-  then
-    cmp.getAFalseSuccessor().getASuccessor*() = varAccAfterOverflow
-  else
-    any()
-
-  and
-
-  // only if var may possibly be zero during comparison
   lowerBound(varAcc) = 0
+}
 
+/**
+ * Identifies a non-assignment read of a variable
+ * (i.e., a use that could observe an overflowed value).
+ */
+pragma[nomagic]
+predicate isReadOf(VariableAccess va, StackVariable var) {
+  va = var.getAnAccess() and
+  not exists(AssignExpr ae | ae.getLValue() = va)
+}
+
+/**
+ * Basic-block-level reachability from a decrement comparison to a use
+ * of the same variable, blocked by any definition of the variable.
+ */
+class DecOverflowReach extends StackVariableReachability {
+  DecOverflowReach() { this = "DecOverflowReach" }
+
+  override predicate isSource(ControlFlowNode node, StackVariable v) {
+    isDecInComparison(_, _, node, v)
+  }
+
+  override predicate isSink(ControlFlowNode node, StackVariable v) {
+    isReadOf(node, v)
+  }
+
+  override predicate isBarrier(ControlFlowNode node, StackVariable v) {
+    isDefOf(node, v)
+  }
+}
+
+from
+  SemanticStackVariable var, VariableAccess varAcc, PostfixDecrExpr dec,
+  VariableAccess varAccAfterOverflow, ComparisonOperation cmp
+where
+  isDecInComparison(dec, varAcc, cmp, var) and
+  isReadOf(varAccAfterOverflow, var) and
+  varAcc != varAccAfterOverflow and
+  // reachable without intervening overwrite (basic-block-level analysis)
+  any(DecOverflowReach r).reaches(cmp, var, varAccAfterOverflow) and
+  // exclude accesses that are part of the comparison expression itself
+  not cmp.getAnOperand().getAChild*() = varAccAfterOverflow and
+  // var-- > 0 (0 < var--) then only accesses in false branch matter
+  (
+    if
+      (
+        cmp instanceof GTExpr and cmp.getRightOperand() instanceof Zero
+        or
+        cmp instanceof LTExpr and cmp.getLeftOperand() instanceof Zero
+      )
+    then cmp.getAFalseSuccessor().getASuccessor*() = varAccAfterOverflow
+    else any()
+  ) and
   // skip vendor code
-  and not dec.getFile().getAbsolutePath().toLowerCase().matches(["%vendor%", "%third_party%"])
-
-select dec, "Unsigned decrementation in comparison ($@) - $@", cmp, cmp.toString(), varAccAfterOverflow, varAccAfterOverflow.toString()
+  not dec.getFile().getAbsolutePath().toLowerCase().matches(["%vendor%", "%third_party%"])
+select dec, "Unsigned decrementation in comparison ($@) - $@", cmp, cmp.toString(),
+  varAccAfterOverflow, varAccAfterOverflow.toString()
