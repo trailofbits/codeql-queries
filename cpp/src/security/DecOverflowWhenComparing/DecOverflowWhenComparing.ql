@@ -21,6 +21,8 @@ predicate isDefOf(ControlFlowNode node, Variable var) {
   node = var.getAnAccess() and node.(VariableAccess).isLValue()
   or
   node.(DeclStmt).getADeclaration() = var and exists(var.getInitializer())
+  or
+  node.(Assignment).getLValue().(VariableAccess).getTarget() = var
 }
 
 /**
@@ -55,9 +57,10 @@ where
   cmp.getAnOperand().getAChild*() = varAcc and
   cmp.getAnOperand() instanceof Zero and
 
-  // only if the variable is used after the comparison
+  // only if the variable is used (not just overwritten) after the comparison
   successorGuarded(cmp, varAccAfterOverflow, var) and
   cmp.getAnOperand().getAChild*() != varAccAfterOverflow and
+  not exists(AssignExpr ae | ae.getLValue() = varAccAfterOverflow) and
 
   // var-- > 0 (0 < var--) then accesses only in false branch
   // var-- >= 0 then accesses in all branches
