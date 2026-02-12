@@ -148,6 +148,54 @@ void overwrite_all_branches(uint32_t n, int *buf, int cond) {
     buf[n] = 0;
 }
 
+// --- Non-stack variable tests ---
+
+uint32_t g_count;
+
+// BAD: global variable used after loop without overwrite
+void global_use_after_loop(int *buf) {
+    while (g_count-- > 0) {
+        buf[0] = 1;
+    }
+    buf[g_count] = 0; // BAD
+}
+
+// BAD: global variable in if-neq pattern
+void global_use_after_neq(int *buf) {
+    if (g_count-- != 0) {
+        buf[0] = 1;
+    }
+    buf[g_count] = 0; // BAD
+}
+
+// GOOD: global variable overwritten before use
+void global_overwrite(int *buf) {
+    while (g_count-- > 0) {
+        buf[0] = 1;
+    }
+    g_count = 42;
+    buf[g_count] = 0;
+}
+
+// BAD: static local variable used after loop
+void static_local_use(int *buf) {
+    static uint32_t s_count;
+    while (s_count-- > 0) {
+        buf[0] = 1;
+    }
+    buf[s_count] = 0; // BAD
+}
+
+// GOOD: static local variable overwritten before use
+void static_local_overwrite(int *buf) {
+    static uint32_t s_count;
+    while (s_count-- > 0) {
+        buf[0] = 1;
+    }
+    s_count = 42;
+    buf[s_count] = 0;
+}
+
 int main() {
     const uint16_t datalen = 128;
     uint8_t data[datalen] = {};
