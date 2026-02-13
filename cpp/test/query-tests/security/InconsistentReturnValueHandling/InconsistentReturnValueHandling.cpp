@@ -32,14 +32,8 @@ int target_func_1(int a)
     return a + 1;
 }
 
-void test_1_1() {
-    // BAD: comparing with sizeof instead of hard-coded int
-    if (target_func_1(2) != sizeof(something)) {
-        puts("something");
-    }
-}
-
 void test_1_2() {
+    // the baseline for target_func_1
     if (target_func_1(2) != 1) {
         puts("something2");
     }
@@ -52,7 +46,12 @@ void test_1_2() {
     }
 }
 
-
+void test_1_1() {
+    // BAD: comparing with sizeof instead of hard-coded int
+    if (target_func_1(2) != sizeof(something)) {
+        puts("something");
+    }
+}
 
 // BAD 2
 int target_func_2(int a)

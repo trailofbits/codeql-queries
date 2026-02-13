@@ -1,8 +1,8 @@
 /**
  * @name Inconsistent handling of return values from a specific function
  * @description If a function's return value is used in `if` statements,
- *              and in a few statements the value is compared somehow differently than it is usually,
- *              then this rare comparisons may indicate bugs.
+ *              and in a few statements the value is compared differently than it is usually,
+ *              then this rare comparisons are bugs indicators.
  *              The query categorizes uses of return values into a few categories
  *              (cmp with int, bool, nullptr, sizeof, another function, ...)
  * @kind problem
@@ -238,9 +238,10 @@ from Function f, int retValsTotalAmount,
     TCmpClass buggyCategory, CmpClass buggyCategoryClass, Call buggyFc,
     IfStmt ifs
 where
-    not buggyFc.getLocation().getFile().toString().toLowerCase().regexpMatch(".*test.*")
+    // not buggyFc.getLocation().getFile().toString().toLowerCase().regexpMatch(".*test.*") and
+
     // we are interested only in defined (e.g., not libc) and used functions
-    and exists(Call fc | fc.getTarget() = f)
+    exists(Call fc | fc.getTarget() = f)
     and f.hasDefinition()
 
     // the function's retVal must be used in some IF statements
@@ -254,7 +255,7 @@ where
     // if threshold for "most common" use case is ~75%, then remaining 25% function calls are handled somehow incorrectly
     and ((float)(categoryMax * 100) / retValsTotalAmount) >= 74
 
-    // // and finally we are looking for calls that use retVal in an uncommon way
+    // finally we are looking for calls that use retVal in an uncommon way
     and categorize(f, buggyFc, buggyCategory, ifs)
     and buggyCategory != mostCommonCategory
     and buggyCategoryClass = buggyCategory
