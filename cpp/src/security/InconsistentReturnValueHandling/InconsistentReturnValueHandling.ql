@@ -35,6 +35,8 @@ newtype TCmpClass =
   Targ()
   or
   Tarithm()
+  or
+  Tother()
 
 class CmpClass extends TCmpClass {
   string toString() {
@@ -53,6 +55,8 @@ class CmpClass extends TCmpClass {
     this = Tarithm() and result = " arithmetic expression"
     or
     this = Targ() and result = "in a function"
+    or
+    this = Tother() and result = " other expression"
   }
 }
 
@@ -127,18 +131,18 @@ TCmpClass operandCategory(Expr comparedVal) {
     )
     or
     (binaryComputation(comparedVal) and result = Tarithm())
+    or
+    (
+        not numericArithmLiteral(comparedVal)
+        and not (comparedVal instanceof Literal and comparedVal.getType() instanceof BoolType)
+        and not (comparedVal.getType() instanceof NullPointerType or comparedVal instanceof NULL)
+        and not comparedVal.getUnderlyingType() instanceof DerivedType
+        and not comparedVal instanceof Call
+        and not comparedVal instanceof SizeofOperator
+        and not binaryComputation(comparedVal)
+        and result = Tother()
+    )
 }
-
-// module RetValFlowConfig implements DataFlow::ConfigSig {
-//     predicate isSource(DataFlow::Node source) {
-//         source.asExpr() = any(Call f)
-//     }
-
-//     predicate isSink(DataFlow::Node sink) {
-//         exists(IfStmt ifs | ifs.getCondition().getAChild*() = sink.asExpr())
-//     }
-// }
-// module RetValFlow = DataFlow::Global<RetValFlowConfig>;
 
 /**
  * Given function's return value, find its first use in an IF statement
@@ -156,7 +160,7 @@ predicate categorize(Function f, Call fc, TCmpClass comparedValCategory, IfStmt 
         )
         
         // exclude far-reaching flows, when the ret val is not checked but is actually used
-        // in other words, find only the first use in an IF statement 
+        // in other words, find only the first use in an IF statement
         and not exists(IfStmt ifsPrev |
             ifsPrev != ifs
             and DataFlow::localFlow(
@@ -224,22 +228,11 @@ int mostCommonRetValType(Function f, TCmpClass mostCommonCategory) {
     )
 }
 
-// uncomment for testing:
-// from Function f, Call fc, TCmpClass comparedValCategory, CmpClass x, IfStmt ifs
-// where
-//     categorize(f, fc, comparedValCategory, ifs)
-//     and x = comparedValCategory
-//     // and f.getName() = "sshbuf_fromb"
-// select f, fc, x, ifs
-
-
 from Function f, int retValsTotalAmount,
     TCmpClass mostCommonCategory, CmpClass mostCommonCategoryClass, int categoryMax,
     TCmpClass buggyCategory, CmpClass buggyCategoryClass, Call buggyFc,
     IfStmt ifs
 where
-    // not buggyFc.getLocation().getFile().toString().toLowerCase().regexpMatch(".*test.*") and
-
     // we are interested only in defined (e.g., not libc) and used functions
     exists(Call fc | fc.getTarget() = f)
     and f.hasDefinition()

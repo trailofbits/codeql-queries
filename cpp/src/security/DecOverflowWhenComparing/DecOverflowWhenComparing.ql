@@ -139,8 +139,7 @@ where
       )
     then cmp.getAFalseSuccessor().getASuccessor*() = varAccAfterOverflow
     else any()
-  ) and
-  // skip vendor code
-  not dec.getFile().getAbsolutePath().toLowerCase().matches(["%vendor%", "%third_party%"])
+  )
+
 select dec, "Unsigned decrementation in comparison ($@) - $@", cmp, cmp.toString(),
   varAccAfterOverflow, varAccAfterOverflow.toString()

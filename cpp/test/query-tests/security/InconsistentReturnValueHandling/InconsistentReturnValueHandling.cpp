@@ -467,3 +467,375 @@ void test_g_4_2() {
         puts("something2");
     }
 }
+
+// BAD 10: 4 int comparisons + 1 variable comparison (variable is outlier)
+int target_func_10(int a)
+{
+    return a + 10;
+}
+
+void test_10_1() {
+    if (target_func_10(2) != 1) {
+        puts("something");
+    }
+    if (target_func_10(3) > 0) {
+        puts("something");
+    }
+    int r = target_func_10(4);
+    if (r > 0) {
+        puts("something");
+    }
+    if (target_func_10(7) != 99) {
+        puts("something");
+    }
+}
+
+void test_10_2() {
+    int threshold = 42;
+    // BAD: comparing with a variable instead of hard-coded int
+    if (target_func_10(5) != threshold) {
+        puts("something");
+    }
+}
+
+// BAD 11: 4 enum comparisons + 1 int literal (int literal is outlier)
+enum ErrorCode { EC_OK = 0, EC_FAIL = 1, EC_RETRY = 2, EC_TIMEOUT = 3 };
+
+int target_func_11(int a)
+{
+    return a > 10 ? EC_OK : EC_FAIL;
+}
+
+void test_11_1() {
+    if (target_func_11(2) != EC_OK) {
+        puts("something");
+    }
+    if (target_func_11(3) != EC_FAIL) {
+        puts("something");
+    }
+    int r = target_func_11(4);
+    if (r == EC_RETRY) {
+        puts("something");
+    }
+    r = target_func_11(5);
+    if (r != EC_TIMEOUT) {
+        puts("something");
+    }
+}
+
+void test_11_2() {
+    // BAD: comparing with int literal instead of enum constant
+    if (target_func_11(6) != 42) {
+        puts("something");
+    }
+}
+
+// BAD 12: 3 int + || with two sizeof calls (sizeof is the outlier)
+int target_func_12(int a)
+{
+    return a * 2;
+}
+
+void test_12_1() {
+    if (target_func_12(2) != 1) {
+        puts("something");
+    }
+    if (target_func_12(3) > 0) {
+        puts("something");
+    }
+    int r = target_func_12(4);
+    if (r > 0) {
+        puts("something");
+    }
+}
+
+void test_12_2() {
+    // BAD: sizeof comparison in short-circuit expression
+    if (target_func_12(5) > sizeof(something) || target_func_12(6) > sizeof(something)) {
+        puts("something");
+    }
+}
+
+// GOOD 5: 4 int comparisons + bare if(f()) which is silently dropped
+int target_func_g5(int a)
+{
+    return a + 5;
+}
+
+void test_g_5_1() {
+    if (target_func_g5(2) != 1) {
+        puts("something");
+    }
+    if (target_func_g5(3) > 0) {
+        puts("something");
+    }
+    int r = target_func_g5(4);
+    if (r > 0) {
+        puts("something");
+    }
+    if (target_func_g5(7) != 99) {
+        puts("something");
+    }
+}
+
+void test_g_5_2() {
+    // bare conditional: no comparison, should be silently dropped
+    if (target_func_g5(6)) {
+        puts("something");
+    }
+}
+
+// GOOD 6: only 3 uses, below threshold of 4
+int target_func_g6(int a)
+{
+    return a + 6;
+}
+
+void test_g_6_1() {
+    if (target_func_g6(2) != 1) {
+        puts("something");
+    }
+    if (target_func_g6(3) > 0) {
+        puts("something");
+    }
+}
+
+void test_g_6_2() {
+    if (target_func_g6(4) > sizeof(something)) {
+        puts("something");
+    }
+}
+
+// GOOD 7: 2 int + 2 sizeof, 50/50 split below 74% threshold
+int target_func_g7(int a)
+{
+    return a + 7;
+}
+
+void test_g_7_1() {
+    if (target_func_g7(2) != 1) {
+        puts("something");
+    }
+    if (target_func_g7(3) > 0) {
+        puts("something");
+    }
+}
+
+void test_g_7_2() {
+    if (target_func_g7(4) > sizeof(something)) {
+        puts("something");
+    }
+    int r = target_func_g7(5);
+    if (r > sizeof(something)) {
+        puts("something");
+    }
+}
+
+// GOOD 8: 4 bool comparisons + if(!f()) which is silently dropped
+bool target_func_g8(int a)
+{
+    return a > 10;
+}
+
+void test_g_8_1() {
+    if (target_func_g8(2) != true) {
+        puts("something");
+    }
+    if (target_func_g8(3) == false) {
+        puts("something");
+    }
+    bool r = target_func_g8(4);
+    if (r == true) {
+        puts("something");
+    }
+    if (target_func_g8(5) != false) {
+        puts("something");
+    }
+}
+
+void test_g_8_2() {
+    // negation: no comparison operator, should be silently dropped
+    if (!target_func_g8(6)) {
+        puts("something");
+    }
+}
+
+// BAD 13: bare if(func()) mixed with comparisons, should not affect categorization
+int target_func_13(int a)
+{
+    return a + 13;
+}
+
+void test_13_1() {
+    if (target_func_13(2) != 1) {
+        puts("something");
+    }
+    if (target_func_13(3) > 0) {
+        puts("something");
+    }
+    int r = target_func_13(4);
+    if (r > 0) {
+        puts("something");
+    }
+}
+
+void test_13_2() {
+    // bare conditional: no comparison, should be silently dropped
+    if (target_func_13(5)) {
+        puts("something");
+    }
+    // BAD: sizeof comparison when others use int
+    if (target_func_13(6) > sizeof(something)) {
+        puts("something");
+    }
+}
+
+// BAD 14: comparison in else-if is properly categorized
+int target_func_14(int a)
+{
+    return a + 14;
+}
+
+void test_14_1() {
+    if (target_func_14(2) != 1) {
+        puts("something");
+    }
+    if (target_func_14(3) > 0) {
+        puts("something");
+    }
+    int r = target_func_14(4);
+    if (r > 0) {
+        puts("something");
+    }
+}
+
+void test_14_2() {
+    int x = 42;
+    // BAD: sizeof comparison in else-if branch
+    if (x > 100) {
+        puts("high");
+    } else if (target_func_14(5) > sizeof(something)) {
+        puts("something");
+    }
+}
+
+// BAD 15: comparison inside && short-circuit expression
+int target_func_15(int a)
+{
+    return a + 15;
+}
+
+void test_15_1() {
+    if (target_func_15(2) != 1) {
+        puts("something");
+    }
+    if (target_func_15(3) > 0) {
+        puts("something");
+    }
+    int r = target_func_15(4);
+    if (r > 0) {
+        puts("something");
+    }
+}
+
+void test_15_2() {
+    int other = 42;
+    // BAD: sizeof comparison inside && expression
+    if (target_func_15(5) > sizeof(something) && other > 0) {
+        puts("something");
+    }
+}
+
+// BAD 16: deep variable copy chain before comparison
+int target_func_16(int a)
+{
+    return a + 16;
+}
+
+void test_16_1() {
+    if (target_func_16(2) != 1) {
+        puts("something");
+    }
+    if (target_func_16(3) > 0) {
+        puts("something");
+    }
+    int r = target_func_16(4);
+    if (r > 0) {
+        puts("something");
+    }
+}
+
+void test_16_2() {
+    int r = target_func_16(5);
+    int s = r;
+    // BAD: sizeof comparison after variable copy
+    if (s > sizeof(something)) {
+        puts("something");
+    }
+}
+
+// GOOD 9: all bare if(func()) — nothing categorized, below threshold
+int target_func_g9(int a)
+{
+    return a + 9;
+}
+
+void test_g_9_1() {
+    if (target_func_g9(1)) {
+        puts("something");
+    }
+    if (target_func_g9(2)) {
+        puts("something");
+    }
+    if (target_func_g9(3)) {
+        puts("something");
+    }
+    if (target_func_g9(4)) {
+        puts("something");
+    }
+    if (target_func_g9(5)) {
+        puts("something");
+    }
+}
+
+// GOOD 10: reversed operand order — all same category (Tint)
+int target_func_g10(int a)
+{
+    return a + 100;
+}
+
+void test_g_10_1() {
+    if (target_func_g10(1) > 0) {
+        puts("something");
+    }
+    if (target_func_g10(2) != 5) {
+        puts("something");
+    }
+    if (0 < target_func_g10(3)) {
+        puts("something");
+    }
+    if (target_func_g10(4) >= -1) {
+        puts("something");
+    }
+}
+
+// GOOD 11: return value used only in while/for, not in if
+int target_func_g12(int a)
+{
+    return a + 120;
+}
+
+void test_g_12_1() {
+    while (target_func_g12(1) > 0) {
+        break;
+    }
+    while (target_func_g12(2) > sizeof(something)) {
+        break;
+    }
+    for (int i = 0; target_func_g12(3) > 0; i++) {
+        break;
+    }
+    for (int i = 0; target_func_g12(4) > sizeof(something); i++) {
+        break;
+    }
+}
