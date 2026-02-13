@@ -1,27 +1,62 @@
 <!DOCTYPE qhelp PUBLIC
-"-//Semmle//qhelp//EN"
-"qhelp.dtd">
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
 <qhelp>
 <overview>
-<p>
-    Description of the vulnerability.
-</p>
+  <p>
+  When a function's return value is checked in <code>if</code> statements across multiple call sites,
+  the comparisons typically fall into a consistent pattern (e.g., compared against a numeric literal,
+  <code>NULL</code>, or <code>sizeof</code>). If a small number of call sites compare the return value
+  in a different way than the majority, these inconsistent comparisons may indicate a bug.
+  </p>
+
+  <p>
+  The query categorizes each comparison into one of the following categories:
+  </p>
+  <ul>
+    <li>Numeric literal (e.g., <code>ret != -1</code>)</li>
+    <li>Boolean (e.g., <code>ret == true</code>)</li>
+    <li>Null pointer (e.g., <code>ret != NULL</code>)</li>
+    <li>Pointer</li>
+    <li><code>sizeof</code> expression (e.g., <code>ret > sizeof(buf)</code>)</li>
+    <li>Another function's return value (e.g., <code>ret != other_func()</code>)</li>
+    <li>Passed as argument to another function (e.g., <code>if (check(ret))</code>)</li>
+    <li>Arithmetic expression</li>
+  </ul>
+
+  <p>
+  When at least 75% of a function's return value comparisons fall into one category,
+  the remaining comparisons in a different category are flagged as potentially incorrect.
+  </p>
 </overview>
+
 <recommendation>
 <p>
-    Do XYZ.
+Review each flagged call site and verify that the comparison matches the function's return value semantics.
+If the function returns an error code or count, all call sites should compare it consistently.
+Fix any comparisons that use the wrong type of operand (e.g., comparing an integer return value against
+<code>sizeof</code> when all other sites compare against a numeric literal).
 </p>
 </recommendation>
+
 <example>
 <p>
-    The following example shows ...:
+In this example, <code>process_items</code> returns the number of items processed or <code>-1</code>
+on error. Most call sites correctly compare the return value with a numeric literal. However, one
+call site mistakenly compares it with <code>sizeof(struct header)</code>, which is inconsistent
+with how the return value is used everywhere else.
 </p>
-<sample src="SomeFileInCWD.cpp"/>
+
+<sample src="InconsistentReturnValueHandling.c" />
 </example>
+
 <references>
 <li>
-    XYZ:
-    <a href="https://trailofbits.com">XYZ</a>
+  <a href="https://cwe.mitre.org/data/definitions/252.html">CWE-252: Unchecked Return Value</a>
+</li>
+<li>
+  <a href="https://cwe.mitre.org/data/definitions/253.html">CWE-253: Incorrect Check of Function Return Value</a>
 </li>
 </references>
+
 </qhelp>

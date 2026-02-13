@@ -50,6 +50,7 @@ codeql database analyze database.db --format=sarif-latest --output=./tob.sarif -
 |[Async unsafe signal handler](./cpp/src/docs/security/AsyncUnsafeSignalHandler/AsyncUnsafeSignalHandler.md)|Async unsafe signal handler (like the one used in CVE-2024-6387)|warning|high|
 |[Decrementation overflow when comparing](./cpp/src/docs/security/DecOverflowWhenComparing/DecOverflowWhenComparing.md)|This query finds unsigned integer overflows resulting from unchecked decrementation during comparison.|error|high|
 |[Find all problematic implicit casts](./cpp/src/docs/security/UnsafeImplicitConversions/UnsafeImplicitConversions.md)|Find all implicit casts that may be problematic. That is, casts that may result in unexpected truncation, reinterpretation or widening of values.|error|high|
+|[Inconsistent handling of return values from a specific function](./cpp/src/docs/security/InconsistentReturnValueHandling/InconsistentReturnValueHandling.md)|Detects functions whose return values are compared inconsistently across call sites, which may indicate bugs|warning|medium|
 |[Invalid string size passed to string manipulation function](./cpp/src/docs/security/CStrnFinder/CStrnFinder.md)|Finds calls to functions that take as input a string and its size as separate arguments (e.g., `strncmp`, `strncat`, ...) and the size argument is wrong|error|low|
 |[Missing null terminator](./cpp/src/docs/security/NoNullTerminator/NoNullTerminator.md)|This query finds incorrectly initialized strings that are passed to functions expecting null-byte-terminated strings|error|high|
 

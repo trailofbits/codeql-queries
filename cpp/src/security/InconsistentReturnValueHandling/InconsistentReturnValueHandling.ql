@@ -1,10 +1,7 @@
 /**
  * @name Inconsistent handling of return values from a specific function
- * @description If a function's return value is used in `if` statements,
- *              and in a few statements the value is compared differently than it is usually,
- *              then this rare comparisons are bugs indicators.
- *              The query categorizes uses of return values into a few categories
- *              (cmp with int, bool, nullptr, sizeof, another function, ...)
+ * @description Detects functions whose return values are compared
+ *              inconsistently across call sites, which may indicate bugs.
  * @kind problem
  * @problem.severity warning
  * @precision medium
