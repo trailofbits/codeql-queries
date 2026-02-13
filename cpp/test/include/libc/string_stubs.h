@@ -11,7 +11,10 @@ extern "C" {
     #define NULL 0
 #endif
 
+#ifndef __cplusplus
 typedef int wchar_t;
+#endif
+
 extern void *memcpy(void *dst, const void *src, unsigned long n);
 extern char* strcpy_s(char* dst, int max_amount, char* src);
 extern int _mbsncat(char* dst, char* src, int count);
@@ -24,6 +27,7 @@ extern char* strcpy(char * dst, const char * src);
 extern int wprintf(const wchar_t * format, ...);
 extern wchar_t* wcscpy(wchar_t * s1, const wchar_t * s2);
 extern void perror(const char *s);
+extern int puts(const char *s);
 
 extern void openlog(const char*, int, int);
 extern void syslog(int, const char*, ...);
