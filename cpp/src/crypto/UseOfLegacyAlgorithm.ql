@@ -36,9 +36,10 @@ where
      * 			descend
      * 			destroy
      */
-
-    cipherName = "DES" and
-    functionName.regexpMatch(".*(?<!no|mo|co)des(?!cri(be|ption|ptor)|ign|cend|troy).*")
+    (
+      cipherName = "DES" and
+      functionName.regexpMatch(".*(?<!no|mo|co)des(?!cri(be|ption|ptor)|ign|cend|troy).*")
+    )
   )
 select call.getLocation(),
   "Potential use of legacy cryptographic algorithm " + cipherName + " detected in function name " +
