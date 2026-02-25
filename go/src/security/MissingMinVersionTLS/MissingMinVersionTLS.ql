@@ -62,7 +62,12 @@ module TlsConfigCreationConfig implements DataFlow::ConfigSig {
   /**
    * Holds if it is TLS.Config instance (a Variable).
    */
-  predicate isSink(DataFlow::Node sink) { exists(Variable v | sink.asExpr() = v.getAReference()) }
+  predicate isSink(DataFlow::Node sink) {
+    exists(Variable v |
+      sink.asExpr() = v.getAReference() or
+      sink.(DataFlow::PostUpdateNode).getPreUpdateNode().asExpr() = v.getAReference()
+    )
+  }
 
   /**
    * Holds if TLS.Config literal is saved in a structure's field
@@ -87,13 +92,13 @@ predicate configOrConfigPointer(Type t) {
   or
   exists(Type tp |
     tp.hasQualifiedName("crypto/tls", "Config") and
-    t.(NamedType).getUnderlyingType().(StructType).hasField(_, tp)
+    t.(DefinedType).getUnderlyingType().(StructType).hasField(_, tp)
   )
   or
   exists(Type tp, Type tp2 |
     tp.hasQualifiedName("crypto/tls", "Config") and
     tp2 = tp.getPointerType+() and
-    t.(NamedType).getUnderlyingType().(StructType).hasField(_, tp2)
+    t.(DefinedType).getUnderlyingType().(StructType).hasField(_, tp2)
   )
 }
 
@@ -225,7 +230,10 @@ where
   // find tls.Config structures with MinVersion not set on the structure initialization
   (
     TlsConfigCreationFlow::flow(source, sink) and
-    sink.asExpr() = v.getAReference() and
+    (
+      sink.asExpr() = v.getAReference() or
+      sink.(DataFlow::PostUpdateNode).getPreUpdateNode().asExpr() = v.getAReference()
+    ) and
     source.asExpr() = configStruct
   ) and
   // only explicitely defined, e.g., skip function arguments
