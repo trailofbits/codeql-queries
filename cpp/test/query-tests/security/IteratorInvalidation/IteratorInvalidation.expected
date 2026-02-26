@@ -1,0 +1,5 @@
+| IteratorInvalidation.cpp:7:23:7:25 | vec | Iterating over this container may cause undefined behavior: $@ can invalidate active iterators. | IteratorInvalidation.cpp:9:17:9:25 | call to push_back | call to push_back |
+| IteratorInvalidation.cpp:16:37:16:39 | vec | Iterating over this container may cause undefined behavior: $@ can invalidate active iterators. | IteratorInvalidation.cpp:19:17:19:21 | call to erase | call to erase |
+| IteratorInvalidation.cpp:27:23:27:24 | dq | Iterating over this container may cause undefined behavior: $@ can invalidate active iterators. | IteratorInvalidation.cpp:29:16:29:21 | call to insert | call to insert |
+| IteratorInvalidation.cpp:36:23:36:23 | s | Iterating over this container may cause undefined behavior: $@ can invalidate active iterators. | IteratorInvalidation.cpp:38:15:38:19 | call to clear | call to clear |
+| IteratorInvalidation.cpp:50:23:50:25 | vec | Iterating over this container may cause undefined behavior: $@ can invalidate active iterators. | IteratorInvalidation.cpp:52:13:52:25 | call to indirect_push | call to indirect_push |
