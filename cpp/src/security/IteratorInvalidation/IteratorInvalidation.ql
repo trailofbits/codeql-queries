@@ -21,14 +21,13 @@ class NotStackVariable extends Variable {
   NotStackVariable() { not this instanceof StackVariable }
 }
 
-Variable nodeToVariable(DataFlow::Node node) {
-  result = node.asExpr().(VariableAccess).getTarget()
-}
+Variable nodeToVariable(DataFlow::Node node) { result = node.asExpr().(VariableAccess).getTarget() }
 
 predicate falsePositive(Iterator it, Invalidator inv) {
   forex(ControlFlowNode n | n = inv.getASuccessor() |
     n.(BreakStmt).getBreakable().(Loop) = it.getParentScope()
-    or n.(ReturnStmt).getEnclosingFunction() = it.getParentScope+()
+    or
+    n.(ReturnStmt).getEnclosingFunction() = it.getParentScope+()
     or
     exists(ExitBasicBlock b |
       b = n.getBasicBlock() and
@@ -36,7 +35,8 @@ predicate falsePositive(Iterator it, Invalidator inv) {
       not b.contains(it.getAnAccess())
     )
   )
-  or inv = it.getAnAssignedValue()
+  or
+  inv = it.getAnAssignedValue()
 }
 
 predicate invalidatesChild(Invalidation invd, Expr container) {

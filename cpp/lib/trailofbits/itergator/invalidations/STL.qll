@@ -1,6 +1,5 @@
 private import trailofbits.itergator.Iterators
 private import cpp
-
 import trailofbits.itergator.Invalidations
 
 private string typeName(Iterated i) { result = i.getTarget().getType().stripType().getName() }
@@ -10,8 +9,9 @@ class PotentialInvalidationSTL extends PotentialInvalidation {
 
   override Expr invalidatedChild(Invalidation invd) {
     result = super.invalidatedChild(invd)
+    or
     // swap can also invalidate the first argument
-    or this.hasName("swap") and result = invd.getArgument(0)
+    this.hasName("swap") and result = invd.getArgument(0)
   }
 
   override predicate invalidates(Iterated i) {
@@ -26,39 +26,39 @@ class PotentialInvalidationSTL extends PotentialInvalidation {
   }
 
   predicate vectorInvalidation() {
-    this.hasName("push_back")
-    or this.hasName("reserve")
-    or this.hasName("insert")
-    or this.hasName("emplace_back")
-    or this.hasName("emplace")
-    or this.hasName("erase")
-    or this.hasName("pop_back")
-    or this.hasName("resize")
-    or this.hasName("shrink_to_fit")
-    or this.hasName("clear")
-    or this.hasName("swap")
+    this.hasName("push_back") or
+    this.hasName("reserve") or
+    this.hasName("insert") or
+    this.hasName("emplace_back") or
+    this.hasName("emplace") or
+    this.hasName("erase") or
+    this.hasName("pop_back") or
+    this.hasName("resize") or
+    this.hasName("shrink_to_fit") or
+    this.hasName("clear") or
+    this.hasName("swap")
   }
 
   predicate dequeInvalidation() {
-    this.hasName("push_back")
-    or this.hasName("push_front")
-    or this.hasName("pop_back")
-    or this.hasName("pop_front")
-    or this.hasName("insert")
-    or this.hasName("erase")
-    or this.hasName("emplace")
-    or this.hasName("emplace_front")
-    or this.hasName("emplace_back")
-    or this.hasName("resize")
-    or this.hasName("clear")
-    or this.hasName("shrink_to_fit")
-    or this.hasName("swap")
+    this.hasName("push_back") or
+    this.hasName("push_front") or
+    this.hasName("pop_back") or
+    this.hasName("pop_front") or
+    this.hasName("insert") or
+    this.hasName("erase") or
+    this.hasName("emplace") or
+    this.hasName("emplace_front") or
+    this.hasName("emplace_back") or
+    this.hasName("resize") or
+    this.hasName("clear") or
+    this.hasName("shrink_to_fit") or
+    this.hasName("swap")
   }
 
   predicate setInvalidation() {
-    this.hasName("emplace")
-    or this.hasName("emplace_hint")
-    or this.hasName("insert")
-    or this.hasName("clear")
+    this.hasName("emplace") or
+    this.hasName("emplace_hint") or
+    this.hasName("insert") or
+    this.hasName("clear")
   }
 }

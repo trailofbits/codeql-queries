@@ -3,13 +3,21 @@ private import trailofbits.itergator.Invalidations
 
 class Iterator extends Variable {
   Iterator() {
-    this.getUnderlyingType().getName().matches("%iterator%")
+    this.getUnderlyingType().getName().matches("%iterator%") or
     // getType is inconsistent
-    or
-    this.getAnAssignedValue().(FunctionCall).getTarget().(MemberFunction).getName().regexpMatch("c?r?begin")
-    or
-    this.getAnAssignedValue().(FunctionCall).getTarget().(MemberFunction).getName().regexpMatch("c?r?end")
-    or this.getAnAssignedValue().(FunctionCall).getTarget().hasName("find")
+    this.getAnAssignedValue()
+        .(FunctionCall)
+        .getTarget()
+        .(MemberFunction)
+        .getName()
+        .regexpMatch("c?r?begin") or
+    this.getAnAssignedValue()
+        .(FunctionCall)
+        .getTarget()
+        .(MemberFunction)
+        .getName()
+        .regexpMatch("c?r?end") or
+    this.getAnAssignedValue().(FunctionCall).getTarget().hasName("find")
   }
 }
 
@@ -20,13 +28,11 @@ class Iterated extends VariableAccess {
   Iterated() {
     iterator.getAnAssignedValue().getChild(-1) = this and
     not this.getTarget().isCompilerGenerated()
-    // show the iterable assigned to __range in ranged based for loops
     or
-    (
-      iterator.getAnAssignedValue().getChild(-1).(VariableAccess).getTarget().isCompilerGenerated() and
-      this =
-        iterator.getAnAssignedValue().getChild(-1).(VariableAccess).getTarget().getAnAssignedValue()
-    )
+    // show the iterable assigned to __range in ranged based for loops
+    iterator.getAnAssignedValue().getChild(-1).(VariableAccess).getTarget().isCompilerGenerated() and
+    this =
+      iterator.getAnAssignedValue().getChild(-1).(VariableAccess).getTarget().getAnAssignedValue()
   }
 
   Iterator iterator() { result = iterator }
@@ -35,12 +41,10 @@ class Iterated extends VariableAccess {
 // function call with utility predicates
 private class FunctionCallR extends FunctionCall {
   predicate containedBy(Stmt other) {
-    (
-      other.getASuccessor*() = this and
-      other.getAChild*() = this
-    )
-    // for destructors
+    other.getASuccessor*() = this and
+    other.getAChild*() = this
     or
+    // for destructors
     exists(Function f | f.getBlock() = other and this.getEnclosingFunction() = f)
   }
 
@@ -70,13 +74,14 @@ class InvalidatorT extends FunctionCallR {
   }
 
   Iterated iterated_() {
-    this.callsPotentialInvalidation(result)
-    or result = this.child().iterated_()
+    this.callsPotentialInvalidation(result) or
+    result = this.child().iterated_()
   }
 
   InvalidatorT potentialInvalidation() {
     this.callsPotentialInvalidation(this.iterated_()) and result = this
-    or result = this.child().potentialInvalidation()
+    or
+    result = this.child().potentialInvalidation()
   }
 }
 
