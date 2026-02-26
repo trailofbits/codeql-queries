@@ -61,3 +61,15 @@ python ./scripts/queries_table_generator.py 2>/dev/null
 ```
 
 This reads query metadata from all "full" suites and outputs markdown tables. Copy-paste the output into `README.md` under the `## Queries` section.
+
+## Qlpack Versioning
+
+Each language has a library pack (`<lang>/lib/qlpack.yml`) and a queries pack (`<lang>/src/qlpack.yml`) with a `version:` field. Test packs have no version.
+
+Bump versions when adding new queries or libraries, removing queries, or making breaking changes to library APIs. Keep the library and queries pack versions in sync for the same language.
+
+Packs per language:
+- `trailofbits/cpp-all` (library) — `cpp/lib/qlpack.yml`
+- `trailofbits/cpp-queries` — `cpp/src/qlpack.yml`
+- `trailofbits/go-queries` — `go/src/qlpack.yml`
+- `trailofbits/java-queries` — `java/src/qlpack.yml`
