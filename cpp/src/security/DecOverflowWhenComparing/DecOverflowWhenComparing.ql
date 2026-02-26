@@ -30,8 +30,7 @@ predicate isDefOf(ControlFlowNode node, Variable var) {
  */
 pragma[nomagic]
 predicate isDecInComparison(
-  PostfixDecrExpr dec, VariableAccess varAcc,
-  ComparisonOperation cmp, Variable var
+  PostfixDecrExpr dec, VariableAccess varAcc, ComparisonOperation cmp, Variable var
 ) {
   varAcc = var.getAnAccess() and
   dec.getOperand() = varAcc.getExplicitlyConverted() and
@@ -62,13 +61,9 @@ class DecOverflowReach extends StackVariableReachability {
     isDecInComparison(_, _, node, v)
   }
 
-  override predicate isSink(ControlFlowNode node, StackVariable v) {
-    isReadOf(node, v)
-  }
+  override predicate isSink(ControlFlowNode node, StackVariable v) { isReadOf(node, v) }
 
-  override predicate isBarrier(ControlFlowNode node, StackVariable v) {
-    isDefOf(node, v)
-  }
+  override predicate isBarrier(ControlFlowNode node, StackVariable v) { isDefOf(node, v) }
 }
 
 /**
@@ -76,9 +71,7 @@ class DecOverflowReach extends StackVariableReachability {
  * Holds if `sink` is reachable from the entry of `bb` without crossing
  * a definition of `var`.
  */
-private predicate nonStackBBEntryReaches(
-  BasicBlock bb, Variable var, ControlFlowNode sink
-) {
+private predicate nonStackBBEntryReaches(BasicBlock bb, Variable var, ControlFlowNode sink) {
   exists(int n |
     sink = bb.getNode(n) and
     isReadOf(sink, var) and
@@ -94,9 +87,7 @@ private predicate nonStackBBEntryReaches(
  * without crossing a definition of `var`.
  */
 pragma[nomagic]
-predicate nonStackReaches(
-  ComparisonOperation source, Variable var, ControlFlowNode sink
-) {
+predicate nonStackReaches(ComparisonOperation source, Variable var, ControlFlowNode sink) {
   not var instanceof StackVariable and
   exists(BasicBlock bb, int i |
     bb.getNode(i) = source and
@@ -115,8 +106,8 @@ predicate nonStackReaches(
 }
 
 from
-  Variable var, VariableAccess varAcc, PostfixDecrExpr dec,
-  VariableAccess varAccAfterOverflow, ComparisonOperation cmp
+  Variable var, VariableAccess varAcc, PostfixDecrExpr dec, VariableAccess varAccAfterOverflow,
+  ComparisonOperation cmp
 where
   isDecInComparison(dec, varAcc, cmp, var) and
   isReadOf(varAccAfterOverflow, var) and
@@ -132,14 +123,11 @@ where
   // var-- > 0 (0 < var--) then only accesses in false branch matter
   (
     if
-      (
-        cmp instanceof GTExpr and cmp.getRightOperand() instanceof Zero
-        or
-        cmp instanceof LTExpr and cmp.getLeftOperand() instanceof Zero
-      )
+      cmp instanceof GTExpr and cmp.getRightOperand() instanceof Zero
+      or
+      cmp instanceof LTExpr and cmp.getLeftOperand() instanceof Zero
     then cmp.getAFalseSuccessor().getASuccessor*() = varAccAfterOverflow
     else any()
   )
-
 select dec, "Unsigned decrementation in comparison ($@) - $@", cmp, cmp.toString(),
   varAccAfterOverflow, varAccAfterOverflow.toString()

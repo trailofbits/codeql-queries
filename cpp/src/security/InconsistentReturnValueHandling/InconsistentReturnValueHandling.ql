@@ -17,22 +17,14 @@ import semmle.code.cpp.controlflow.IRGuards
  * Categories for uses of functions' return values
  */
 newtype TCmpClass =
-  Tint()
-  or
-  Tbool()
-  or
-  Tnull()
-  or
-  Tptr()
-  or
-  Tsizeof(Type s)
-  or
-  Tcall()
-  or
-  Targ()
-  or
-  Tarithm()
-  or
+  Tint() or
+  Tbool() or
+  Tnull() or
+  Tptr() or
+  Tsizeof(Type s) or
+  Tcall() or
+  Targ() or
+  Tarithm() or
   Tother()
 
 class CmpClass extends TCmpClass {
@@ -62,14 +54,14 @@ class CmpClass extends TCmpClass {
  */
 pragma[inline]
 predicate numericLiteral(Expr expr) {
-    expr instanceof Literal
-    and not expr instanceof BlockExpr
-    and not expr instanceof FormatLiteral   
-    and not expr instanceof NULL
-    and not expr instanceof TextLiteral
-    and not expr instanceof LabelLiteral
-    and not expr.getType() instanceof NullPointerType
-    and not expr.getType() instanceof BoolType
+  expr instanceof Literal and
+  not expr instanceof BlockExpr and
+  not expr instanceof FormatLiteral and
+  not expr instanceof NULL and
+  not expr instanceof TextLiteral and
+  not expr instanceof LabelLiteral and
+  not expr.getType() instanceof NullPointerType and
+  not expr.getType() instanceof BoolType
 }
 
 /**
@@ -78,29 +70,26 @@ predicate numericLiteral(Expr expr) {
  */
 pragma[inline]
 predicate numericArithmLiteral(Expr expr) {
-    numericLiteral(expr)
-    or
-    (
-        expr instanceof UnaryArithmeticOperation
-        and
-        numericLiteral(expr.getAChild())
-    )
+  numericLiteral(expr)
+  or
+  expr instanceof UnaryArithmeticOperation and
+  numericLiteral(expr.getAChild())
 }
 
 pragma[inline]
 predicate binaryComputation(Expr e) {
-    e instanceof BinaryArithmeticOperation
-    or
-    e instanceof BinaryBitwiseOperation
-    or
-    e instanceof BinaryLogicalOperation
+  e instanceof BinaryArithmeticOperation
+  or
+  e instanceof BinaryBitwiseOperation
+  or
+  e instanceof BinaryLogicalOperation
 }
 
 pragma[inline]
 Expr getOtherOperand(ComparisonOperation cmp, Expr fcRetVal) {
-    (cmp.getRightOperand().getAChild*() = fcRetVal and result = cmp.getLeftOperand())
-    or
-    (cmp.getLeftOperand().getAChild*() = fcRetVal and result = cmp.getRightOperand())
+  cmp.getRightOperand().getAChild*() = fcRetVal and result = cmp.getLeftOperand()
+  or
+  cmp.getLeftOperand().getAChild*() = fcRetVal and result = cmp.getRightOperand()
 }
 
 /**
@@ -109,36 +98,34 @@ Expr getOtherOperand(ComparisonOperation cmp, Expr fcRetVal) {
  */
 pragma[inline]
 TCmpClass operandCategory(Expr comparedVal) {
-    (numericArithmLiteral(comparedVal) and result = Tint())
+  numericArithmLiteral(comparedVal) and result = Tint()
+  or
+  comparedVal instanceof Literal and comparedVal.getType() instanceof BoolType and result = Tbool()
+  or
+  (comparedVal.getType() instanceof NullPointerType or comparedVal instanceof NULL) and
+  result = Tnull()
+  or
+  comparedVal.getUnderlyingType() instanceof DerivedType and result = Tptr()
+  or
+  comparedVal instanceof Call and result = Tcall()
+  or
+  comparedVal instanceof SizeofOperator and
+  (
+    result = Tsizeof(comparedVal.(SizeofExprOperator).getExprOperand().getType())
     or
-    (comparedVal instanceof Literal and comparedVal.getType() instanceof BoolType and result = Tbool())
-    or
-    ((comparedVal.getType() instanceof NullPointerType or comparedVal instanceof NULL) and result = Tnull())
-    or
-    (comparedVal.getUnderlyingType() instanceof DerivedType and result = Tptr())
-    or
-    (comparedVal instanceof Call and result = Tcall())
-    or
-    (comparedVal instanceof SizeofOperator and
-        (
-        result = Tsizeof(comparedVal.(SizeofExprOperator).getExprOperand().getType())
-        or
-        result = Tsizeof(comparedVal.(SizeofTypeOperator).getTypeOperand())
-        )
-    )
-    or
-    (binaryComputation(comparedVal) and result = Tarithm())
-    or
-    (
-        not numericArithmLiteral(comparedVal)
-        and not (comparedVal instanceof Literal and comparedVal.getType() instanceof BoolType)
-        and not (comparedVal.getType() instanceof NullPointerType or comparedVal instanceof NULL)
-        and not comparedVal.getUnderlyingType() instanceof DerivedType
-        and not comparedVal instanceof Call
-        and not comparedVal instanceof SizeofOperator
-        and not binaryComputation(comparedVal)
-        and result = Tother()
-    )
+    result = Tsizeof(comparedVal.(SizeofTypeOperator).getTypeOperand())
+  )
+  or
+  binaryComputation(comparedVal) and result = Tarithm()
+  or
+  not numericArithmLiteral(comparedVal) and
+  not (comparedVal instanceof Literal and comparedVal.getType() instanceof BoolType) and
+  not (comparedVal.getType() instanceof NullPointerType or comparedVal instanceof NULL) and
+  not comparedVal.getUnderlyingType() instanceof DerivedType and
+  not comparedVal instanceof Call and
+  not comparedVal instanceof SizeofOperator and
+  not binaryComputation(comparedVal) and
+  result = Tother()
 }
 
 /**
@@ -146,114 +133,92 @@ TCmpClass operandCategory(Expr comparedVal) {
  * and assign proper TCmpClass category
  */
 predicate categorize(Function f, Call fc, TCmpClass comparedValCategory, IfStmt ifs) {
-    exists(Expr fcRetVal |
-        fc.getTarget() = f
-        and ifs.getCondition().getAChild*() = fcRetVal
-
-        // we could use global DF with a barrier, but that would return a lot of false positives
-        and DataFlow::localFlow(
-            DataFlow::exprNode(fc),
-            DataFlow::exprNode(fcRetVal)
-        )
-        
-        // exclude far-reaching flows, when the ret val is not checked but is actually used
-        // in other words, find only the first use in an IF statement
-        and not exists(IfStmt ifsPrev |
-            ifsPrev != ifs
-            and DataFlow::localFlow(
-                DataFlow::exprNode(fc),
-                DataFlow::exprNode(ifsPrev.getCondition().getAChild*())
-            )
-        )
-
-        and
-        if
-            // if(func(retVal))
-            exists(Call anyFc |
-                ifs.getCondition().getAChild*() = anyFc
-                and anyFc.getAnArgument().getAChild*() = fcRetVal
-            )
-        then
-            comparedValCategory = Targ()
-        else (
+  exists(Expr fcRetVal |
+    fc.getTarget() = f and
+    ifs.getCondition().getAChild*() = fcRetVal and
+    // we could use global DF with a barrier, but that would return a lot of false positives
+    DataFlow::localFlow(DataFlow::exprNode(fc), DataFlow::exprNode(fcRetVal)) and
+    // exclude far-reaching flows, when the ret val is not checked but is actually used
+    // in other words, find only the first use in an IF statement
+    not exists(IfStmt ifsPrev |
+      ifsPrev != ifs and
+      DataFlow::localFlow(DataFlow::exprNode(fc),
+        DataFlow::exprNode(ifsPrev.getCondition().getAChild*()))
+    ) and
+    if
+      // if(func(retVal))
+      exists(Call anyFc |
+        ifs.getCondition().getAChild*() = anyFc and
+        anyFc.getAnArgument().getAChild*() = fcRetVal
+      )
+    then comparedValCategory = Targ()
+    else
+      // if (retVal != comparedVal)
+      exists(ComparisonOperation cmp |
+        ifs.getCondition().getAChild*() = cmp and
+        // skip if we are passing the return value to some function
+        not exists(Call tmpCall |
+          cmp.getAChild*() = tmpCall and
+          tmpCall.getAnArgument().getAChild*() = fcRetVal
+        ) and
+        (
+          // if (2*retVal+1 != comparedVal)
+          // if (retVal > 2*anything()+sizeof(struct))
+          if
+            cmp.getAnOperand().getAChild*() = fcRetVal and
+            binaryComputation(cmp.getAnOperand())
+          then comparedValCategory = Tarithm()
+          else
             // if (retVal != comparedVal)
-            exists(ComparisonOperation cmp |
-                ifs.getCondition().getAChild*() = cmp
-                // skip if we are passing the return value to some function
-                and not exists(Call tmpCall |
-                    cmp.getAChild*() = tmpCall
-                    and tmpCall.getAnArgument().getAChild*() = fcRetVal
-                )
-                and (
-                    // if (2*retVal+1 != comparedVal)
-                    // if (retVal > 2*anything()+sizeof(struct))
-                    if (
-                        cmp.getAnOperand().getAChild*() = fcRetVal
-                        and binaryComputation(cmp.getAnOperand())
-                    )
-                    then
-                        comparedValCategory = Tarithm()
-                    else (
-                        // if (retVal != comparedVal)
-                        comparedValCategory = operandCategory(getOtherOperand(cmp, fcRetVal))
-                    )
-                )
-            )
+            comparedValCategory = operandCategory(getOtherOperand(cmp, fcRetVal))
         )
-    )
+      )
+  )
 }
 
 /**
  * Count all eligible IF statements that
  * checks return values of the given function
  */
-int countAllRetValTypes(Function f) {
-    result = count(IfStmt ifs |
-        categorize(f, _, _, ifs) |
-        ifs
-    )
-}
+int countAllRetValTypes(Function f) { result = count(IfStmt ifs | categorize(f, _, _, ifs) | ifs) }
 
 /**
  * Determine what is the most commont TCmpClass category
  * for the given function (by counting eligible IF statements)
  */
 int mostCommonRetValType(Function f, TCmpClass mostCommonCategory) {
-    result = max(int numberOfRetValTypeInstances |
-        categorize(f, _, mostCommonCategory, _)
-        and numberOfRetValTypeInstances = count(IfStmt ifs | categorize(f, _, mostCommonCategory, ifs) | ifs)
+  result =
+    max(int numberOfRetValTypeInstances |
+      categorize(f, _, mostCommonCategory, _) and
+      numberOfRetValTypeInstances =
+        count(IfStmt ifs | categorize(f, _, mostCommonCategory, ifs) | ifs)
     )
 }
 
-from Function f, int retValsTotalAmount,
-    TCmpClass mostCommonCategory, CmpClass mostCommonCategoryClass, int categoryMax,
-    TCmpClass buggyCategory, CmpClass buggyCategoryClass, Call buggyFc,
-    IfStmt ifs
+from
+  Function f, int retValsTotalAmount, TCmpClass mostCommonCategory,
+  CmpClass mostCommonCategoryClass, int categoryMax, TCmpClass buggyCategory,
+  CmpClass buggyCategoryClass, Call buggyFc, IfStmt ifs
 where
-    // we are interested only in defined (e.g., not libc) and used functions
-    exists(Call fc | fc.getTarget() = f)
-    and f.hasDefinition()
-
-    // the function's retVal must be used in some IF statements
-    and retValsTotalAmount = countAllRetValTypes(f)
-    and retValsTotalAmount >= 4
-
-    // now we find how the function's retVal is used most commonly
-    and categoryMax = mostCommonRetValType(f, mostCommonCategory)
-    and mostCommonCategoryClass = mostCommonCategory
-
-    // if threshold for "most common" use case is ~75%, then remaining 25% function calls are handled somehow incorrectly
-    and ((float)(categoryMax * 100) / retValsTotalAmount) >= 74
-
-    // finally we are looking for calls that use retVal in an uncommon way
-    and categorize(f, buggyFc, buggyCategory, ifs)
-    and buggyCategory != mostCommonCategory
-    and buggyCategoryClass = buggyCategory
-
-    // return value could be used multiple times in a single IF statement
-    // don't show such findings
-    and not categoryMax = retValsTotalAmount
-    
-select buggyFc, "Function $@ return value is usually compared with" + mostCommonCategoryClass + " (" + categoryMax +
-    " of " + retValsTotalAmount + " times), but this call compares with" + buggyCategoryClass + " $@",
-    f, f.getName(), ifs, "here"
+  // we are interested only in defined (e.g., not libc) and used functions
+  exists(Call fc | fc.getTarget() = f) and
+  f.hasDefinition() and
+  // the function's retVal must be used in some IF statements
+  retValsTotalAmount = countAllRetValTypes(f) and
+  retValsTotalAmount >= 4 and
+  // now we find how the function's retVal is used most commonly
+  categoryMax = mostCommonRetValType(f, mostCommonCategory) and
+  mostCommonCategoryClass = mostCommonCategory and
+  // if threshold for "most common" use case is ~75%, then remaining 25% function calls are handled somehow incorrectly
+  ((categoryMax * 100).(float) / retValsTotalAmount) >= 74 and
+  // finally we are looking for calls that use retVal in an uncommon way
+  categorize(f, buggyFc, buggyCategory, ifs) and
+  buggyCategory != mostCommonCategory and
+  buggyCategoryClass = buggyCategory and
+  // return value could be used multiple times in a single IF statement
+  // don't show such findings
+  not categoryMax = retValsTotalAmount
+select buggyFc,
+  "Function $@ return value is usually compared with" + mostCommonCategoryClass + " (" + categoryMax
+    + " of " + retValsTotalAmount + " times), but this call compares with" + buggyCategoryClass +
+    " $@", f, f.getName(), ifs, "here"
