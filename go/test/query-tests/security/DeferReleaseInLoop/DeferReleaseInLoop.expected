@@ -1,0 +1,8 @@
+| DeferReleaseInLoop.go:19:3:19:17 | defer statement | Deferred Close() in a loop will not execute until the function returns, leaking resources across iterations. |
+| DeferReleaseInLoop.go:31:3:31:17 | defer statement | Deferred Close() in a loop will not execute until the function returns, leaking resources across iterations. |
+| DeferReleaseInLoop.go:43:3:43:25 | defer statement | Deferred Close() in a loop will not execute until the function returns, leaking resources across iterations. |
+| DeferReleaseInLoop.go:55:3:55:20 | defer statement | Deferred Close() in a loop will not execute until the function returns, leaking resources across iterations. |
+| DeferReleaseInLoop.go:67:3:67:18 | defer statement | Deferred Close() in a loop will not execute until the function returns, leaking resources across iterations. |
+| DeferReleaseInLoop.go:84:3:84:18 | defer statement | Deferred Close() in a loop will not execute until the function returns, leaking resources across iterations. |
+| DeferReleaseInLoop.go:85:3:85:17 | defer statement | Deferred Close() in a loop will not execute until the function returns, leaking resources across iterations. |
+| DeferReleaseInLoop.go:98:4:98:18 | defer statement | Deferred Close() in a loop will not execute until the function returns, leaking resources across iterations. |
