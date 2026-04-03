@@ -20,7 +20,7 @@ class UnboundedReadCall extends DataFlow::CallNode {
   UnboundedReadCall() {
     this.getTarget().hasQualifiedName("io", "ReadAll")
     or
-    this.getTarget().hasQualifiedName("io/ioutil", "ReadAll") // deprecated but still used
+    this.getTarget().hasQualifiedName("io/ioutil", "ReadAll")
     or
     this.getTarget().hasQualifiedName("ioutil", "ReadAll")
   }
@@ -29,13 +29,10 @@ class UnboundedReadCall extends DataFlow::CallNode {
 /**
  * A source node: an HTTP request body that can be controlled by an attacker.
  *
- * Matches:
- * - `r.Body` where `r` is an `*http.Request`
- * - `r.GetBody()` calls
+ * Matches `r.Body` where `r` is an `*http.Request`.
  */
 class HTTPRequestBodySource extends DataFlow::Node {
   HTTPRequestBodySource() {
-    // r.Body field read
     exists(Field f, SelectorExpr sel |
       f.hasQualifiedName("net/http", "Request", "Body") and
       sel.getSelector().refersTo(f) and
@@ -46,10 +43,6 @@ class HTTPRequestBodySource extends DataFlow::Node {
 
 /**
  * A call that wraps a reader with a size limit, acting as a sanitizer.
- *
- * - `http.MaxBytesReader(w, r, n)`
- * - `io.LimitReader(r, n)`
- * - `io.LimitedReader{R: r, N: n}`
  */
 class SizeLimitingCall extends DataFlow::CallNode {
   SizeLimitingCall() {
@@ -59,15 +52,38 @@ class SizeLimitingCall extends DataFlow::CallNode {
   }
 }
 
+/**
+ * Holds if `r.Body` is reassigned from a size-limiting call in the same function
+ * that `bodyRead` is in, on the same request variable `r`.
+ */
+predicate bodyLimitedByReassignment(SelectorExpr bodyRead) {
+  exists(SizeLimitingCall limiter, Assignment assign, SelectorExpr lhs, Variable v |
+    // The assignment target is `v.Body`
+    assign.getLhs() = lhs and
+    lhs.getSelector().getName() = "Body" and
+    lhs.getBase().(Ident).refersTo(v) and
+    // The RHS is a MaxBytesReader/LimitReader call
+    assign.getRhs() = limiter.asExpr() and
+    // The body read is on the same variable: `v.Body`
+    bodyRead.getBase().(Ident).refersTo(v) and
+    // Both in the same function
+    assign.getEnclosingFunction() = bodyRead.getEnclosingFunction()
+  )
+}
+
 module UnboundedReadConfig implements DataFlow::ConfigSig {
-  predicate isSource(DataFlow::Node source) { source instanceof HTTPRequestBodySource }
+  predicate isSource(DataFlow::Node source) {
+    source instanceof HTTPRequestBodySource and
+    // Exclude r.Body reads where r.Body was reassigned from a size limiter
+    not bodyLimitedByReassignment(source.asExpr())
+  }
 
   predicate isSink(DataFlow::Node sink) {
     exists(UnboundedReadCall readAll | sink = readAll.getArgument(0))
   }
 
   predicate isBarrier(DataFlow::Node node) {
-    // If the body passes through a size-limiting wrapper, it is safe
+    // If the body passes through a size-limiting wrapper (io.LimitReader pattern), it is safe
     node = any(SizeLimitingCall c).getResult(0)
     or
     node = any(SizeLimitingCall c).getResult()
