@@ -1,3 +1,0 @@
-| ECDSASignatureMalleability.go:18:28:18:30 | sig | ECDSA signature used as hex encoding (likely identifier). Signatures are malleable: (r, s) and (r, -s mod n) are both valid, so they cannot serve as unique identifiers. |
-| ECDSASignatureMalleability.go:34:21:34:23 | sig | ECDSA signature used as byte comparison. Signatures are malleable: (r, s) and (r, -s mod n) are both valid, so they cannot serve as unique identifiers. |
-| ECDSASignatureMalleability.go:48:28:48:30 | sig | ECDSA signature used as hex encoding (likely identifier). Signatures are malleable: (r, s) and (r, -s mod n) are both valid, so they cannot serve as unique identifiers. |
