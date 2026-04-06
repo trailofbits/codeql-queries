@@ -7,6 +7,8 @@
 extern "C" {
 #endif
 
+ssize_t read(int, void *, size_t);
+
 void _exit(int);
 
 #ifdef  __cplusplus

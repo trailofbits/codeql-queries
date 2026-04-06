@@ -14,6 +14,15 @@
             they come from untrusted sources.
         </p>
     </recommendation>
+    <example>
+        <sample src="PotentiallyUnguardedProtocolHandler.java" />
+        <p>
+            In the bad example, an untrusted URL is passed directly to <code>Desktop.browse()</code>
+            without any scheme validation.
+            In the good example, the URL scheme is checked with <code>getScheme()</code> before
+            invoking the handler.
+        </p>
+    </example>
     <references>
         <li> Positive Security: <a
                 href="https://positive.security/blog/url-open-rce">Allow

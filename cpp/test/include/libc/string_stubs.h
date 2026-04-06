@@ -28,6 +28,8 @@ extern int wprintf(const wchar_t * format, ...);
 extern wchar_t* wcscpy(wchar_t * s1, const wchar_t * s2);
 extern void perror(const char *s);
 extern int puts(const char *s);
+extern int strcmp(const char *, const char *);
+extern int strncmp(const char *, const char *, size_t);
 
 extern void openlog(const char*, int, int);
 extern void syslog(int, const char*, ...);
