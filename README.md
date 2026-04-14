@@ -5,20 +5,23 @@ This repository contains CodeQL queries developed by Trail of Bits and made avai
 ## Using custom CodeQL queries
 
 The easiest is to [download all packs](https://docs.github.com/en/code-security/codeql-cli/using-the-advanced-functionality-of-the-codeql-cli/publishing-and-using-codeql-packs#running-codeql-pack-download-scopepack) from the GitHub registry:
+
 ```sh
-codeql pack download trailofbits/cpp-queries trailofbits/go-queries
+codeql pack download trailofbits/cpp-queries trailofbits/go-queries trailofbits/java-queries
 ```
 
 Then verify that new queries are installed:
+
 ```sh
 codeql resolve qlpacks | grep trailofbits
 ```
 
 And use the queries for analysis:
+
 ```sh
 codeql database analyze database.db --format=sarif-latest --output=./tob.sarif -- trailofbits/cpp-queries
-# or
 codeql database analyze database.db --format=sarif-latest --output=./tob.sarif -- trailofbits/go-queries
+codeql database analyze database.db --format=sarif-latest --output=./tob.sarif -- trailofbits/java-queries
 ```
 
 ## Queries
@@ -126,11 +129,13 @@ make install
 ```
 
 Generate query tables and copy-paste it to README.md file
+
 ```sh
 python ./scripts/queries_table_generator.py 2>/dev/null
 ```
 
 Generate markdown query help files
+
 ```sh
 codeql generate query-help ./cpp/src/ --format=markdown --output ./cpp/src/docs
 codeql generate query-help ./go/src/ --format=markdown --output ./go/src/docs
