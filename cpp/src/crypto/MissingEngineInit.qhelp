@@ -1,0 +1,14 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>This query identifies loaded OpenSSL engines which are not passed to both <code>ENGINE_init</code> and <code>ENGINE_set_default</code>. <code>ENGINE_init</code> should always be called when a new engine is loaded. It is generally good practise to also call <code>ENGINE_set_default</code> to ensure that the primitives defined by the engine are used by default.</p>
+
+<p>The following code snippet would be flagged as an issue by the query.</p>
+
+<sample language="cpp">ENGINE* load_rdrand() {
+    return ENGINE_by_id("rdrand");
+}</sample>
+</overview>
+</qhelp>

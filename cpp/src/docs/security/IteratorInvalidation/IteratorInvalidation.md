@@ -9,11 +9,10 @@ The query tracks data flow between the iterated container and the modifying call
 ## Recommendation
 Avoid modifying containers while iterating over them. Common safe alternatives include:
 
-- Collect modifications and apply them after the loop completes
-- Use the erase-remove idiom for deletions
-- Iterate over a copy of the container if modification is necessary
-- Use index-based loops instead of iterator-based loops when the container supports random access
-
+* Collect modifications and apply them after the loop completes
+* Use the erase-remove idiom for deletions
+* Iterate over a copy of the container if modification is necessary
+* Use index-based loops instead of iterator-based loops when the container supports random access
 
 ## Example
 
@@ -41,6 +40,7 @@ void good_example(std::vector<int>& vec) {
         vec.push_back(val);
     }
 }
+
 ```
 In the bad example, calling `push_back` inside the range-based for loop may cause the vector to reallocate, invalidating all iterators including the loop's internal iterator. The good example collects values to add and applies them after the loop.
 

@@ -1,0 +1,19 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>Randomly generated BIGNUMs often represent sensitive data (e.g. like ECDSA nonces). These should be cleared as they go out of scope to ensure that sensitive data does not remain in memory longer than required.</p>
+
+<p>This query identifies OpenSSL BIGNUMs which are inititialized using <code>BN_rand</code> but not which are not zeroized using <code>BN_clear</code> before they go out of scope. The following example function would be flagged as an issue by the query.</p>
+
+<sample language="cpp">void compute() {
+    BIGNUM *n = BN_new();
+    BN_rand(n, 128, BN_RAND_TOP_ANY, BN_RAND_BOTTOM_ANY);
+
+    // Perform sensitive computation using `n`.
+
+    BN_free(n);
+}</sample>
+</overview>
+</qhelp>

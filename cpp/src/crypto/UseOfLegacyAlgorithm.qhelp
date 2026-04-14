@@ -1,0 +1,29 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>This query finds uses of weak or depracated cryptographic algorithms like <code>MD5</code>, <code>SHA1</code>, and <code>DES</code>. The query will flag calls to functions containing any of the following names:</p>
+
+<ul>
+<li><code>MD2</code></li>
+<li><code>MD4</code></li>
+<li><code>MD5</code></li>
+<li><code>RIPEMD</code></li>
+<li><code>SHA1</code></li>
+<li><code>Streebog</code></li>
+<li><code>Whirlpool</code></li>
+<li><code>PBKDF1</code></li>
+<li><code>Arcfour</code></li>
+<li><code>Blowfish</code></li>
+<li><code>CAST</code></li>
+<li><code>DES</code></li>
+<li><code>IDEA</code></li>
+<li><code>Kasumi</code></li>
+<li><code>Magma</code></li>
+<li><code>RC2</code></li>
+<li><code>RC4</code></li>
+<li><code>TDEA</code></li>
+</ul>
+</overview>
+</qhelp>
