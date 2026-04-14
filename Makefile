@@ -27,4 +27,10 @@ generate-help:
 	codeql generate query-help ./go/src/ --format=markdown --output ./go/src/docs
 	codeql generate query-help ./java/src/ --format=markdown --output ./java/src/docs
 
-.PHONY: test format format-check pack-install pack-upgrade generate-table generate-help
+publish:
+	codeql pack publish cpp/lib/
+	codeql pack publish cpp/src/
+	codeql pack publish go/src/
+	codeql pack publish java/src/
+
+.PHONY: test format format-check pack-install pack-upgrade generate-table generate-help publish
