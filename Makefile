@@ -10,6 +10,9 @@ format-check:
 	find . \( -iname '*.ql' -o -iname '*.qll' \) -print0 | \
 	  xargs -0 codeql query format --check-only
 
+download:
+	codeql pack download trailofbits/cpp-all trailofbits/cpp-queries trailofbits/go-queries trailofbits/java-queries
+
 pack-install:
 	find . -iname "qlpack.yml" -exec \
 	  sh -c 'codeql pack install $$(dirname "$$1")' sh {} \;

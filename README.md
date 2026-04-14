@@ -5,7 +5,7 @@ This repository contains CodeQL queries developed by Trail of Bits and made avai
 ## Setup
 
 ```bash
-codeql pack download trailofbits/cpp-queries trailofbits/go-queries trailofbits/java-queries
+make download
 codeql resolve packs | grep trailofbits
 ```
 
