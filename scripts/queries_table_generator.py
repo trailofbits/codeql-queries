@@ -61,7 +61,7 @@ class QlQuery:
         return self.name < other.name
 
     def md_table_line(self):
-        qhelp_markdown_path = (Path(self.lang)/'src'/'docs'/self.rel_path).with_suffix('.md')
+        qhelp_markdown_path = (Path('..')/self.lang/'src'/'docs'/self.rel_path).with_suffix('.md')
         cells = [
             # f"{self.id}",
             f'[{self.name}](./{qhelp_markdown_path})',
@@ -122,7 +122,7 @@ class Qls:
             for q in query_list:
                 table += q.md_table_line() + "\n"
 
-            tables += table + "\n\n"
+            tables += table + "\n"
 
         return tables
 
@@ -143,7 +143,7 @@ class Qls:
             new = QlQuery.parse_from_file(path, lang)
             queries.append(new)
 
-        print(f"INFO: Parsed {len(queries)} from {qls_path}.", file=sys.stderr)
+        sys.stderr.write(f"INFO: Parsed {len(queries)} from {qls_path}.\n")
         return Qls(qls_path, queries, lang)
 
 def main():
@@ -179,9 +179,9 @@ def main():
         suites_dir = qlpack.get('suites', 'codeql-suites')
         suites = list((qlpack_path / suites_dir).glob('*-full.qls'))
         if len(suites) > 1:
-            print(f'Error: Found more than 1 "full" suite for qlpack {qlpack_name}', file=sys.stderr)
+            sys.stderr.write(f'Error: Found more than 1 "full" suite for qlpack {qlpack_name}\n')
         if len(suites)  == 0:
-            print(f'Error: No "full" suite for qlpack {qlpack_name}', file=sys.stderr)
+            sys.stderr.write(f'Error: No "full" suite for qlpack {qlpack_name}\n')
             continue
 
         # generate and print markdown
@@ -190,11 +190,8 @@ def main():
         lang = lang.capitalize()
         if lang == 'Cpp':
             lang = 'C and C++'
-        print(f'### {lang}\n')
-        print(suit.md_tables())
-
-    print("Copy-paste tables to the README.md file")
-
+        sys.stdout.write(f'### {lang}\n\n')
+        sys.stdout.write(suit.md_tables())
 
 if __name__ == "__main__":
     main()

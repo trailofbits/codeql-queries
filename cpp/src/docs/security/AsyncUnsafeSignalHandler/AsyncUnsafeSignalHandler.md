@@ -1,11 +1,19 @@
 # Async unsafe signal handler
 This is a CodeQL query constructed to find signal handlers that are performing async unsafe operations.
 
-The kernel defines a list of async-safe signal functions in its [man page](https://man7.org/linux/man-pages/man7/signal-safety.7.html). Any signal handler that performs operations that are not safe asynchronously may be vulnerable.
+Because a signal may be delivered at any moment, e.g., in the middle of a malloc, the handler shouldn't touch the program's internal state.
+
+The kernel defines a list of async-safe signal functions in its [man page](https://man7.org/linux/man-pages/man7/signal-safety.7.html). Any signal handler that performs operations that are not safe for asynchronous execution may be vulnerable.
+
+Moreover, signal handlers may be re-entered. Handlers' logic should take that possibility into account.
+
+If the issue is exploitable depends on attacker's ability to deliver the signal. Remote attacks may be limitted to some signals (like SIGALRM and SIGURG), while local attacks could use all signals.
 
 
 ## Recommendation
 Attempt to keep signal handlers as simple as possible. Only call async-safe functions from signal handlers.
+
+Block delivery of new signals inside signal handlers to prevent handler re-entrancy issues.
 
 
 ## Example
@@ -55,6 +63,7 @@ In this example, while both syntatically valid, a correct handler is defined in 
 
 
 ## References
+* [Michal Zalewski, "Delivering Signals for Fun and Profit"](https://lcamtuf.coredump.cx/signals.txt)
 * [SEI CERT C Coding Standard "SIG30-C. Call only asynchronous-safe functions within signal handlers"](https://wiki.sei.cmu.edu/confluence/display/c/SIG30-C.+Call+only+asynchronous-safe+functions+within+signal+handlers)
 * [regreSSHion: RCE in OpenSSH's server, on glibc-based Linux systems](https://www.qualys.com/2024/07/01/cve-2024-6387/regresshion.txt)
 * [signal-safety - async-signal-safe functions](https://man7.org/linux/man-pages/man7/signal-safety.7.html)

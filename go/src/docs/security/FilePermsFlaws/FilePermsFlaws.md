@@ -1,4 +1,4 @@
-# File permission flaws
+# Invalid file permission parameter
 `FileMode` parameters (for methods accessing filesystem) are usually provided as octal numbers. This query detects hardcoded `FileMode`s that are not in octal form - numbers you see in the code are not what you will get. The query filters out some commonly used, not-octal integers to reduce number of false positives. Moreover, the query detect calls to permission-changing methods (e.g., `os.Chmod`, `os.Mkdir`) when the `FileMode` has more than 9 bits set - other bits may not be used, depending on the operating system.
 
 

@@ -18,4 +18,13 @@ pack-upgrade:
 	find . -iname "qlpack.yml" -exec \
 	  sh -c 'codeql pack upgrade $$(dirname "$$1")' sh {} \;
 
-.PHONY: test format format-check pack-install pack-upgrade
+generate-table:
+	uv run --with pyyaml \
+	  python ./scripts/queries_table_generator.py 2>/dev/null > doc/QUERIES.md
+
+generate-help:
+	codeql generate query-help ./cpp/src/ --format=markdown --output ./cpp/src/docs
+	codeql generate query-help ./go/src/ --format=markdown --output ./go/src/docs
+	codeql generate query-help ./java/src/ --format=markdown --output ./java/src/docs
+
+.PHONY: test format format-check pack-install pack-upgrade generate-table generate-help

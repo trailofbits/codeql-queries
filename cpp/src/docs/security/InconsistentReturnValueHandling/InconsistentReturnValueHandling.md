@@ -11,7 +11,6 @@ The query categorizes each comparison into one of the following categories:
 * Another function's return value (e.g., `ret != other_func()`)
 * Passed as argument to another function (e.g., `if (check(ret))`)
 * Arithmetic expression
-
 When at least 75% of a function's return value comparisons fall into one category, the remaining comparisons in a different category are flagged as potentially incorrect.
 
 
@@ -20,6 +19,8 @@ Review each flagged call site and verify that the comparison matches the functio
 
 
 ## Example
+In this example, `process_items` returns the number of items processed or `-1` on error. Most call sites correctly compare the return value with a numeric literal. However, one call site mistakenly compares it with `sizeof(struct header)`, which is inconsistent with how the return value is used everywhere else.
+
 
 ```c
 struct header {
@@ -60,9 +61,8 @@ void example() {
     result = process_items(items, 7);
     if (result > sizeof(struct header)) { /* wrong comparison */ }
 }
-```
-In this example, `process_items` returns the number of items processed or `-1` on error. Most call sites correctly compare the return value with a numeric literal. However, one call site mistakenly compares it with `sizeof(struct header)`, which is inconsistent with how the return value is used everywhere else.
 
+```
 
 ## References
 * [CWE-252: Unchecked Return Value](https://cwe.mitre.org/data/definitions/252.html)
