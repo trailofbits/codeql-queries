@@ -53,14 +53,19 @@ Test `.cpp` files include stubs via relative paths:
 
 Stubs only need enough declarations for CodeQL to resolve types and function names — no implementations required.
 
-## Updating README Query Tables
+## Updating Query Tables
 
-When a query is added, removed, or its metadata changes, regenerate the README tables:
+When a query is added, removed, or its metadata changes, regenerate `doc/QUERIES.md`:
 ```sh
-python ./scripts/queries_table_generator.py 2>/dev/null
+make generate-table
 ```
 
-This reads query metadata from all "full" suites and outputs markdown tables. Copy-paste the output into `README.md` under the `## Queries` section.
+This reads query metadata from all "full" suites and writes markdown tables to `doc/QUERIES.md`. The file is generated — do not hand-edit it.
+
+The accompanying per-query markdown docs in `<lang>/src/docs/` are regenerated from each query's `.qhelp` file with:
+```sh
+make generate-help
+```
 
 ## Qlpack Versioning
 

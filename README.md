@@ -9,7 +9,7 @@ make download
 codeql resolve packs | grep trailofbits
 ```
 
-See [QUERIES.md](doc/QUERIES.md) for details.
+See [QUERIES.md](doc/QUERIES.md) for the full list of queries.
 
 ## Usage
 

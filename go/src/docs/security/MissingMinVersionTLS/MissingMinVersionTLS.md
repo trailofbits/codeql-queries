@@ -37,7 +37,7 @@ func test1() *tls.Config {
 
 func test2() *tls.Config {
 	config := &tls.Config{}
-	config.MinVersion = 0 // GOOD: min version is set (hovewer, to the default one)
+	config.MinVersion = 0 // GOOD: min version is set (however, to the default one)
 	result := config
 	return result
 }

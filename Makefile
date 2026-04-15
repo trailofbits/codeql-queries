@@ -23,7 +23,7 @@ pack-upgrade:
 
 generate-table:
 	uv run --with pyyaml \
-	  python ./scripts/queries_table_generator.py 2>/dev/null > doc/QUERIES.md
+	  python ./scripts/queries_table_generator.py > doc/QUERIES.md
 
 generate-help:
 	codeql generate query-help ./cpp/src/ --format=markdown --output ./cpp/src/docs
@@ -36,4 +36,4 @@ publish:
 	codeql pack publish go/src/
 	codeql pack publish java/src/
 
-.PHONY: test format format-check pack-install pack-upgrade generate-table generate-help publish
+.PHONY: test format format-check download pack-install pack-upgrade generate-table generate-help publish
