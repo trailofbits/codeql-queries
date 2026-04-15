@@ -1,5 +1,5 @@
 # Use of legacy cryptographic algorithm
-This query finds uses of weak or depracated cryptographic algorithms like `MD5`, `SHA1`, and `DES`. The query will flag calls to functions containing any of the following names:
+This query finds uses of weak or deprecated cryptographic algorithms like `MD5`, `SHA1`, and `DES`. The query will flag calls to functions containing any of the following names:
 
 * `MD2`
 * `MD4`
@@ -9,7 +9,7 @@ This query finds uses of weak or depracated cryptographic algorithms like `MD5`,
 * `Streebog`
 * `Whirlpool`
 * `PBKDF1`
-* `Arcfour`
+* `ArcFour`
 * `Blowfish`
 * `CAST`
 * `DES`

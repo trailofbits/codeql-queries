@@ -23,7 +23,8 @@ pack-upgrade:
 
 generate-table:
 	uv run --with pyyaml \
-	  python ./scripts/queries_table_generator.py > doc/QUERIES.md
+	  python ./scripts/queries_table_generator.py > doc/QUERIES.md.tmp
+	mv doc/QUERIES.md.tmp doc/QUERIES.md
 
 generate-help:
 	codeql generate query-help ./cpp/src/ --format=markdown --output ./cpp/src/docs

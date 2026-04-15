@@ -12,14 +12,14 @@ import sys
 from dataclasses import dataclass
 from functools import total_ordering
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
 import yaml
 
 
 @dataclass(frozen=True)
 class QueryMetadata:
-    """Metadata extracted from a single query's @tags."""
+    """Metadata extracted from a single .ql query file."""
 
     name: str
     id: str
@@ -49,7 +49,7 @@ class QlQuery:
         self.id: str = metadata.id
         self.description: str = metadata.description
         self.kind: str = metadata.kind
-        self.tags: List[str] = sorted(metadata.tags.split(' '))
+        self.tags: list[str] = sorted(metadata.tags.split(' '))
         self.group: str = metadata.group
 
         self.problem_severity: Optional[str] = metadata.problem_severity
@@ -83,7 +83,7 @@ class QlQuery:
             Path('..') / self.doc_lang_dir / 'src' / 'docs' / self.rel_path
         ).with_suffix('.md')
         cells = [
-            f'[{self.name}](./{qhelp_markdown_path})',
+            f'[{self.name}]({qhelp_markdown_path})',
             f"{self.description}",
             f"{self.problem_severity}",
             f"{self.precision}",
@@ -99,6 +99,10 @@ class QlQuery:
         ).decode("utf-8")
 
         parsed = json.loads(raw_metadata)
+        if "group" not in parsed:
+            sys.stderr.write(
+                f'WARN: {path} has no "group" metadata, defaulting to "security".\n'
+            )
         metadata = QueryMetadata(
             name=parsed["name"],
             id=parsed["id"],
@@ -115,11 +119,11 @@ class QlQuery:
 
 
 class Qls:
-    def __init__(self, path: Path, queries: List[QlQuery], doc_lang_dir: str):
+    def __init__(self, path: Path, queries: list[QlQuery], doc_lang_dir: str):
         self.path: Path = path
         self.doc_lang_dir = doc_lang_dir
 
-        self.queries: dict[str, List[QlQuery]] = {}
+        self.queries: dict[str, list[QlQuery]] = {}
         for query in queries:
             self.queries.setdefault(query.group, []).append(query)
         for group, query_list in self.queries.items():
@@ -166,6 +170,8 @@ def display_name(extractor: str) -> str:
     """Return the human-readable language heading for an extractor name."""
     if extractor == 'cpp':
         return 'C and C++'
+    if extractor == 'java-kotlin':
+        return 'Java and Kotlin'
     return extractor.capitalize()
 
 
@@ -211,13 +217,17 @@ def main():
         if len(suites) == 0:
             sys.exit(f'Error: No "full" suite for qlpack {qlpack_name}')
 
+        extractor = qlpack.get("extractor")
+        if extractor is None:
+            sys.exit(f'Error: qlpack {qlpack_name} has no "extractor" field')
+
         # The on-disk directory holding the docs (e.g., "java") may differ from
         # the extractor name (e.g., "java-kotlin"). Derive the doc dir from the
         # pack's filesystem location, which is <lang>/src.
         doc_lang_dir = qlpack_path.parent.name
         suite = Qls.get_qls_from_path(suites[0], doc_lang_dir)
 
-        sys.stdout.write(f'### {display_name(qlpack["extractor"])}\n\n')
+        sys.stdout.write(f'### {display_name(extractor)}\n\n')
         sys.stdout.write(suite.md_tables())
 
 

@@ -6,31 +6,31 @@
 
 | Name | Description | Severity | Precision  |
 | ---  | ----------- | :----:   | :--------: |
-|[BN_CTX_free called before BN_CTX_end](./../cpp/src/docs/crypto/BnCtxFreeBeforeEnd.md)|Detects BN_CTX_free called before BN_CTX_end, which violates the required lifecycle|error|medium|
-|[Crypto variable initialized using static key](./../cpp/src/docs/crypto/StaticKeyFlow.md)|Finds crypto variables initialized using static keys|error|high|
-|[Crypto variable initialized using static password](./../cpp/src/docs/crypto/StaticPasswordFlow.md)|Finds crypto variables initialized using static passwords|error|high|
-|[Crypto variable initialized using weak randomness](./../cpp/src/docs/crypto/WeakRandomnessTaint.md)|Finds crypto variables initialized using weak randomness|error|high|
-|[Invalid key size](./../cpp/src/docs/crypto/InvalidKeySize.md)|Tests if keys passed to EVP_EncryptInit and EVP_EncryptInit_ex have the same size as the key size of the cipher used|warning|medium|
-|[Memory leak related to custom allocator](./../cpp/src/docs/crypto/CustomAllocatorLeak.md)|Finds memory leaks from custom allocated memory|warning|medium|
-|[Memory use after free related to custom allocator](./../cpp/src/docs/crypto/CustomAllocatorUseAfterFree.md)|Finds use-after-frees related to custom allocators like `BN_new`|warning|medium|
-|[Missing OpenSSL engine initialization](./../cpp/src/docs/crypto/MissingEngineInit.md)|Finds created OpenSSL engines that may not be properly initialized|warning|medium|
-|[Missing error handling](./../cpp/src/docs/crypto/MissingErrorHandling.md)|Checks if returned error codes are properly checked|warning|high|
-|[Missing zeroization of potentially sensitive random BIGNUM](./../cpp/src/docs/crypto/MissingZeroization.md)|Determines if random bignums are properly zeroized|warning|medium|
-|[Random buffer too small](./../cpp/src/docs/crypto/RandomBufferTooSmall.md)|Finds buffer overflows in calls to CSPRNGs|warning|high|
-|[Unbalanced BN_CTX_start and BN_CTX_end pair](./../cpp/src/docs/crypto/UnbalancedBnCtx.md)|Detects if one call in the BN_CTX_start/BN_CTX_end pair is missing|warning|medium|
-|[Use of legacy cryptographic algorithm](./../cpp/src/docs/crypto/UseOfLegacyAlgorithm.md)|Detects potential instantiations of legacy cryptographic algorithms|warning|medium|
+|[BN_CTX_free called before BN_CTX_end](../cpp/src/docs/crypto/BnCtxFreeBeforeEnd.md)|Detects BN_CTX_free called before BN_CTX_end, which violates the required lifecycle|error|medium|
+|[Crypto variable initialized using static key](../cpp/src/docs/crypto/StaticKeyFlow.md)|Finds crypto variables initialized using static keys|error|high|
+|[Crypto variable initialized using static password](../cpp/src/docs/crypto/StaticPasswordFlow.md)|Finds crypto variables initialized using static passwords|error|high|
+|[Crypto variable initialized using weak randomness](../cpp/src/docs/crypto/WeakRandomnessTaint.md)|Finds crypto variables initialized using weak randomness|error|high|
+|[Invalid key size](../cpp/src/docs/crypto/InvalidKeySize.md)|Tests if keys passed to EVP_EncryptInit and EVP_EncryptInit_ex have the same size as the key size of the cipher used|warning|medium|
+|[Memory leak related to custom allocator](../cpp/src/docs/crypto/CustomAllocatorLeak.md)|Finds memory leaks from custom allocated memory|warning|medium|
+|[Memory use after free related to custom allocator](../cpp/src/docs/crypto/CustomAllocatorUseAfterFree.md)|Finds use-after-frees related to custom allocators like `BN_new`|warning|medium|
+|[Missing OpenSSL engine initialization](../cpp/src/docs/crypto/MissingEngineInit.md)|Finds created OpenSSL engines that may not be properly initialized|warning|medium|
+|[Missing error handling](../cpp/src/docs/crypto/MissingErrorHandling.md)|Checks if returned error codes are properly checked|warning|high|
+|[Missing zeroization of potentially sensitive random BIGNUM](../cpp/src/docs/crypto/MissingZeroization.md)|Determines if random bignums are properly zeroized|warning|medium|
+|[Random buffer too small](../cpp/src/docs/crypto/RandomBufferTooSmall.md)|Finds buffer overflows in calls to CSPRNGs|warning|high|
+|[Unbalanced BN_CTX_start and BN_CTX_end pair](../cpp/src/docs/crypto/UnbalancedBnCtx.md)|Detects if one call in the BN_CTX_start/BN_CTX_end pair is missing|warning|medium|
+|[Use of legacy cryptographic algorithm](../cpp/src/docs/crypto/UseOfLegacyAlgorithm.md)|Detects potential instantiations of legacy cryptographic algorithms|warning|medium|
 
 #### Security
 
 | Name | Description | Severity | Precision  |
 | ---  | ----------- | :----:   | :--------: |
-|[Async unsafe signal handler](./../cpp/src/docs/security/AsyncUnsafeSignalHandler/AsyncUnsafeSignalHandler.md)|Async unsafe signal handler (like the one used in CVE-2024-6387)|warning|high|
-|[Decrementation overflow when comparing](./../cpp/src/docs/security/DecOverflowWhenComparing/DecOverflowWhenComparing.md)|This query finds unsigned integer overflows resulting from unchecked decrementation during comparison.|error|high|
-|[Find all problematic implicit casts](./../cpp/src/docs/security/UnsafeImplicitConversions/UnsafeImplicitConversions.md)|Find all implicit casts that may be problematic. That is, casts that may result in unexpected truncation, reinterpretation or widening of values.|error|high|
-|[Inconsistent handling of return values from a specific function](./../cpp/src/docs/security/InconsistentReturnValueHandling/InconsistentReturnValueHandling.md)|Detects functions whose return values are compared inconsistently across call sites, which may indicate bugs.|warning|medium|
-|[Invalid string size passed to string manipulation function](./../cpp/src/docs/security/CStrnFinder/CStrnFinder.md)|Finds calls to functions that take as input a string and its size as separate arguments (e.g., `strncmp`, `strncat`, ...) and the size argument is wrong|error|low|
-|[Iterator invalidation](./../cpp/src/docs/security/IteratorInvalidation/IteratorInvalidation.md)|Modifying a container while iterating over it can invalidate iterators, leading to undefined behavior.|warning|medium|
-|[Missing null terminator](./../cpp/src/docs/security/NoNullTerminator/NoNullTerminator.md)|This query finds incorrectly initialized strings that are passed to functions expecting null-byte-terminated strings|error|high|
+|[Async unsafe signal handler](../cpp/src/docs/security/AsyncUnsafeSignalHandler/AsyncUnsafeSignalHandler.md)|Async unsafe signal handler (like the one used in CVE-2024-6387)|warning|high|
+|[Decrementation overflow when comparing](../cpp/src/docs/security/DecOverflowWhenComparing/DecOverflowWhenComparing.md)|This query finds unsigned integer overflows resulting from unchecked decrementation during comparison.|error|high|
+|[Find all problematic implicit casts](../cpp/src/docs/security/UnsafeImplicitConversions/UnsafeImplicitConversions.md)|Find all implicit casts that may be problematic. That is, casts that may result in unexpected truncation, reinterpretation or widening of values.|error|high|
+|[Inconsistent handling of return values from a specific function](../cpp/src/docs/security/InconsistentReturnValueHandling/InconsistentReturnValueHandling.md)|Detects functions whose return values are compared inconsistently across call sites, which may indicate bugs.|warning|medium|
+|[Invalid string size passed to string manipulation function](../cpp/src/docs/security/CStrnFinder/CStrnFinder.md)|Finds calls to functions that take as input a string and its size as separate arguments (e.g., `strncmp`, `strncat`, ...) and the size argument is wrong|error|low|
+|[Iterator invalidation](../cpp/src/docs/security/IteratorInvalidation/IteratorInvalidation.md)|Modifying a container while iterating over it can invalidate iterators, leading to undefined behavior.|warning|medium|
+|[Missing null terminator](../cpp/src/docs/security/NoNullTerminator/NoNullTerminator.md)|This query finds incorrectly initialized strings that are passed to functions expecting null-byte-terminated strings|error|high|
 
 ### Go
 
@@ -38,21 +38,21 @@
 
 | Name | Description | Severity | Precision  |
 | ---  | ----------- | :----:   | :--------: |
-|[Message not hashed before signature verification](./../go/src/docs/crypto/MsgNotHashedBeforeSigVerfication/MsgNotHashedBeforeSigVerfication.md)|Detects calls to (EC)DSA APIs with a message that was not hashed. If the message is longer than the expected hash digest size, it is silently truncated|error|medium|
+|[Message not hashed before signature verification](../go/src/docs/crypto/MsgNotHashedBeforeSigVerfication/MsgNotHashedBeforeSigVerfication.md)|Detects calls to (EC)DSA APIs with a message that was not hashed. If the message is longer than the expected hash digest size, it is silently truncated|error|medium|
 
 #### Security
 
 | Name | Description | Severity | Precision  |
 | ---  | ----------- | :----:   | :--------: |
-|[Invalid file permission parameter](./../go/src/docs/security/FilePermsFlaws/FilePermsFlaws.md)|Finds non-octal (e.g., `755` vs `0o755`) and unsupported (e.g., `04666`) literals used as a filesystem permission parameter (`FileMode`)|error|medium|
-|[Missing MinVersion in tls.Config](./../go/src/docs/security/MissingMinVersionTLS/MissingMinVersionTLS.md)|Finds uses of tls.Config where MinVersion is not set and the project's minimum Go version (from go.mod) indicates insecure defaults: Go < 1.18 for clients or Go < 1.22 for servers. Does not mark explicitly set versions (including explicitly insecure ones).|error|medium|
-|[Trim functions misuse](./../go/src/docs/security/TrimMisuse/TrimMisuse.md)|Finds calls to `string.{Trim,TrimLeft,TrimRight}` with the 2nd argument not being a cutset but a continuous substring to be trimmed|error|low|
+|[Invalid file permission parameter](../go/src/docs/security/FilePermsFlaws/FilePermsFlaws.md)|Finds non-octal (e.g., `755` vs `0o755`) and unsupported (e.g., `04666`) literals used as a filesystem permission parameter (`FileMode`)|error|medium|
+|[Missing MinVersion in tls.Config](../go/src/docs/security/MissingMinVersionTLS/MissingMinVersionTLS.md)|Finds uses of tls.Config where MinVersion is not set and the project's minimum Go version (from go.mod) indicates insecure defaults: Go < 1.18 for clients or Go < 1.22 for servers. Does not mark explicitly set versions (including explicitly insecure ones).|error|medium|
+|[Trim functions misuse](../go/src/docs/security/TrimMisuse/TrimMisuse.md)|Finds calls to `string.{Trim,TrimLeft,TrimRight}` with the 2nd argument not being a cutset but a continuous substring to be trimmed|error|low|
 
-### Java-kotlin
+### Java and Kotlin
 
 #### Security
 
 | Name | Description | Severity | Precision  |
 | ---  | ----------- | :----:   | :--------: |
-|[Recursive functions](./../java/src/docs/security/Recursion/Recursion.md)|Detects possibly unbounded recursive calls|warning|low|
+|[Recursive functions](../java/src/docs/security/Recursion/Recursion.md)|Detects possibly unbounded recursive calls|warning|low|
 
