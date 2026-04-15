@@ -70,10 +70,12 @@ class QlQuery:
         if self.group != other.group:
             return self.group < other.group
 
-        if 'experimental' in self.tags:
-            if 'experimental' not in other.tags:
-                return False
-        if 'experimental' in other.tags:
+        # Experimental queries sort after non-experimental ones.
+        self_exp = 'experimental' in self.tags
+        other_exp = 'experimental' in other.tags
+        if self_exp and not other_exp:
+            return False
+        if other_exp and not self_exp:
             return True
 
         return self.name < other.name

@@ -1,5 +1,5 @@
 # Iterator invalidation
-This is a CodeQL query that detects modifications to C++ containers while iterating over them. Such modifications can invalidate active iterators, leading to undefined behavior including use-after-free, out-of-bounds access, and crashes.
+Detects modifications to C++ containers while iterating over them. Such modifications can invalidate active iterators, leading to undefined behavior including use-after-free, out-of-bounds access, and crashes.
 
 When a container is modified (e.g., calling `push_back` on a `std::vector` during a range-based for loop), existing iterators may become invalid. Continuing to use those iterators results in undefined behavior per the C++ Standard.
 

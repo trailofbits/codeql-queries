@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Report a false positive, false negative, or crash in a query
 title: ''
 labels: bug
 assignees: ''
@@ -8,31 +8,22 @@ assignees: ''
 ---
 
 **Describe the bug**
-A clear and concise description of what the bug is.
+A clear description of what is wrong. Is this a false positive, false negative, crash, or something else?
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+**Query involved**
+Which query or pack is affected (for example, `trailofbits/cpp-queries` or the specific query ID reported in the alert).
+
+**To reproduce**
+1. CodeQL CLI version (`codeql --version`):
+2. Language/database under analysis:
+3. Exact command invocation:
+4. Minimal code snippet or repository link that triggers the issue:
 
 **Expected behavior**
-A clear and concise description of what you expected to happen.
+What you expected the query to report (or not report).
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
-
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
-
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+**Actual behavior**
+What the query actually reported, including alert locations and any error output.
 
 **Additional context**
 Add any other context about the problem here.

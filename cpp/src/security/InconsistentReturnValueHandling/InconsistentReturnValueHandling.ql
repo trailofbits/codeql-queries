@@ -7,6 +7,7 @@
  * @precision medium
  * @id tob/cpp/inconsistent-retval-handling
  * @tags security
+ * @group security
  */
 
 import cpp

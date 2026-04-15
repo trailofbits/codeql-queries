@@ -3,7 +3,7 @@
   "qhelp.dtd">
 <qhelp>
 <overview>
-<p>This query finds buffer overflows in calls to CSPRNGs like <code>RAND_bytes</code>, <code>RAND_bytes_ex</code>, and <code>RAND_priv_bytes</code>. It is currently restricted to statically allocated buffers to allow us to easily determine the input buffer size, but could easily be extended to dynamically allocated buffers as well.</p>
+<p>This query finds buffer overflows in calls to CSPRNGs like <code>RAND_bytes</code>, <code>RAND_bytes_ex</code>, <code>RAND_priv_bytes</code>, and <code>RAND_priv_bytes_ex</code>. It is currently restricted to statically allocated buffers to allow us to easily determine the input buffer size, but could easily be extended to dynamically allocated buffers as well.</p>
 
 <p>The following example code would be flagged as vulnerable by the query.</p>
 

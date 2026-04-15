@@ -3,7 +3,7 @@
   "qhelp.dtd">
 <qhelp>
 <overview>
-<p>This is a CodeQL query that detects modifications to C++ containers while iterating over them. Such modifications can invalidate active iterators, leading to undefined behavior including use-after-free, out-of-bounds access, and crashes.</p>
+<p>Detects modifications to C++ containers while iterating over them. Such modifications can invalidate active iterators, leading to undefined behavior including use-after-free, out-of-bounds access, and crashes.</p>
 
 <p>When a container is modified (e.g., calling <code>push_back</code> on a <code>std::vector</code> during a range-based for loop), existing iterators may become invalid. Continuing to use those iterators results in undefined behavior per the C++ Standard.</p>
 
