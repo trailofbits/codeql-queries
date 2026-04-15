@@ -7,6 +7,8 @@
 extern "C" {
 #endif
 
+extern int system(const char *);
+
 extern void *reallocf(void *, unsigned long);
 
 int rand(void) {
