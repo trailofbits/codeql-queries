@@ -3,6 +3,16 @@
 #ifndef HEADER_UNISTD_STUB_H
 #define HEADER_UNISTD_STUB_H
 
+#ifndef _SIZE_T_DEFINED
+#define _SIZE_T_DEFINED
+typedef unsigned long size_t;
+#endif
+
+#ifndef _SSIZE_T_DEFINED
+#define _SSIZE_T_DEFINED
+typedef long ssize_t;
+#endif
+
 #ifdef  __cplusplus
 extern "C" {
 #endif

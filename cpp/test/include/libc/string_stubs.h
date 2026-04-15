@@ -15,6 +15,11 @@ extern "C" {
 typedef int wchar_t;
 #endif
 
+#ifndef _SIZE_T_DEFINED
+#define _SIZE_T_DEFINED
+typedef unsigned long size_t;
+#endif
+
 extern void *memcpy(void *dst, const void *src, unsigned long n);
 extern char* strcpy_s(char* dst, int max_amount, char* src);
 extern int _mbsncat(char* dst, char* src, int count);
