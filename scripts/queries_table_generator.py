@@ -29,7 +29,7 @@ class QueryMetadata:
     group: str
     problem_severity: Optional[str]
     precision: Optional[str]
-    security_severity: Optional[float]
+    security_severity: Optional[str]
 
 
 @total_ordering
