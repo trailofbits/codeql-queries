@@ -12,7 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: trailofbits/setup-codeql@main
+        with:
+          persist-credentials: false
+      - uses: trailofbits/setup-codeql@615e3864087261d42cce229e3eec419ab9b22c36 # main
         with:
           version: '2.25.1'
           platform: 'linux64'
