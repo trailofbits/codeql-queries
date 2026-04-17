@@ -3,12 +3,6 @@ name: Publish CodeQL packs
 on:
   release:
     types: [published]
-  workflow_dispatch:
-    inputs:
-      version:
-        description: "Pack version to publish (e.g. 0.3.1)"
-        required: true
-        type: string
 
 permissions: {}
 
@@ -36,33 +30,20 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Resolve pack version
-        run: |
-          if [ -n "${{ inputs.version }}" ]; then
-            echo "PACK_VERSION=${{ inputs.version }}" >> "$GITHUB_ENV"
-          else
-            TAG="${{ github.event.release.tag_name }}"
-            echo "PACK_VERSION=${TAG#v}" >> "$GITHUB_ENV"
-          fi
-      - name: Set pack versions
-        run: |
-          for f in cpp/lib/qlpack.yml cpp/src/qlpack.yml go/src/qlpack.yml java/src/qlpack.yml; do
-            sed -i "s/^version: .*/version: $PACK_VERSION/" "$f"
-          done
       - run: make test
       - run: make publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Generate manifest
         run: |
+          version() { grep '^version:' "$1" | cut -d' ' -f2; }
           cat > manifest.json <<EOF
           {
-            "version": "$PACK_VERSION",
             "packs": [
-              {"name": "trailofbits/cpp-all", "registry": "ghcr.io"},
-              {"name": "trailofbits/cpp-queries", "registry": "ghcr.io"},
-              {"name": "trailofbits/go-queries", "registry": "ghcr.io"},
-              {"name": "trailofbits/java-queries", "registry": "ghcr.io"}
+              {"name": "trailofbits/cpp-all", "version": "$(version cpp/lib/qlpack.yml)", "registry": "ghcr.io"},
+              {"name": "trailofbits/cpp-queries", "version": "$(version cpp/src/qlpack.yml)", "registry": "ghcr.io"},
+              {"name": "trailofbits/go-queries", "version": "$(version go/src/qlpack.yml)", "registry": "ghcr.io"},
+              {"name": "trailofbits/java-queries", "version": "$(version java/src/qlpack.yml)", "registry": "ghcr.io"}
             ]
           }
           EOF

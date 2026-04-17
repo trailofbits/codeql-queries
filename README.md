@@ -53,3 +53,12 @@ make pack-upgrade
 make test format
 make generate-table generate-help
 ```
+
+## Release
+
+1. Ensure all `qlpack.yml` files have the correct version.
+   ```shell
+   ./scripts/update-version.sh <version>
+   ```
+1. Create a release on GitHub, create a new tag, and autogenerate release notes.
+
