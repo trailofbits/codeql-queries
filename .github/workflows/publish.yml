@@ -3,8 +3,17 @@ name: Publish CodeQL packs
 on:
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Pack version to publish (e.g. 0.3.1)"
+        required: true
+        type: string
 
 permissions: {}
+
+env:
+  REGISTRY: ghcr.io
 
 jobs:
   publish:
@@ -21,7 +30,44 @@ jobs:
           version: '2.25.1'
           platform: 'linux64'
           checksum: '4f070e6cc7009e75aec307ed109c2fcf0501e579c20a31080b893e31209523d5'
+      - name: Log in to the Container registry
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121  # v4.1.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Resolve pack version
+        run: |
+          if [ -n "${{ inputs.version }}" ]; then
+            echo "PACK_VERSION=${{ inputs.version }}" >> "$GITHUB_ENV"
+          else
+            TAG="${{ github.event.release.tag_name }}"
+            echo "PACK_VERSION=${TAG#v}" >> "$GITHUB_ENV"
+          fi
+      - name: Set pack versions
+        run: |
+          for f in cpp/lib/qlpack.yml cpp/src/qlpack.yml go/src/qlpack.yml java/src/qlpack.yml; do
+            sed -i "s/^version: .*/version: $PACK_VERSION/" "$f"
+          done
       - run: make test
       - run: make publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate manifest
+        run: |
+          cat > manifest.json <<EOF
+          {
+            "version": "$PACK_VERSION",
+            "packs": [
+              {"name": "trailofbits/cpp-all", "registry": "ghcr.io"},
+              {"name": "trailofbits/cpp-queries", "registry": "ghcr.io"},
+              {"name": "trailofbits/go-queries", "registry": "ghcr.io"},
+              {"name": "trailofbits/java-queries", "registry": "ghcr.io"}
+            ]
+          }
+          EOF
+      - name: Upload manifest
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: publish-manifest
+          path: manifest.json
