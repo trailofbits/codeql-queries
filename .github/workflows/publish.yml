@@ -6,6 +6,9 @@ on:
 
 permissions: {}
 
+env:
+  REGISTRY: ghcr.io
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -21,6 +24,12 @@ jobs:
           version: '2.25.1'
           platform: 'linux64'
           checksum: '4f070e6cc7009e75aec307ed109c2fcf0501e579c20a31080b893e31209523d5'
+      - name: Log in to the Container registry
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121  # v4.1.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - run: make test
       - run: make publish
         env:

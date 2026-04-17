@@ -2,7 +2,7 @@
 name: trailofbits/java-queries
 description: CodeQL queries for Java developed by Trail of Bits
 authors: Trail of Bits
-version: 0.0.1
+version: 0.3.0
 license: AGPL
 library: false
 extractor: java-kotlin
