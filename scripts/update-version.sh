@@ -22,6 +22,17 @@ packs=(
 )
 
 for f in "${packs[@]}"; do
+	if [[ ! -f "$f" ]]; then
+		echo "Error: file not found: $f (run from repo root)" >&2
+		exit 1
+	fi
+	if ! grep -q '^version: ' "$f"; then
+		echo "Error: no 'version:' line in $f" >&2
+		exit 1
+	fi
+done
+
+for f in "${packs[@]}"; do
 	tmp="$(mktemp)"
 	sed "s/^version: .*/version: $version/" "$f" >"$tmp"
 	mv "$tmp" "$f"

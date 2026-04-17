@@ -36,14 +36,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Generate manifest
         run: |
-          version() { grep '^version:' "$1" | cut -d' ' -f2; }
+          version() { grep -m1 '^version: ' "$1" | cut -d' ' -f2; }
+          cpp_all="$(version cpp/lib/qlpack.yml)"
+          cpp_queries="$(version cpp/src/qlpack.yml)"
+          go_queries="$(version go/src/qlpack.yml)"
+          java_queries="$(version java/src/qlpack.yml)"
           cat > manifest.json <<EOF
           {
             "packs": [
-              {"name": "trailofbits/cpp-all", "version": "$(version cpp/lib/qlpack.yml)", "registry": "ghcr.io"},
-              {"name": "trailofbits/cpp-queries", "version": "$(version cpp/src/qlpack.yml)", "registry": "ghcr.io"},
-              {"name": "trailofbits/go-queries", "version": "$(version go/src/qlpack.yml)", "registry": "ghcr.io"},
-              {"name": "trailofbits/java-queries", "version": "$(version java/src/qlpack.yml)", "registry": "ghcr.io"}
+              {"name": "trailofbits/cpp-all", "version": "$cpp_all", "registry": "ghcr.io"},
+              {"name": "trailofbits/cpp-queries", "version": "$cpp_queries", "registry": "ghcr.io"},
+              {"name": "trailofbits/go-queries", "version": "$go_queries", "registry": "ghcr.io"},
+              {"name": "trailofbits/java-queries", "version": "$java_queries", "registry": "ghcr.io"}
             ]
           }
           EOF
