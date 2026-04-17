@@ -1,4 +1,4 @@
-# CStrNFinder
+# Invalid string size passed to string manipulation function
 Some functions receive input buffer (strings, arrays, ...) and the buffer's size as separate arguments. For manually provided (hardcoded) sizes one may make simple mistakes resulting from typos or misunderstanding of fuctions' APIs. For example:
 
 * a hardcoded string's length may be incorrectly stated

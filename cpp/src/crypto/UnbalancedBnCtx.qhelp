@@ -1,0 +1,56 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>This query detects unbalanced pairs of <code>BN_CTX_start</code> and <code>BN_CTX_end</code> calls in OpenSSL code. These functions must be used in matching pairs to properly manage temporary BIGNUM allocations within a <code>BN_CTX</code> context.</p>
+
+<p><code>BN_CTX_start</code> marks the beginning of a nested allocation scope, and <code>BN_CTX_end</code> releases all temporary BIGNUMs allocated via <code>BN_CTX_get</code> since the matching <code>BN_CTX_start</code>. Each call to <code>BN_CTX_start</code> must have a corresponding <code>BN_CTX_end</code> call, and vice versa.</p>
+
+<p>Common issues include:</p>
+
+<ul>
+<li>Calling <code>BN_CTX_start</code> without a corresponding <code>BN_CTX_end</code> (memory leak of temporary allocations)</li>
+<li>Calling <code>BN_CTX_end</code> without a corresponding <code>BN_CTX_start</code> (undefined behavior)</li>
+<li>Missing <code>BN_CTX_end</code> in error paths</li>
+</ul>
+
+<p>The following example would be flagged for missing <code>BN_CTX_end</code>:</p>
+
+<sample language="cpp">int compute(BN_CTX *ctx, BIGNUM *result) {
+    BN_CTX_start(ctx);
+
+    BIGNUM *tmp1 = BN_CTX_get(ctx);
+    BIGNUM *tmp2 = BN_CTX_get(ctx);
+
+    if (!tmp1 || !tmp2) {
+        // ERROR: Missing BN_CTX_end on error path
+        return 0;
+    }
+
+    // Perform computation
+
+    BN_CTX_end(ctx);
+    return 1;
+}</sample>
+
+<p>The correct version ensures <code>BN_CTX_end</code> is called on all code paths:</p>
+
+<sample language="cpp">int compute(BN_CTX *ctx, BIGNUM *result) {
+    BN_CTX_start(ctx);
+
+    BIGNUM *tmp1 = BN_CTX_get(ctx);
+    BIGNUM *tmp2 = BN_CTX_get(ctx);
+
+    if (!tmp1 || !tmp2) {
+        BN_CTX_end(ctx);  // Properly clean up on error path
+        return 0;
+    }
+
+    // Perform computation
+
+    BN_CTX_end(ctx);
+    return 1;
+}</sample>
+</overview>
+</qhelp>
