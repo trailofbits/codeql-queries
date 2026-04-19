@@ -1,0 +1,12 @@
+edges
+| UnboundedIORead.go:24:12:24:17 | selection of Body | UnboundedIORead.go:25:24:25:29 | reader | provenance | Src:MaD:1919  |
+nodes
+| UnboundedIORead.go:12:24:12:29 | selection of Body | semmle.label | selection of Body |
+| UnboundedIORead.go:18:28:18:33 | selection of Body | semmle.label | selection of Body |
+| UnboundedIORead.go:24:12:24:17 | selection of Body | semmle.label | selection of Body |
+| UnboundedIORead.go:25:24:25:29 | reader | semmle.label | reader |
+subpaths
+#select
+| UnboundedIORead.go:12:24:12:29 | selection of Body | UnboundedIORead.go:12:24:12:29 | selection of Body | UnboundedIORead.go:12:24:12:29 | selection of Body | Unbounded read of HTTP request $@ with no size limit allows denial of service via memory exhaustion. | UnboundedIORead.go:12:24:12:29 | selection of Body | body |
+| UnboundedIORead.go:18:28:18:33 | selection of Body | UnboundedIORead.go:18:28:18:33 | selection of Body | UnboundedIORead.go:18:28:18:33 | selection of Body | Unbounded read of HTTP request $@ with no size limit allows denial of service via memory exhaustion. | UnboundedIORead.go:18:28:18:33 | selection of Body | body |
+| UnboundedIORead.go:25:24:25:29 | reader | UnboundedIORead.go:24:12:24:17 | selection of Body | UnboundedIORead.go:25:24:25:29 | reader | Unbounded read of HTTP request $@ with no size limit allows denial of service via memory exhaustion. | UnboundedIORead.go:24:12:24:17 | selection of Body | body |
