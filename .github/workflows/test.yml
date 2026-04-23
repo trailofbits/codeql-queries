@@ -20,7 +20,7 @@ jobs:
           version: '2.25.1'
           platform: 'linux64'
           checksum: '4f070e6cc7009e75aec307ed109c2fcf0501e579c20a31080b893e31209523d5'
-      - uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57 # v8.0.0
+      - uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
       - run: make format-check
       - run: make test
       - name: Verify doc/QUERIES.md is up to date
