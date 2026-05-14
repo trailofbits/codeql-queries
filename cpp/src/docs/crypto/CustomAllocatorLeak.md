@@ -1,10 +1,7 @@
-# Custom allocator leak
+# Memory leak related to custom allocator
+This query identifies potential memory leaks from custom allocators like `BN_new`.
 
-This query identifies potential memory leaks from custom allocators like
-`BN_new`. 
-
-The following example would be identified by the query as a potential memory
-leak.
+The following example would be identified by the query as a potential memory leak.
 
 ```cpp
 int compute(BIGNUM* a) {

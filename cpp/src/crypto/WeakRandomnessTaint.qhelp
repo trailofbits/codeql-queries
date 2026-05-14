@@ -1,0 +1,10 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>This query finds crypto variables initialized using weak randomness like process IDs or timestamps.</p>
+
+<p>Limitations: the query does not track weak randomness through a hash function, so keys derived by hashing a weak source are not flagged.</p>
+</overview>
+</qhelp>

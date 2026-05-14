@@ -2,7 +2,7 @@
 name: trailofbits/go-queries
 description: CodeQL queries for Go developed by Trail of Bits
 authors: Trail of Bits
-version: 0.2.1
+version: 0.3.0
 license: AGPL
 library: false
 extractor: go

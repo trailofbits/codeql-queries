@@ -1,15 +1,13 @@
 # Unbalanced BN_CTX_start and BN_CTX_end pair
-
 This query detects unbalanced pairs of `BN_CTX_start` and `BN_CTX_end` calls in OpenSSL code. These functions must be used in matching pairs to properly manage temporary BIGNUM allocations within a `BN_CTX` context.
 
 `BN_CTX_start` marks the beginning of a nested allocation scope, and `BN_CTX_end` releases all temporary BIGNUMs allocated via `BN_CTX_get` since the matching `BN_CTX_start`. Each call to `BN_CTX_start` must have a corresponding `BN_CTX_end` call, and vice versa.
 
 Common issues include:
 
-- Calling `BN_CTX_start` without a corresponding `BN_CTX_end` (memory leak of temporary allocations)
-- Calling `BN_CTX_end` without a corresponding `BN_CTX_start` (undefined behavior)
-- Missing `BN_CTX_end` in error paths
-
+* Calling `BN_CTX_start` without a corresponding `BN_CTX_end` (memory leak of temporary allocations)
+* Calling `BN_CTX_end` without a corresponding `BN_CTX_start` (undefined behavior)
+* Missing `BN_CTX_end` in error paths
 The following example would be flagged for missing `BN_CTX_end`:
 
 ```cpp
@@ -30,7 +28,6 @@ int compute(BN_CTX *ctx, BIGNUM *result) {
     return 1;
 }
 ```
-
 The correct version ensures `BN_CTX_end` is called on all code paths:
 
 ```cpp

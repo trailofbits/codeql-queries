@@ -1,5 +1,4 @@
-# Custom allocator use-after-free
-
+# Memory use after free related to custom allocator
 This query identifies use-after-frees with custom allocators like `BN_new`.
 
 The following code snippet would be identified as an issue by the query.

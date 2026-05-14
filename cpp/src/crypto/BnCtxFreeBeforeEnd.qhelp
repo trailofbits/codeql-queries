@@ -1,0 +1,45 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>This query identifies instances where <code>BN_CTX_free</code> is called before <code>BN_CTX_end</code>, which violates the required lifecycle of OpenSSL's <code>BN_CTX</code> objects.</p>
+
+<p>In OpenSSL, the proper lifecycle for using <code>BN_CTX</code> with nested allocations is:</p>
+
+<ol>
+<li><code>BN_CTX_start(ctx)</code> - marks the start of a nested allocation</li>
+<li>Use <code>BN_CTX_get(ctx)</code> to get temporary BIGNUMs</li>
+<li><code>BN_CTX_end(ctx)</code> - releases the temporary BIGNUMs allocated since the matching <code>BN_CTX_start</code></li>
+<li><code>BN_CTX_free(ctx)</code> - frees the entire context</li>
+</ol>
+
+<p>Calling <code>BN_CTX_free</code> before <code>BN_CTX_end</code> can lead to corrupted state or undefined behavior, as temporary BIGNUMs allocated via <code>BN_CTX_get</code> are not properly released.</p>
+
+<p>The following example would be flagged as an issue by the query:</p>
+
+<sample language="cpp">void compute(BIGNUM *result) {
+    BN_CTX *ctx = BN_CTX_new();
+    BN_CTX_start(ctx);
+
+    BIGNUM *tmp = BN_CTX_get(ctx);
+    // Perform computation using tmp
+
+    // ERROR: BN_CTX_free called without calling BN_CTX_end first
+    BN_CTX_free(ctx);
+}</sample>
+
+<p>The correct version should call <code>BN_CTX_end</code> before <code>BN_CTX_free</code>:</p>
+
+<sample language="cpp">void compute(BIGNUM *result) {
+    BN_CTX *ctx = BN_CTX_new();
+    BN_CTX_start(ctx);
+
+    BIGNUM *tmp = BN_CTX_get(ctx);
+    // Perform computation using tmp
+
+    BN_CTX_end(ctx);  // Properly release temporary BIGNUMs
+    BN_CTX_free(ctx); // Now safe to free the context
+}</sample>
+</overview>
+</qhelp>

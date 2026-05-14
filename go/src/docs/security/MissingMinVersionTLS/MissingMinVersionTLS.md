@@ -1,21 +1,19 @@
 # Missing MinVersion in tls.Config
-Golang's `tls.Config` struct accepts `MinVersion` parameter that sets minimum accepted TLS version. If the parameter is not provided, the default depends on the Go version in use:
+Golang's `tls.Config` struct accepts a `MinVersion` parameter that sets the minimum accepted TLS version. If the parameter is not provided, the default depends on the Go version in use. Since Go 1.18, `crypto/tls` clients default to TLS 1.2 (previously TLS 1.0). Since Go 1.22, `crypto/tls` servers also default to TLS 1.2 (previously TLS 1.0).
 
-- Since **Go 1.18**, clients default to TLS 1.2 (previously TLS 1.0)
-- Since **Go 1.22**, servers also default to TLS 1.2 (previously TLS 1.0)
+This query flags `tls.Config` values where `MinVersion` is never set explicitly and the project's `go.mod` declares support for a Go version where the defaults are insecure:
 
-For projects that support older Go versions, leaving `MinVersion` unset may still permit TLS 1.0 or 1.1, which are deprecated and should not be used.
+* Go &lt; 1.18 for client-side configs (when client default is TLS 1.0)
+* Go &lt; 1.22 for server-side configs (when server default is TLS 1.0)
+TLS 1.0 and 1.1 are deprecated and should not be used.
 
-This query flags `tls.Config` values where `MinVersion` is never set explicitly and the project's `go.mod` declares support for:
-- **Go < 1.18** for client-side configs (when client default is TLS 1.0)
-- **Go < 1.22** for server-side configs (when server default is TLS 1.0)
 
 ## Recommendation
 Explicitly set the TLS version to TLS 1.2 or higher:
-- For projects using Go < 1.18: Set `MinVersion` for both clients and servers
-- For projects using Go 1.18-1.21: Set `MinVersion` for servers
-- For projects using Go >= 1.22: Defaults are secure, but explicit setting is still recommended
 
+* For projects using Go &lt; 1.18: Set `MinVersion` for both clients and servers
+* For projects using Go 1.18-1.21: Set `MinVersion` for servers
+* For projects using Go &gt;= 1.22: Defaults are secure, but explicit setting is still recommended
 
 ## Example
 
@@ -39,7 +37,7 @@ func test1() *tls.Config {
 
 func test2() *tls.Config {
 	config := &tls.Config{}
-	config.MinVersion = 0 // GOOD: min version is set (hovewer, to the default one)
+	config.MinVersion = 0 // GOOD: min version is set (however, to the default one)
 	result := config
 	return result
 }
@@ -61,13 +59,13 @@ func main() {
 }
 
 ```
-In this example, the `http.Server` may be set with TLS configuration created by either `test1` or `test2` functions. For projects with `go` directive < 1.22, the `test1` result will be highlighted by this query, as it fails to explicitly set minimum supported TLS version. The `test2` result will not be marked, even though it also uses the default value for minimum version. That is because the `test2` is explicit, and this query assumes that developers knew what they are doing.
+In this example, the `http.Server` may be set with TLS configuration created by either `test1` or `test2` functions. For projects with a `go` directive &lt; 1.22, the `test1` result will be highlighted by this query, as it fails to explicitly set minimum supported TLS version. The `test2` result will not be marked, even though it also uses the default value for minimum version. That is because the `test2` is explicit, and this query assumes that developers knew what they are doing.
 
 Note: The query behavior depends on the `go` directive in `go.mod`:
-- **Go < 1.18**: Both client and server configs without MinVersion are flagged
-- **Go 1.18-1.21**: Only server configs without MinVersion are flagged
-- **Go >= 1.22**: No configs are flagged (both defaults are secure)
 
+* Go &lt; 1.18: Both client and server configs without MinVersion are flagged
+* Go 1.18-1.21: Only server configs without MinVersion are flagged
+* Go &gt;= 1.22: No configs are flagged (both defaults are secure)
 
 ## References
 * [tls.Config specification](https://pkg.go.dev/crypto/tls#Config)

@@ -1,0 +1,26 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>This query identifies potential memory leaks from custom allocators like
+<code>BN_new</code>.</p>
+
+<p>The following example would be identified by the query as a potential memory
+leak.</p>
+
+<sample language="cpp">int compute(BIGNUM* a) {
+  BIGNUM *b = BN_new();
+
+  // Perform computation on `a` and `b`.
+
+  if (condition(a)) {
+    BN_free(b);
+    return a;
+  }
+
+  // The BIGNUM `b` may leak here.
+  return a;
+}</sample>
+</overview>
+</qhelp>

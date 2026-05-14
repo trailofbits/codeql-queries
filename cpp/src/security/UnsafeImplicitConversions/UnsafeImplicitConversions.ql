@@ -6,6 +6,7 @@
  * @tags security
  * @problem.severity error
  * @precision high
+ * @group security
  */
 
 import cpp
