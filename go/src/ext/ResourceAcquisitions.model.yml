@@ -1,0 +1,65 @@
+# Models-as-Data definitions of functions that acquire a resource which must
+# later be released (Close, etc.). Consumed by DeferReleaseInLoop.ql via
+# `sourceNode(node, "tob-resource-acq")`. Each row marks the first return value
+# ("ReturnValue") of the listed function as a resource-acquisition node.
+#
+# Row format (sourceModel):
+#   [package, type, subtypes, name, signature, ext, output, kind, provenance]
+extensions:
+  - addsTo:
+      pack: codeql/go-all
+      extensible: sourceModel
+    data:
+      # os
+      - ["os", "", false, "Open", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["os", "", false, "OpenFile", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["os", "", false, "Create", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["os", "", false, "CreateTemp", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["os", "", false, "NewFile", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["os", "", false, "Pipe", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      # net (package-level)
+      - ["net", "", false, "Dial", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["net", "", false, "DialTimeout", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["net", "", false, "Listen", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["net", "", false, "ListenPacket", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["net", "", false, "FileConn", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["net", "", false, "FileListener", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["net", "", false, "FilePacketConn", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      # net.Dialer (method)
+      - ["net", "Dialer", true, "Dial", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["net", "Dialer", true, "DialContext", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      # net/http (package-level)
+      - ["net/http", "", false, "Get", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["net/http", "", false, "Post", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["net/http", "", false, "PostForm", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["net/http", "", false, "Head", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      # net/http.Client (method)
+      - ["net/http", "Client", true, "Do", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["net/http", "Client", true, "Get", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["net/http", "Client", true, "Post", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["net/http", "Client", true, "PostForm", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["net/http", "Client", true, "Head", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      # crypto/tls (package-level)
+      - ["crypto/tls", "", false, "Dial", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["crypto/tls", "", false, "DialWithDialer", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["crypto/tls", "", false, "Client", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["crypto/tls", "", false, "Server", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      # crypto/tls.Dialer (method)
+      - ["crypto/tls", "Dialer", true, "DialContext", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      # compress/gzip
+      - ["compress/gzip", "", false, "NewReader", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["compress/gzip", "", false, "NewWriter", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["compress/gzip", "", false, "NewWriterLevel", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      # compress/zlib
+      - ["compress/zlib", "", false, "NewReader", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["compress/zlib", "", false, "NewWriter", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["compress/zlib", "", false, "NewWriterLevel", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["compress/zlib", "", false, "NewWriterLevelDict", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      # compress/flate
+      - ["compress/flate", "", false, "NewReader", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["compress/flate", "", false, "NewWriter", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      # compress/lzw
+      - ["compress/lzw", "", false, "NewReader", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["compress/lzw", "", false, "NewWriter", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      # archive/zip
+      - ["archive/zip", "", false, "OpenReader", "", "", "ReturnValue", "tob-resource-acq", "manual"]

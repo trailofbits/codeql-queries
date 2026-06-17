@@ -11,40 +11,7 @@
  */
 
 import go
-
-/**
- * A function that acquires a resource that could leak
- */
-class ResourceAcquisition extends Function {
-  ResourceAcquisition() {
-    this.hasQualifiedName("os", ["Open", "OpenFile", "Create", "CreateTemp", "NewFile", "Pipe"])
-    or
-    this.hasQualifiedName("net", ["Dial", "DialTimeout", "Listen", "ListenPacket"])
-    or
-    this.hasQualifiedName("net", ["FileConn", "FileListener", "FilePacketConn"])
-    or
-    this.(Method).hasQualifiedName("net", "Dialer", ["Dial", "DialContext"])
-    or
-    this.hasQualifiedName("net/http", ["Get", "Post", "PostForm", "Head"])
-    or
-    this.(Method).hasQualifiedName("net/http", "Client", ["Do", "Get", "Post", "PostForm", "Head"])
-    or
-    this.hasQualifiedName("crypto/tls", ["Dial", "DialWithDialer", "Client", "Server"])
-    or
-    this.(Method).hasQualifiedName("crypto/tls", "Dialer", "DialContext")
-    or
-    this.hasQualifiedName("compress/gzip", ["NewReader", "NewWriter", "NewWriterLevel"])
-    or
-    this.hasQualifiedName("compress/zlib",
-      ["NewReader", "NewWriter", "NewWriterLevel", "NewWriterLevelDict"])
-    or
-    this.hasQualifiedName("compress/flate", ["NewReader", "NewWriter"])
-    or
-    this.hasQualifiedName("compress/lzw", ["NewReader", "NewWriter"])
-    or
-    this.hasQualifiedName("archive/zip", "OpenReader")
-  }
-}
+import semmle.go.dataflow.ExternalFlow
 
 /**
  * Holds if `inner` is a (transitive) child of `outer` without crossing
@@ -89,7 +56,7 @@ DataFlow::Node deferCloseReceiverBase(DeferStmt d) {
 
 from DeferStmt deferStmt, DataFlow::CallNode acquisition, LoopStmt loop
 where
-  acquisition.getTarget() instanceof ResourceAcquisition and
+  sourceNode(acquisition.getResult(0), "tob-resource-acq") and
   inLoopBody(acquisition.asExpr(), loop) and
   inLoopBody(deferStmt, loop) and
   DataFlow::localFlow(acquisition.getResult(0), deferCloseReceiverBase(deferStmt))
