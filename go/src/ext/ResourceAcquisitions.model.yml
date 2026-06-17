@@ -1,7 +1,12 @@
 # Models-as-Data definitions of functions that acquire a resource which must
 # later be released (Close, etc.). Consumed by DeferReleaseInLoop.ql via
-# `sourceNode(node, "tob-resource-acq")`. Each row marks the first return value
-# ("ReturnValue") of the listed function as a resource-acquisition node.
+# `sourceNode(node, "tob-resource-acq")`.
+#
+# The `output` column selects which acquired value to mark:
+#   - "ReturnValue"    -> the first return value (the common `(resource, error)` shape).
+#   - "ReturnValue[n]" -> the n-th return value, for functions that return more
+#                         than one resource (e.g. `os.Pipe` returns a read and a
+#                         write `*os.File`, so both ends are modeled below).
 #
 # Row format (sourceModel):
 #   [package, type, subtypes, name, signature, ext, output, kind, provenance]
@@ -16,7 +21,9 @@ extensions:
       - ["os", "", false, "Create", "", "", "ReturnValue", "tob-resource-acq", "manual"]
       - ["os", "", false, "CreateTemp", "", "", "ReturnValue", "tob-resource-acq", "manual"]
       - ["os", "", false, "NewFile", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      # os.Pipe returns (r, w *File, err): model both the read end and write end.
       - ["os", "", false, "Pipe", "", "", "ReturnValue", "tob-resource-acq", "manual"]
+      - ["os", "", false, "Pipe", "", "", "ReturnValue[1]", "tob-resource-acq", "manual"]
       # net (package-level)
       - ["net", "", false, "Dial", "", "", "ReturnValue", "tob-resource-acq", "manual"]
       - ["net", "", false, "DialTimeout", "", "", "ReturnValue", "tob-resource-acq", "manual"]

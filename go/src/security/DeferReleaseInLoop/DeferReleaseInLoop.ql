@@ -54,12 +54,15 @@ DataFlow::Node deferCloseReceiverBase(DeferStmt d) {
   result.asExpr() = selectorRoot(d.getCall().getCalleeExpr().(SelectorExpr).getBase())
 }
 
-from DeferStmt deferStmt, DataFlow::CallNode acquisition, LoopStmt loop
+from DeferStmt deferStmt, DataFlow::CallNode acquisition, DataFlow::Node acquired, LoopStmt loop
 where
-  sourceNode(acquisition.getResult(0), "tob-resource-acq") and
+  // Match any return value modeled as a resource acquisition, not just the
+  // first — e.g. `os.Pipe` returns both a read and a write `*os.File`.
+  acquired = acquisition.getResult(_) and
+  sourceNode(acquired, "tob-resource-acq") and
   inLoopBody(acquisition.asExpr(), loop) and
   inLoopBody(deferStmt, loop) and
-  DataFlow::localFlow(acquisition.getResult(0), deferCloseReceiverBase(deferStmt))
+  DataFlow::localFlow(acquired, deferCloseReceiverBase(deferStmt))
 select deferStmt,
   "Deferred Close() of resource acquired from $@ in a loop will not execute until the function returns, leaking resources across iterations.",
   acquisition, acquisition.getTarget().getName() + "()"

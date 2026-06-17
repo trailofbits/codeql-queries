@@ -171,6 +171,20 @@ func test_nested_loop(paths []string) {
 	}
 }
 
+// finding: os.Pipe — both read and write ends are deferred in the loop
+func test_os_pipe(n int) {
+	for i := 0; i < n; i++ {
+		r, w, err := os.Pipe()
+		if err != nil {
+			continue
+		}
+		defer r.Close()
+		defer w.Close()
+		_ = r
+		_ = w
+	}
+}
+
 // finding: nested selector — resp.Request.Body.Close() (3-level chain, root is resp)
 func test_nested_selector(urls []string) {
 	for _, url := range urls {
@@ -261,6 +275,7 @@ func main() {
 	test_zlib_reader(os.Args[1:])
 	test_zip_openreader(os.Args[1:])
 	test_nested_loop(os.Args[1:])
+	test_os_pipe(3)
 	test_nested_selector(os.Args[1:])
 	test_fp_closure(os.Args[1:])
 	test_fp_no_loop()
