@@ -171,6 +171,18 @@ func test_nested_loop(paths []string) {
 	}
 }
 
+// finding: nested selector — resp.Request.Body.Close() (3-level chain, root is resp)
+func test_nested_selector(urls []string) {
+	for _, url := range urls {
+		resp, err := http.Get(url)
+		if err != nil {
+			continue
+		}
+		defer resp.Request.Body.Close()
+		fmt.Println(resp.Status)
+	}
+}
+
 /*
  * False positives that should NOT be flagged
  */
@@ -249,6 +261,7 @@ func main() {
 	test_zlib_reader(os.Args[1:])
 	test_zip_openreader(os.Args[1:])
 	test_nested_loop(os.Args[1:])
+	test_nested_selector(os.Args[1:])
 	test_fp_closure(os.Args[1:])
 	test_fp_no_loop()
 	test_fp_arbitrary_defer(os.Args[1:])

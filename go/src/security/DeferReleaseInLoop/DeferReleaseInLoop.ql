@@ -67,19 +67,24 @@ predicate inLoopBody(AstNode node, LoopStmt loop) {
 }
 
 /**
- * Gets the innermost identifier used as the receiver in `defer x.Close()`.
- * For `defer f.Close()`, this is `f`.
- * For `defer resp.Body.Close()`, this is `resp`.
+ * Gets the root identifier of an identifier or (possibly nested) selector
+ * expression: `f` for `f`, `resp` for `resp.Body`, `a` for `a.b.c`.
+ */
+Ident selectorRoot(Expr e) {
+  result = e
+  or
+  result = selectorRoot(e.(SelectorExpr).getBase())
+}
+
+/**
+ * Gets the data-flow node for the root variable of a `defer x.Close()`
+ * receiver chain. For `defer f.Close()`, this is `f`; for
+ * `defer resp.Body.Close()`, this is `resp`; for `defer a.b.c.Close()`,
+ * this is `a`.
  */
 DataFlow::Node deferCloseReceiverBase(DeferStmt d) {
   d.getCall().getTarget().getName() = "Close" and
-  exists(Expr base | base = d.getCall().getCalleeExpr().(SelectorExpr).getBase() |
-    // defer f.Close() — base is an identifier
-    result.asExpr() = base.(Ident)
-    or
-    // defer resp.Body.Close() — base is a selector, take its base identifier
-    result.asExpr() = base.(SelectorExpr).getBase().(Ident)
-  )
+  result.asExpr() = selectorRoot(d.getCall().getCalleeExpr().(SelectorExpr).getBase())
 }
 
 from DeferStmt deferStmt, DataFlow::CallNode acquisition, LoopStmt loop
