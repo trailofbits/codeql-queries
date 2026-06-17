@@ -1,5 +1,5 @@
 edges
-| UnboundedIORead.go:24:12:24:17 | selection of Body | UnboundedIORead.go:25:24:25:29 | reader | provenance | Src:MaD:1919  |
+| UnboundedIORead.go:24:12:24:17 | selection of Body | UnboundedIORead.go:25:24:25:29 | reader | provenance | Src:MaD:1925  |
 nodes
 | UnboundedIORead.go:12:24:12:29 | selection of Body | semmle.label | selection of Body |
 | UnboundedIORead.go:18:28:18:33 | selection of Body | semmle.label | selection of Body |
