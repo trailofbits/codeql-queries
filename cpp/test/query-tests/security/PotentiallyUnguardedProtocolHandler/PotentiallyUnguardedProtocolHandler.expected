@@ -1,0 +1,24 @@
+edges
+| PotentiallyUnguardedProtocolHandler.cpp:29:11:29:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:30:29:30:37 | call to QUrl | provenance | TaintFunction |
+| PotentiallyUnguardedProtocolHandler.cpp:29:11:29:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:30:29:30:37 | call to QUrl | provenance | TaintFunction |
+| PotentiallyUnguardedProtocolHandler.cpp:29:11:29:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:30:29:30:37 | call to QUrl | provenance | TaintFunction |
+| PotentiallyUnguardedProtocolHandler.cpp:30:29:30:37 | call to QUrl | PotentiallyUnguardedProtocolHandler.cpp:30:29:30:37 | call to QUrl | provenance |  |
+| PotentiallyUnguardedProtocolHandler.cpp:37:11:37:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:40:29:40:37 | call to QUrl | provenance | TaintFunction |
+| PotentiallyUnguardedProtocolHandler.cpp:37:11:37:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:40:29:40:37 | call to QUrl | provenance | TaintFunction |
+| PotentiallyUnguardedProtocolHandler.cpp:37:11:37:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:40:29:40:37 | call to QUrl | provenance | TaintFunction |
+| PotentiallyUnguardedProtocolHandler.cpp:40:29:40:37 | call to QUrl | PotentiallyUnguardedProtocolHandler.cpp:40:29:40:37 | call to QUrl | provenance |  |
+nodes
+| PotentiallyUnguardedProtocolHandler.cpp:29:11:29:13 | read output argument | semmle.label | read output argument |
+| PotentiallyUnguardedProtocolHandler.cpp:30:29:30:37 | call to QUrl | semmle.label | call to QUrl |
+| PotentiallyUnguardedProtocolHandler.cpp:30:29:30:37 | call to QUrl | semmle.label | call to QUrl |
+| PotentiallyUnguardedProtocolHandler.cpp:30:29:30:37 | call to QUrl | semmle.label | call to QUrl |
+| PotentiallyUnguardedProtocolHandler.cpp:37:11:37:13 | read output argument | semmle.label | read output argument |
+| PotentiallyUnguardedProtocolHandler.cpp:40:29:40:37 | call to QUrl | semmle.label | call to QUrl |
+| PotentiallyUnguardedProtocolHandler.cpp:40:29:40:37 | call to QUrl | semmle.label | call to QUrl |
+| PotentiallyUnguardedProtocolHandler.cpp:40:29:40:37 | call to QUrl | semmle.label | call to QUrl |
+subpaths
+#select
+| PotentiallyUnguardedProtocolHandler.cpp:30:3:30:27 | call to openUrl | PotentiallyUnguardedProtocolHandler.cpp:29:11:29:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:30:29:30:37 | call to QUrl | QDesktopServices::openUrl() is called with untrusted input from $@ without proper URL scheme validation. | PotentiallyUnguardedProtocolHandler.cpp:29:11:29:13 | read output argument | this source |
+| PotentiallyUnguardedProtocolHandler.cpp:30:3:30:27 | call to openUrl | PotentiallyUnguardedProtocolHandler.cpp:29:11:29:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:30:29:30:37 | call to QUrl | QDesktopServices::openUrl() is called with untrusted input from $@ without proper URL scheme validation. | PotentiallyUnguardedProtocolHandler.cpp:29:11:29:13 | read output argument | this source |
+| PotentiallyUnguardedProtocolHandler.cpp:40:3:40:27 | call to openUrl | PotentiallyUnguardedProtocolHandler.cpp:37:11:37:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:40:29:40:37 | call to QUrl | QDesktopServices::openUrl() is called with untrusted input from $@ without proper URL scheme validation. | PotentiallyUnguardedProtocolHandler.cpp:37:11:37:13 | read output argument | this source |
+| PotentiallyUnguardedProtocolHandler.cpp:40:3:40:27 | call to openUrl | PotentiallyUnguardedProtocolHandler.cpp:37:11:37:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:40:29:40:37 | call to QUrl | QDesktopServices::openUrl() is called with untrusted input from $@ without proper URL scheme validation. | PotentiallyUnguardedProtocolHandler.cpp:37:11:37:13 | read output argument | this source |

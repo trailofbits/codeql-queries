@@ -31,6 +31,7 @@
 |[Invalid string size passed to string manipulation function](../cpp/src/docs/security/CStrnFinder/CStrnFinder.md)|Finds calls to functions that take as input a string and its size as separate arguments (e.g., `strncmp`, `strncat`, ...) and the size argument is wrong|error|low|
 |[Iterator invalidation](../cpp/src/docs/security/IteratorInvalidation/IteratorInvalidation.md)|Modifying a container while iterating over it can invalidate iterators, leading to undefined behavior.|warning|medium|
 |[Missing null terminator](../cpp/src/docs/security/NoNullTerminator/NoNullTerminator.md)|This query finds incorrectly initialized strings that are passed to functions expecting null-byte-terminated strings|error|high|
+|[Potentially unguarded protocol handler invocation](../cpp/src/docs/security/PotentiallyUnguardedProtocolHandler/PotentiallyUnguardedProtocolHandler.md)|Detects calls to URL protocol handlers with untrusted input that may not be properly validated for dangerous protocols|warning|medium|
 
 ### Go
 
@@ -54,5 +55,6 @@
 
 | Name | Description | Severity | Precision  |
 | ---  | ----------- | :----:   | :--------: |
+|[Potentially unguarded protocol handler invocation](../java/src/docs/security/PotentiallyUnguardedProtocolHandler/PotentiallyUnguardedProtocolHandler.md)|Detects calls to URL protocol handlers with untrusted input that may not be properly validated for dangerous protocols|warning|medium|
 |[Recursive functions](../java/src/docs/security/Recursion/Recursion.md)|Detects possibly unbounded recursive calls|warning|low|
 
