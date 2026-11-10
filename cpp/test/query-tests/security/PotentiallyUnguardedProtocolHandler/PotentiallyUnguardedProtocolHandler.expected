@@ -1,0 +1,32 @@
+edges
+| PotentiallyUnguardedProtocolHandler.cpp:22:11:22:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:23:29:23:37 | call to QUrl | provenance | TaintFunction |
+| PotentiallyUnguardedProtocolHandler.cpp:58:11:58:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:60:31:60:39 | call to QUrl | provenance | TaintFunction |
+| PotentiallyUnguardedProtocolHandler.cpp:66:11:66:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:68:31:68:39 | call to QUrl | provenance | TaintFunction |
+| PotentiallyUnguardedProtocolHandler.cpp:74:11:74:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:76:31:76:39 | call to QUrl | provenance | TaintFunction |
+| PotentiallyUnguardedProtocolHandler.cpp:83:11:83:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:85:10:85:16 | *command | provenance | TaintFunction |
+| PotentiallyUnguardedProtocolHandler.cpp:91:11:91:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:93:10:93:16 | *command | provenance | TaintFunction |
+| PotentiallyUnguardedProtocolHandler.cpp:99:11:99:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:101:10:101:16 | *command | provenance | TaintFunction |
+nodes
+| PotentiallyUnguardedProtocolHandler.cpp:22:11:22:13 | read output argument | semmle.label | read output argument |
+| PotentiallyUnguardedProtocolHandler.cpp:23:29:23:37 | call to QUrl | semmle.label | call to QUrl |
+| PotentiallyUnguardedProtocolHandler.cpp:58:11:58:13 | read output argument | semmle.label | read output argument |
+| PotentiallyUnguardedProtocolHandler.cpp:60:31:60:39 | call to QUrl | semmle.label | call to QUrl |
+| PotentiallyUnguardedProtocolHandler.cpp:66:11:66:13 | read output argument | semmle.label | read output argument |
+| PotentiallyUnguardedProtocolHandler.cpp:68:31:68:39 | call to QUrl | semmle.label | call to QUrl |
+| PotentiallyUnguardedProtocolHandler.cpp:74:11:74:13 | read output argument | semmle.label | read output argument |
+| PotentiallyUnguardedProtocolHandler.cpp:76:31:76:39 | call to QUrl | semmle.label | call to QUrl |
+| PotentiallyUnguardedProtocolHandler.cpp:83:11:83:13 | read output argument | semmle.label | read output argument |
+| PotentiallyUnguardedProtocolHandler.cpp:85:10:85:16 | *command | semmle.label | *command |
+| PotentiallyUnguardedProtocolHandler.cpp:91:11:91:13 | read output argument | semmle.label | read output argument |
+| PotentiallyUnguardedProtocolHandler.cpp:93:10:93:16 | *command | semmle.label | *command |
+| PotentiallyUnguardedProtocolHandler.cpp:99:11:99:13 | read output argument | semmle.label | read output argument |
+| PotentiallyUnguardedProtocolHandler.cpp:101:10:101:16 | *command | semmle.label | *command |
+subpaths
+#select
+| PotentiallyUnguardedProtocolHandler.cpp:23:3:23:27 | call to openUrl | PotentiallyUnguardedProtocolHandler.cpp:22:11:22:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:23:29:23:37 | call to QUrl | QDesktopServices::openUrl() is called with untrusted input from $@ without URL scheme validation. | PotentiallyUnguardedProtocolHandler.cpp:22:11:22:13 | read output argument | this source |
+| PotentiallyUnguardedProtocolHandler.cpp:60:5:60:29 | call to openUrl | PotentiallyUnguardedProtocolHandler.cpp:58:11:58:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:60:31:60:39 | call to QUrl | QDesktopServices::openUrl() is called with untrusted input from $@ without URL scheme validation. | PotentiallyUnguardedProtocolHandler.cpp:58:11:58:13 | read output argument | this source |
+| PotentiallyUnguardedProtocolHandler.cpp:68:5:68:29 | call to openUrl | PotentiallyUnguardedProtocolHandler.cpp:66:11:66:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:68:31:68:39 | call to QUrl | QDesktopServices::openUrl() is called with untrusted input from $@ without URL scheme validation. | PotentiallyUnguardedProtocolHandler.cpp:66:11:66:13 | read output argument | this source |
+| PotentiallyUnguardedProtocolHandler.cpp:76:5:76:29 | call to openUrl | PotentiallyUnguardedProtocolHandler.cpp:74:11:74:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:76:31:76:39 | call to QUrl | QDesktopServices::openUrl() is called with untrusted input from $@ without URL scheme validation. | PotentiallyUnguardedProtocolHandler.cpp:74:11:74:13 | read output argument | this source |
+| PotentiallyUnguardedProtocolHandler.cpp:85:3:85:8 | call to system | PotentiallyUnguardedProtocolHandler.cpp:83:11:83:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:85:10:85:16 | *command | xdg-open is called with untrusted input from $@ without URL scheme validation. | PotentiallyUnguardedProtocolHandler.cpp:83:11:83:13 | read output argument | this source |
+| PotentiallyUnguardedProtocolHandler.cpp:93:3:93:8 | call to system | PotentiallyUnguardedProtocolHandler.cpp:91:11:91:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:93:10:93:16 | *command | rundll32 url.dll,FileProtocolHandler is called with untrusted input from $@ without URL scheme validation. | PotentiallyUnguardedProtocolHandler.cpp:91:11:91:13 | read output argument | this source |
+| PotentiallyUnguardedProtocolHandler.cpp:101:3:101:8 | call to system | PotentiallyUnguardedProtocolHandler.cpp:99:11:99:13 | read output argument | PotentiallyUnguardedProtocolHandler.cpp:101:10:101:16 | *command | open is called with untrusted input from $@ without URL scheme validation. | PotentiallyUnguardedProtocolHandler.cpp:99:11:99:13 | read output argument | this source |

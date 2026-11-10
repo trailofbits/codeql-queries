@@ -7,6 +7,8 @@
 extern "C" {
 #endif
 
+long read(int, void *, unsigned long);
+
 void _exit(int);
 
 #ifdef  __cplusplus
