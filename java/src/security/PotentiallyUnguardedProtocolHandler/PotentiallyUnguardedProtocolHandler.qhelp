@@ -2,34 +2,32 @@
 <qhelp>
     <overview>
         <p>
-            URL protocol handlers are used to handle any URL scheme supported by the native desktop.
-            If URL inputs to these handlers are untrusted and not properly sanitized, they can be
-            used to perform unintended actions by another application registered to handle the same
-            protocol.
+            Desktop URL handlers accept every scheme registered with the operating system.
+            Passing an untrusted URL to one of these handlers can invoke an unintended
+            application or expose local resources.
         </p>
     </overview>
     <recommendation>
         <p>
-            Review protocol handler sinks and ensure that any URL inputs are properly sanitized if
-            they come from untrusted sources.
+            Parse the URL and allow only the schemes required by the application before
+            invoking the protocol handler. For web links, allow only HTTP and HTTPS.
         </p>
     </recommendation>
     <example>
         <sample src="PotentiallyUnguardedProtocolHandler.java" />
         <p>
-            In the bad example, an untrusted URL is passed directly to <code>Desktop.browse()</code>
-            without any scheme validation.
-            In the good example, the URL scheme is checked with <code>getScheme()</code> before
-            invoking the handler.
+            The bad example opens an untrusted URL directly. The good example first
+            checks that the URL uses HTTP or HTTPS.
         </p>
     </example>
     <references>
-        <li> Positive Security: <a
-                href="https://positive.security/blog/url-open-rce">Allow
-                arbitrary URLs, expect arbitrary code execution</a>
+        <li>
+            CWE-939: <a href="https://cwe.mitre.org/data/definitions/939.html">Improper
+            Authorization in Handler for Custom URL Scheme</a>
         </li>
-        <li> CVE-2022-43550: <a href="https://hackerone.com/reports/1692603">Jitsi Desktop Client
-                RCE By Interacting with Malicious URL Schemes on Windows</a>
+        <li>
+            CVE-2022-43550: <a href="https://hackerone.com/reports/1692603">Jitsi Desktop
+            Client RCE by interacting with malicious URL schemes</a>
         </li>
     </references>
 </qhelp>

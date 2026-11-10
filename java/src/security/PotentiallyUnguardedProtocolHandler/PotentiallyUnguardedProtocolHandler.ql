@@ -1,7 +1,7 @@
 /**
  * @name Potentially unguarded protocol handler invocation
  * @id tob/java/unguarded-protocol-handler
- * @description Detects calls to URL protocol handlers with untrusted input that may not be properly validated for dangerous protocols
+ * @description Finds URL protocol handlers called with URLs from untrusted sources
  * @kind path-problem
  * @tags security
  *       external/cwe/cwe-939
@@ -12,130 +12,168 @@
  */
 
 import java
-import semmle.code.java.dataflow.TaintTracking
-import semmle.code.java.dataflow.FlowSources
 import semmle.code.java.controlflow.Guards
-import semmle.code.java.security.ExternalProcess
+import semmle.code.java.dataflow.FlowSources
+import semmle.code.java.dataflow.TaintTracking
 
-/**
- * Generic case: invoke protocol handling through OS's protocol handling utilities. This aligns with CVE-2022-43550.
- */
-class ShellProtocolHandler extends ArgumentToExec {
-  ShellProtocolHandler() {
-    // Single string: "rundll32 url.dll,FileProtocolHandler " + url or "xdg-open " + url
-    this instanceof StringArgumentToExec and
-    exists(StringLiteral sl |
-      sl.getParent*() = this and
-      sl.getValue()
-          .regexpMatch("(?i).*(rundll32.*url\\.dll.*FileProtocolHandler|xdg-open|\\bopen\\b).*")
-    )
-    or
-    // Array: {"rundll32", "url.dll,FileProtocolHandler", url} or {"xdg-open", url}
-    this.getType().(Array).getElementType() instanceof TypeString and
-    exists(ArrayInit init, StringLiteral handler |
-      init = this.(ArrayCreationExpr).getInit() and
-      handler = init.getAnInit() and
-      handler.getValue().regexpMatch("(?i)(rundll32(\\.exe)?|xdg-open|open|/usr/bin/open)")
-    )
+class DesktopBrowseProtocolHandler extends MethodCall {
+  DesktopBrowseProtocolHandler() {
+    this.getMethod().hasQualifiedName("java.awt", "Desktop", "browse")
   }
 
+  Expr getUrlArgument() { result = this.getArgument(0) }
+
+  string getHandlerType() { result = "Desktop.browse()" }
+}
+
+private ArrayInit getCommandArray(Expr command) {
+  result = command.(ArrayInit)
+  or
+  result = command.(ArrayCreationExpr).getInit()
+  or
+  exists(VarAccess access |
+    command = access and
+    result = getCommandArray(access.getVariable().getAnAssignedValue())
+  )
+}
+
+class RuntimeProtocolHandler extends MethodCall {
+  RuntimeProtocolHandler() { this.getMethod().hasQualifiedName("java.lang", "Runtime", "exec") }
+
   Expr getUrlArgument() {
-    // For single string exec, the URL is tainted into the concatenated string
-    result = this and this instanceof StringArgumentToExec
+    result = this.getArgument(0) and result.getType() instanceof TypeString
     or
-    // For arrays with rundll32, find elements after "url.dll,FileProtocolHandler"
-    exists(ArrayInit init, int urlIdx, int dllIdx |
-      init = this.(ArrayCreationExpr).getInit() and
-      result = init.getInit(urlIdx) and
-      init.getInit(dllIdx)
-          .(StringLiteral)
-          .getValue()
-          .regexpMatch("(?i)url\\.dll.*FileProtocolHandler") and
-      urlIdx > dllIdx
-    )
-    or
-    // For arrays with xdg-open/open, find elements after the handler
-    exists(ArrayInit init, int urlIdx, int handlerIdx |
-      init = this.(ArrayCreationExpr).getInit() and
-      result = init.getInit(urlIdx) and
-      init.getInit(handlerIdx)
-          .(StringLiteral)
-          .getValue()
-          .regexpMatch("(?i)(xdg-open|open|/usr/bin/open)") and
-      urlIdx > handlerIdx
+    exists(ArrayInit command, int urlIndex, int markerIndex, StringLiteral marker |
+      command = getCommandArray(this.getArgument(0)) and
+      result = command.getInit(urlIndex) and
+      marker = command.getInit(markerIndex) and
+      marker.getValue().regexpMatch("(?i)(url\\.dll.*FileProtocolHandler|xdg-open|open)") and
+      urlIndex > markerIndex
     )
   }
 
   string getHandlerType() {
-    exists(StringLiteral sl |
-      sl.getParent*() = this and
+    exists(StringLiteral literal |
+      literal.getParent*() = this.getArgument(0) and
       (
-        sl.getValue().regexpMatch("(?i).*rundll32.*url\\.dll.*FileProtocolHandler.*") and
+        literal.getValue().regexpMatch("(?i).*rundll32.*url\\.dll.*FileProtocolHandler.*") and
         result = "rundll32 url.dll,FileProtocolHandler"
         or
-        sl.getValue().regexpMatch("(?i).*xdg-open.*") and
-        result = "xdg-open"
+        literal.getValue().regexpMatch("(?i).*xdg-open.*") and result = "xdg-open"
         or
-        sl.getValue().regexpMatch("(?i).*\\bopen\\b.*") and
+        literal.getValue().regexpMatch("(?i).*\\bopen\\b.*") and
+        not literal.getValue().regexpMatch("(?i).*xdg-open.*") and
         result = "open"
       )
     )
-  }
-}
-
-/**
- * A call to Desktop.browse() method. This is the platform-agnostic standard now.
- * NOTE(alan): the URLRedirect query will likely also trigger due to a little imprecision there
- */
-class DesktopBrowseProtocolHandler extends MethodCall {
-  DesktopBrowseProtocolHandler() {
-    this.getMethod().hasName("browse") and
-    this.getMethod().getDeclaringType().hasQualifiedName("java.awt", "Desktop")
-  }
-
-  Expr getUrlArgument() { result = this.getArgument(0) }
-}
-
-/**
- * A sanitizer node that represents URL scheme validation
- */
-class UrlSchemeValidationSanitizer extends DataFlow::Node {
-  UrlSchemeValidationSanitizer() {
-    exists(MethodCall mc |
-      mc = this.asExpr() and
+    or
+    exists(ArrayInit command, StringLiteral executable, StringLiteral marker |
+      command = getCommandArray(this.getArgument(0)) and
+      executable = command.getAnInit() and
+      marker = command.getAnInit() and
       (
-        // String comparison on the untrusted URL
-        mc.getMethod().hasName(["equals", "equalsIgnoreCase", "startsWith", "matches"]) and
-        exists(MethodCall getScheme |
-          getScheme.getParent*() = mc and
-          getScheme.getMethod().hasName(["getScheme", "getProtocol"])
-        )
+        executable.getValue().regexpMatch("(?i)rundll32(\\.exe)?") and
+        marker.getValue().regexpMatch("(?i)url\\.dll.*FileProtocolHandler") and
+        result = "rundll32 url.dll,FileProtocolHandler"
         or
-        // URL string contains check like: url.contains("://")
-        mc.getMethod().hasName(["contains", "startsWith", "matches", "indexOf"]) and
-        exists(StringLiteral sl | sl = mc.getAnArgument() | sl.getValue().regexpMatch(".*://.*"))
-        or
-        // Pattern matching on the string representation
-        mc.getMethod().hasName(["matches", "find"]) and
-        mc.getQualifier().getType().(RefType).hasQualifiedName("java.util.regex", "Matcher")
+        executable.getValue().regexpMatch("(?i)(xdg-open|open|/usr/bin/open)") and
+        result = executable.getValue()
       )
     )
   }
 }
 
-/**
- * Configuration for tracking untrusted data to protocol handler invocations
- */
+class ProcessBuilderProtocolHandler extends ClassInstanceExpr {
+  ProcessBuilderProtocolHandler() {
+    this.getConstructor().getDeclaringType().hasQualifiedName("java.lang", "ProcessBuilder") and
+    exists(MethodCall start |
+      start.getMethod().hasQualifiedName("java.lang", "ProcessBuilder", "start") and
+      DataFlow::localFlow(DataFlow::exprNode(this), DataFlow::exprNode(start.getQualifier()))
+    )
+  }
+
+  Expr getUrlArgument() {
+    exists(int urlIndex, int markerIndex, StringLiteral marker |
+      result = this.getArgument(urlIndex) and
+      marker = this.getArgument(markerIndex) and
+      marker.getValue().regexpMatch("(?i)(url\\.dll.*FileProtocolHandler|xdg-open|open)") and
+      urlIndex > markerIndex
+    )
+  }
+
+  string getHandlerType() {
+    exists(StringLiteral executable, StringLiteral marker |
+      executable = this.getAnArgument() and
+      marker = this.getAnArgument() and
+      (
+        executable.getValue().regexpMatch("(?i)rundll32(\\.exe)?") and
+        marker.getValue().regexpMatch("(?i)url\\.dll.*FileProtocolHandler") and
+        result = "rundll32 url.dll,FileProtocolHandler"
+        or
+        executable.getValue().regexpMatch("(?i)(xdg-open|open|/usr/bin/open)") and
+        result = executable.getValue()
+      )
+    )
+  }
+}
+
+predicate protocolHandlerCall(Expr call, Expr url, string handlerType) {
+  exists(DesktopBrowseProtocolHandler handler |
+    call = handler and
+    url = handler.getUrlArgument() and
+    handlerType = handler.getHandlerType()
+  )
+  or
+  exists(RuntimeProtocolHandler handler |
+    call = handler and
+    url = handler.getUrlArgument() and
+    handlerType = handler.getHandlerType()
+  )
+  or
+  exists(ProcessBuilderProtocolHandler handler |
+    call = handler and
+    url = handler.getUrlArgument() and
+    handlerType = handler.getHandlerType()
+  )
+}
+
+predicate urlSchemeGuardChecks(Guard guard, Expr checked, boolean branch) {
+  exists(MethodCall comparison, MethodCall scheme, CompileTimeConstantExpr allowed |
+    guard = comparison and
+    comparison.getMethod().getDeclaringType() instanceof TypeString and
+    comparison.getMethod().hasName(["equals", "equalsIgnoreCase"]) and
+    (
+      scheme = comparison.getQualifier() and allowed = comparison.getArgument(0)
+      or
+      scheme = comparison.getArgument(0) and allowed = comparison.getQualifier()
+    ) and
+    allowed.getStringValue() = ["http", "https"] and
+    scheme.getMethod().hasName(["getScheme", "getProtocol"]) and
+    checked = scheme.getQualifier() and
+    branch = true
+  )
+  or
+  exists(MethodCall comparison, CompileTimeConstantExpr allowed |
+    guard = comparison and
+    comparison.getMethod().getDeclaringType() instanceof TypeString and
+    comparison.getMethod().hasName("startsWith") and
+    comparison.getArgument(0) = allowed and
+    allowed.getStringValue() = ["http://", "https://"] and
+    checked = comparison.getQualifier() and
+    branch = true
+  )
+}
+
 module PotentiallyUnguardedProtocolHandlerConfig implements DataFlow::ConfigSig {
   predicate isSource(DataFlow::Node source) { source instanceof RemoteFlowSource }
 
   predicate isSink(DataFlow::Node sink) {
-    exists(DesktopBrowseProtocolHandler call | sink.asExpr() = call.getUrlArgument())
-    or
-    exists(ShellProtocolHandler call | sink.asExpr() = call.getUrlArgument())
+    exists(Expr call | protocolHandlerCall(call, sink.asExpr(), _))
   }
 
-  predicate isBarrier(DataFlow::Node node) { node instanceof UrlSchemeValidationSanitizer }
+  predicate isBarrier(DataFlow::Node node) {
+    node = DataFlow::BarrierGuard<urlSchemeGuardChecks/3>::getABarrierNode()
+  }
 }
 
 module PotentiallyUnguardedProtocolHandlerFlow =
@@ -145,22 +183,10 @@ import PotentiallyUnguardedProtocolHandlerFlow::PathGraph
 
 from
   PotentiallyUnguardedProtocolHandlerFlow::PathNode source,
-  PotentiallyUnguardedProtocolHandlerFlow::PathNode sink, Expr call, string callType
+  PotentiallyUnguardedProtocolHandlerFlow::PathNode sink, Expr call, string handlerType
 where
   PotentiallyUnguardedProtocolHandlerFlow::flowPath(source, sink) and
-  (
-    exists(DesktopBrowseProtocolHandler dbc |
-      call = dbc and
-      sink.getNode().asExpr() = dbc.getUrlArgument() and
-      callType = "Desktop.browse()"
-    )
-    or
-    exists(ShellProtocolHandler shc |
-      call = shc and
-      sink.getNode().asExpr() = shc.getUrlArgument() and
-      callType = shc.getHandlerType()
-    )
-  )
+  protocolHandlerCall(call, sink.getNode().asExpr(), handlerType)
 select call, source, sink,
-  callType + " is called with untrusted input from $@ without proper URL scheme validation.",
+  handlerType + " is called with untrusted input from $@ without URL scheme validation.",
   source.getNode(), "this source"
