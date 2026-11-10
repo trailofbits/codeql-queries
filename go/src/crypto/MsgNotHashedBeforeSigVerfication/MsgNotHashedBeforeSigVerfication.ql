@@ -105,7 +105,7 @@ module AnythingToSignatureMsgTrunFuncConfig implements DataFlow::ConfigSig {
   // TODO: alternatively, set sources to be ExternalInputs
   predicate isSource(DataFlow::Node source) {
     not isSink(source) and
-    not source.asInstruction() instanceof IR::ReadArgumentInstruction
+    not source instanceof DataFlow::ParameterNode
   }
 
   predicate isSink(DataFlow::Node sink) {
