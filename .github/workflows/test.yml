@@ -12,15 +12,15 @@ jobs:
   main:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: trailofbits/setup-codeql@615e3864087261d42cce229e3eec419ab9b22c36 # main
+      - uses: trailofbits/setup-codeql@b8013ac1f220d4c372aca61c2baa643e07497165 # main
         with:
-          version: '2.25.1'
+          version: '2.27.4'
           platform: 'linux64'
-          checksum: '4f070e6cc7009e75aec307ed109c2fcf0501e579c20a31080b893e31209523d5'
-      - uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57 # v8.0.0
+          checksum: '393bf92b66596141ec93baf9b483f4a350f3749916c922fed0dd63c67706047d'
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
       - run: make format-check
       - run: make test
       - name: Verify doc/QUERIES.md is up to date
