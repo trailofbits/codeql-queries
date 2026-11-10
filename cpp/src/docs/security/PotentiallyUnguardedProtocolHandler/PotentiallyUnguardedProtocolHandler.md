@@ -28,6 +28,5 @@ The bad example opens an untrusted URL directly. The good example first checks t
 
 
 ## References
-* CWE-939: [Improper Authorization in Handler for Custom URL Scheme](https://cwe.mitre.org/data/definitions/939.html)
 * CVE-2022-43550: [Jitsi Desktop Client RCE by interacting with malicious URL schemes](https://hackerone.com/reports/1692603)
 * Common Weakness Enumeration: [CWE-939](https://cwe.mitre.org/data/definitions/939.html).

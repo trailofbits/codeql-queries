@@ -37,50 +37,85 @@ private ArrayInit getCommandArray(Expr command) {
   )
 }
 
+private string getExecutableHandlerType(StringLiteral executable) {
+  executable.getValue().regexpMatch("(?i)xdg-open") and result = "xdg-open"
+  or
+  executable.getValue().regexpMatch("(?i)(open|/usr/bin/open)") and result = "open"
+}
+
+private predicate isRundllHandler(Expr executable, Expr marker) {
+  executable.(StringLiteral).getValue().regexpMatch("(?i)rundll32(\\.exe)?") and
+  marker.(StringLiteral).getValue().regexpMatch("(?i)url\\.dll.*FileProtocolHandler")
+}
+
+private int getFirstUrlIndex(StringLiteral executable, Expr secondArgument, string handlerType) {
+  handlerType = getExecutableHandlerType(executable) and result = 1
+  or
+  isRundllHandler(executable, secondArgument) and
+  handlerType = "rundll32 url.dll,FileProtocolHandler" and
+  result = 2
+}
+
+private predicate arrayProtocolHandler(ArrayInit command, Expr url, string handlerType) {
+  exists(int urlIndex, StringLiteral executable |
+    executable = command.getInit(0) and
+    url = command.getInit(urlIndex) and
+    urlIndex >= getFirstUrlIndex(executable, command.getInit(1), handlerType)
+  )
+}
+
+private StringLiteral getCommandPrefix(Expr command) {
+  result = command.(StringLiteral)
+  or
+  result = getCommandPrefix(command.(AddExpr).getLeftOperand())
+}
+
+private string getStringCommandHandlerType(Expr command) {
+  exists(StringLiteral prefix |
+    prefix = getCommandPrefix(command) and
+    (
+      prefix.getValue().regexpMatch("(?i)\\s*xdg-open\\s+.*") and result = "xdg-open"
+      or
+      prefix.getValue().regexpMatch("(?i)\\s*(open|/usr/bin/open)\\s+.*") and result = "open"
+      or
+      prefix
+          .getValue()
+          .regexpMatch("(?i)\\s*rundll32(\\.exe)?\\s+url\\.dll.*FileProtocolHandler\\s+.*") and
+      result = "rundll32 url.dll,FileProtocolHandler"
+    )
+  )
+}
+
 class RuntimeProtocolHandler extends MethodCall {
   RuntimeProtocolHandler() { this.getMethod().hasQualifiedName("java.lang", "Runtime", "exec") }
 
   Expr getUrlArgument() {
     result = this.getArgument(0) and result.getType() instanceof TypeString
     or
-    exists(ArrayInit command, int urlIndex, int markerIndex, StringLiteral marker |
+    exists(ArrayInit command |
       command = getCommandArray(this.getArgument(0)) and
-      result = command.getInit(urlIndex) and
-      marker = command.getInit(markerIndex) and
-      marker.getValue().regexpMatch("(?i)(url\\.dll.*FileProtocolHandler|xdg-open|open)") and
-      urlIndex > markerIndex
+      arrayProtocolHandler(command, result, _)
     )
   }
 
   string getHandlerType() {
-    exists(StringLiteral literal |
-      literal.getParent*() = this.getArgument(0) and
-      (
-        literal.getValue().regexpMatch("(?i).*rundll32.*url\\.dll.*FileProtocolHandler.*") and
-        result = "rundll32 url.dll,FileProtocolHandler"
-        or
-        literal.getValue().regexpMatch("(?i).*xdg-open.*") and result = "xdg-open"
-        or
-        literal.getValue().regexpMatch("(?i).*\\bopen\\b.*") and
-        not literal.getValue().regexpMatch("(?i).*xdg-open.*") and
-        result = "open"
-      )
-    )
+    result = getStringCommandHandlerType(this.getArgument(0))
     or
-    exists(ArrayInit command, StringLiteral executable, StringLiteral marker |
+    exists(ArrayInit command, Expr url |
       command = getCommandArray(this.getArgument(0)) and
-      executable = command.getAnInit() and
-      marker = command.getAnInit() and
-      (
-        executable.getValue().regexpMatch("(?i)rundll32(\\.exe)?") and
-        marker.getValue().regexpMatch("(?i)url\\.dll.*FileProtocolHandler") and
-        result = "rundll32 url.dll,FileProtocolHandler"
-        or
-        executable.getValue().regexpMatch("(?i)(xdg-open|open|/usr/bin/open)") and
-        result = executable.getValue()
-      )
+      arrayProtocolHandler(command, url, result)
     )
   }
+}
+
+private predicate processBuilderProtocolHandler(
+  ClassInstanceExpr command, Expr url, string handlerType
+) {
+  exists(int urlIndex, StringLiteral executable |
+    executable = command.getArgument(0) and
+    url = command.getArgument(urlIndex) and
+    urlIndex >= getFirstUrlIndex(executable, command.getArgument(1), handlerType)
+  )
 }
 
 class ProcessBuilderProtocolHandler extends ClassInstanceExpr {
@@ -92,29 +127,9 @@ class ProcessBuilderProtocolHandler extends ClassInstanceExpr {
     )
   }
 
-  Expr getUrlArgument() {
-    exists(int urlIndex, int markerIndex, StringLiteral marker |
-      result = this.getArgument(urlIndex) and
-      marker = this.getArgument(markerIndex) and
-      marker.getValue().regexpMatch("(?i)(url\\.dll.*FileProtocolHandler|xdg-open|open)") and
-      urlIndex > markerIndex
-    )
-  }
+  Expr getUrlArgument() { processBuilderProtocolHandler(this, result, _) }
 
-  string getHandlerType() {
-    exists(StringLiteral executable, StringLiteral marker |
-      executable = this.getAnArgument() and
-      marker = this.getAnArgument() and
-      (
-        executable.getValue().regexpMatch("(?i)rundll32(\\.exe)?") and
-        marker.getValue().regexpMatch("(?i)url\\.dll.*FileProtocolHandler") and
-        result = "rundll32 url.dll,FileProtocolHandler"
-        or
-        executable.getValue().regexpMatch("(?i)(xdg-open|open|/usr/bin/open)") and
-        result = executable.getValue()
-      )
-    )
-  }
+  string getHandlerType() { processBuilderProtocolHandler(this, _, result) }
 }
 
 predicate protocolHandlerCall(Expr call, Expr url, string handlerType) {

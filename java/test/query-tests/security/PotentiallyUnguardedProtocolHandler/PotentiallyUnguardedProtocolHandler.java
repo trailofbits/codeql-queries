@@ -90,6 +90,13 @@ public class PotentiallyUnguardedProtocolHandler {
         Runtime.getRuntime().exec("echo " + argument); // GOOD
     }
 
+    public void unrelatedRuntimeWithHandlerArgument(HttpServletRequest request)
+            throws IOException {
+        String url = request.getParameter("url");
+        Runtime.getRuntime().exec(new String[]{"echo", "xdg-open", url}); // GOOD
+        Runtime.getRuntime().exec("echo xdg-open " + url); // GOOD
+    }
+
     public void badProcessBuilder(HttpServletRequest request) throws IOException {
         String url = request.getParameter("url");
         ProcessBuilder builder = new ProcessBuilder("xdg-open", url); // BAD
@@ -102,5 +109,11 @@ public class PotentiallyUnguardedProtocolHandler {
             ProcessBuilder builder = new ProcessBuilder("xdg-open", url); // GOOD
             builder.start();
         }
+    }
+
+    public void unrelatedProcessBuilder(HttpServletRequest request) throws IOException {
+        String url = request.getParameter("url");
+        ProcessBuilder builder = new ProcessBuilder("echo", "xdg-open", url); // GOOD
+        builder.start();
     }
 }

@@ -22,10 +22,6 @@
     </example>
     <references>
         <li>
-            CWE-939: <a href="https://cwe.mitre.org/data/definitions/939.html">Improper
-            Authorization in Handler for Custom URL Scheme</a>
-        </li>
-        <li>
             CVE-2022-43550: <a href="https://hackerone.com/reports/1692603">Jitsi Desktop
             Client RCE by interacting with malicious URL schemes</a>
         </li>
