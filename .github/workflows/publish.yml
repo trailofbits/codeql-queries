@@ -16,16 +16,16 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: trailofbits/setup-codeql@615e3864087261d42cce229e3eec419ab9b22c36 # main
+      - uses: trailofbits/setup-codeql@b8013ac1f220d4c372aca61c2baa643e07497165 # main
         with:
-          version: '2.25.1'
+          version: '2.27.4'
           platform: 'linux64'
-          checksum: '4f070e6cc7009e75aec307ed109c2fcf0501e579c20a31080b893e31209523d5'
+          checksum: '393bf92b66596141ec93baf9b483f4a350f3749916c922fed0dd63c67706047d'
       - name: Log in to the Container registry
-        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121  # v4.1.0
+        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
