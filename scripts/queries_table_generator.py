@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """Generate markdown tables for all queries.
 
 Queries are listed from all Qlpacks' "full" suites, grouped by the custom
@@ -12,7 +10,6 @@ import sys
 from dataclasses import dataclass
 from functools import total_ordering
 from pathlib import Path
-from typing import Optional
 
 import yaml
 
@@ -27,9 +24,9 @@ class QueryMetadata:
     kind: str
     tags: str
     group: str
-    problem_severity: Optional[str]
-    precision: Optional[str]
-    security_severity: Optional[str]
+    problem_severity: str | None
+    precision: str | None
+    security_severity: str | None
 
 
 @total_ordering
@@ -49,12 +46,12 @@ class QlQuery:
         self.id: str = metadata.id
         self.description: str = metadata.description
         self.kind: str = metadata.kind
-        self.tags: list[str] = sorted(metadata.tags.split(' '))
+        self.tags: list[str] = sorted(metadata.tags.split(" "))
         self.group: str = metadata.group
 
-        self.problem_severity: Optional[str] = metadata.problem_severity
-        self.precision: Optional[str] = metadata.precision
-        self.security_severity: Optional[float] = (
+        self.problem_severity: str | None = metadata.problem_severity
+        self.precision: str | None = metadata.precision
+        self.security_severity: float | None = (
             float(metadata.security_severity)
             if metadata.security_severity is not None
             else None
@@ -71,8 +68,8 @@ class QlQuery:
             return self.group < other.group
 
         # Experimental queries sort after non-experimental ones.
-        self_exp = 'experimental' in self.tags
-        other_exp = 'experimental' in other.tags
+        self_exp = "experimental" in self.tags
+        other_exp = "experimental" in other.tags
         if self_exp and not other_exp:
             return False
         if other_exp and not self_exp:
@@ -82,10 +79,10 @@ class QlQuery:
 
     def md_table_line(self):
         qhelp_markdown_path = (
-            Path('..') / self.doc_lang_dir / 'src' / 'docs' / self.rel_path
-        ).with_suffix('.md')
+            Path("..") / self.doc_lang_dir / "src" / "docs" / self.rel_path
+        ).with_suffix(".md")
         cells = [
-            f'[{self.name}]({qhelp_markdown_path})',
+            f"[{self.name}]({qhelp_markdown_path})",
             f"{self.description}",
             f"{self.problem_severity}",
             f"{self.precision}",
@@ -97,7 +94,7 @@ class QlQuery:
     @staticmethod
     def parse_from_file(path: Path, doc_lang_dir: str) -> "QlQuery":
         raw_metadata = subprocess.check_output(
-            ['codeql', 'resolve', 'metadata', str(path)]
+            ["codeql", "resolve", "metadata", str(path)]
         ).decode("utf-8")
 
         parsed = json.loads(raw_metadata)
@@ -133,7 +130,7 @@ class Qls:
 
     def md_tables(self) -> str:
         tables = ""
-        for group, query_list in self.queries.items():
+        for group, query_list in sorted(self.queries.items()):
             tables += f"#### {group.capitalize()}\n\n"
 
             table = ""
@@ -149,13 +146,19 @@ class Qls:
 
     @staticmethod
     def get_qls_from_path(qls_path: Path, doc_lang_dir: str) -> "Qls":
-        queries_paths = subprocess.check_output([
-            'codeql',
-            'resolve',
-            'queries',
-            '--search-path=.',
-            str(qls_path),
-        ]).decode("utf-8").split("\n")
+        queries_paths = (
+            subprocess.check_output(
+                [
+                    "codeql",
+                    "resolve",
+                    "queries",
+                    "--search-path=.",
+                    str(qls_path),
+                ]
+            )
+            .decode("utf-8")
+            .split("\n")
+        )
 
         queries = []
         for path in queries_paths:
@@ -170,10 +173,10 @@ class Qls:
 
 def display_name(extractor: str) -> str:
     """Return the human-readable language heading for an extractor name."""
-    if extractor == 'cpp':
-        return 'C and C++'
-    if extractor == 'java-kotlin':
-        return 'Java and Kotlin'
+    if extractor == "cpp":
+        return "C and C++"
+    if extractor == "java-kotlin":
+        return "Java and Kotlin"
     return extractor.capitalize()
 
 
@@ -181,17 +184,23 @@ def main():
     # get ToB qlpacks that are not tests nor libraries
     tob_qlpacks = {}
     qlpack_paths = json.loads(
-        subprocess.check_output([
-            'codeql',
-            'resolve',
-            'qlpacks',
-            '--search-path=.',
-            '--format=json',
-        ]).decode("utf-8")
+        subprocess.check_output(
+            [
+                "codeql",
+                "resolve",
+                "qlpacks",
+                "--search-path=.",
+                "--format=json",
+            ]
+        ).decode("utf-8")
     )
 
     for k, v in qlpack_paths.items():
-        if k.startswith('trailofbits/') and not k.endswith('-tests') and not k.endswith('-all'):
+        if (
+            k.startswith("trailofbits/")
+            and not k.endswith("-tests")
+            and not k.endswith("-all")
+        ):
             tob_qlpacks[k] = Path(v[0])
 
     sys.stdout.write(
@@ -200,22 +209,20 @@ def main():
 
     # for every pack finds the "full" suite
     for qlpack_name, qlpack_path in tob_qlpacks.items():
-        with open(qlpack_path / 'qlpack.yml') as f:
+        with open(qlpack_path / "qlpack.yml") as f:
             qlpack = yaml.safe_load(f)
 
         # skip libraries
-        if qlpack.get('library') is True:
+        if qlpack.get("library") is True:
             continue
         # skip tests
-        if qlpack.get('version') is None:
+        if qlpack.get("version") is None:
             continue
 
-        suites_dir = qlpack.get('suites', 'codeql-suites')
-        suites = list((qlpack_path / suites_dir).glob('*-full.qls'))
+        suites_dir = qlpack.get("suites", "codeql-suites")
+        suites = list((qlpack_path / suites_dir).glob("*-full.qls"))
         if len(suites) > 1:
-            sys.exit(
-                f'Error: Found more than 1 "full" suite for qlpack {qlpack_name}'
-            )
+            sys.exit(f'Error: Found more than 1 "full" suite for qlpack {qlpack_name}')
         if len(suites) == 0:
             sys.exit(f'Error: No "full" suite for qlpack {qlpack_name}')
 
@@ -229,7 +236,7 @@ def main():
         doc_lang_dir = qlpack_path.parent.name
         suite = Qls.get_qls_from_path(suites[0], doc_lang_dir)
 
-        sys.stdout.write(f'### {display_name(extractor)}\n\n')
+        sys.stdout.write(f"### {display_name(extractor)}\n\n")
         sys.stdout.write(suite.md_tables())
 
 
