@@ -44,9 +44,11 @@
 
 | Name | Description | Severity | Precision  |
 | ---  | ----------- | :----:   | :--------: |
+|[Deferred resource release in loop](../go/src/docs/security/DeferReleaseInLoop/DeferReleaseInLoop.md)|Deferring a resource release (Close, Rollback, etc.) inside a loop delays cleanup until the enclosing function returns, causing resource leaks across iterations such as file descriptor exhaustion or connection pool starvation.|warning|medium|
 |[Invalid file permission parameter](../go/src/docs/security/FilePermsFlaws/FilePermsFlaws.md)|Finds non-octal (e.g., `755` vs `0o755`) and unsupported (e.g., `04666`) literals used as a filesystem permission parameter (`FileMode`)|error|medium|
 |[Missing MinVersion in tls.Config](../go/src/docs/security/MissingMinVersionTLS/MissingMinVersionTLS.md)|Finds uses of tls.Config where MinVersion is not set and the project's minimum Go version (from go.mod) indicates insecure defaults: Go < 1.18 for clients or Go < 1.22 for servers. Does not mark explicitly set versions (including explicitly insecure ones).|error|medium|
 |[Trim functions misuse](../go/src/docs/security/TrimMisuse/TrimMisuse.md)|Finds calls to `string.{Trim,TrimLeft,TrimRight}` with the 2nd argument not being a cutset but a continuous substring to be trimmed|error|low|
+|[Unbounded read of request body](../go/src/docs/security/UnboundedIORead/UnboundedIORead.md)|Reading an HTTP request body with `io.ReadAll` or `ioutil.ReadAll` without a size limit allows a malicious client to exhaust server memory with an arbitrarily large request.|error|high|
 
 ### Java and Kotlin
 

@@ -1,0 +1,42 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+In Go, <code>defer</code> schedules a function call to run when the <em>enclosing function</em>
+returns — not when the enclosing block or loop iteration ends. Deferring a resource release
+call (such as <code>Close</code>, <code>Unlock</code>, or <code>Rollback</code>) inside a loop
+means that cleanup calls accumulate and only execute after the loop finishes and the function
+returns.
+</p>
+
+<p>
+This can lead to resource exhaustion: file descriptors pile up, database connections are held
+open, locks are held longer than intended, or transactions remain open across iterations.
+</p>
+
+</overview>
+<recommendation>
+<p>
+Extract the loop body into a separate function or closure so that <code>defer</code> runs
+at the end of each iteration:
+</p>
+
+<sample src="DeferReleaseInLoop.go" />
+
+<p>
+Alternatively, call the cleanup function directly without <code>defer</code> at the
+appropriate point in the loop body.
+</p>
+
+</recommendation>
+<references>
+<li>
+    <a href="https://go.dev/ref/spec#Defer_statements">Go Language Specification — Defer statements</a>
+</li>
+<li>
+    <a href="https://blog.learngoprogramming.com/gotchas-of-defer-in-go-1-8d070894cb01">Gotchas of Defer in Go</a>
+</li>
+</references>
+</qhelp>
