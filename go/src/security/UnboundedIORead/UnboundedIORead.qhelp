@@ -1,0 +1,35 @@
+<!DOCTYPE qhelp PUBLIC
+  "-//Semmle//qhelp//EN"
+  "qhelp.dtd">
+<qhelp>
+<overview>
+<p>
+Reading an HTTP request body with <code>io.ReadAll</code> (or the deprecated
+<code>ioutil.ReadAll</code>) allocates the entire body into memory with no upper bound.
+A malicious client can send an arbitrarily large request body to exhaust server memory,
+causing a denial-of-service condition.
+</p>
+
+</overview>
+<recommendation>
+<p>
+Wrap the request body with a size-limiting reader before reading it:
+</p>
+
+<sample src="UnboundedIORead.go" />
+
+<p>
+Prefer <code>http.MaxBytesReader</code> which also sets the appropriate error on the
+response, or <code>io.LimitReader</code> for non-HTTP contexts.
+</p>
+
+</recommendation>
+<references>
+<li>
+    <a href="https://pkg.go.dev/net/http#MaxBytesReader">http.MaxBytesReader documentation</a>
+</li>
+<li>
+    <a href="https://pkg.go.dev/io#LimitReader">io.LimitReader documentation</a>
+</li>
+</references>
+</qhelp>
